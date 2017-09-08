@@ -1,0 +1,4097 @@
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 4 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: Redstone, size: 4 })
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: GoldenApple, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+None
+None
+None
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+None
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+None
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: GoldenApple, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+None
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+None
+None
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+None
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: String, size: 4 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Redstone, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+None
+Some(Stack { item: Redstone, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Redstone, size: 2 })
+None
+None
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+None
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+None
+None
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+None
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: GoldRecord, size: 1 })
+None
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+None
+None
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: GoldenApple, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: GoldRecord, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldenApple, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 3 })
+None
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+None
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Redstone, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: String, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: GoldenApple, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+None
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+None
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 2 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+None
+None
+None
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+None
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Redstone, size: 3 })
+None
+None
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+None
+None
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Gunpowder, size: 4 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: GreenRecord, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 1 })
+None
+None
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+None
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Wheat, size: 4 })
+None
+Some(Stack { item: Redstone, size: 2 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+None
+None
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Gunpowder, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+None
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 4 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+None
+None
+None
+None
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+None
+Some(Stack { item: Wheat, size: 1 })
+None
+Some(Stack { item: GreenRecord, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Gunpowder, size: 4 })
+Some(Stack { item: Wheat, size: 3 })
+None
+None
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Gunpowder, size: 1 })
+None
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Redstone, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: String, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: String, size: 4 })
+Some(Stack { item: Redstone, size: 1 })
+Some(Stack { item: Redstone, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Wheat, size: 4 })
+Some(Stack { item: IronIngot, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Gunpowder, size: 3 })
+None
+Some(Stack { item: String, size: 2 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+None
+None
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: GoldRecord, size: 1 })
+Some(Stack { item: InkSac, size: 1 })
+None
+Some(Stack { item: Bread, size: 1 })
+Some(Stack { item: IronIngot, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Bucket, size: 1 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: String, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+Some(Stack { item: Wheat, size: 3 })
+None
+Some(Stack { item: InkSac, size: 1 })
+Some(Stack { item: Wheat, size: 2 })
+Some(Stack { item: String, size: 2 })
+None
+Some(Stack { item: IronIngot, size: 4 })
+Some(Stack { item: Gunpowder, size: 2 })
+Some(Stack { item: Gunpowder, size: 3 })
+Some(Stack { item: Gunpowder, size: 2 })
+None
+None
+Some(Stack { item: IronIngot, size: 4 })
+None
+Some(Stack { item: Bucket, size: 1 })
+None
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: Saddle, size: 1 })
+Some(Stack { item: IronIngot, size: 2 })
+Some(Stack { item: Bread, size: 1 })
+

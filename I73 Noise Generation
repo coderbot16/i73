@@ -1,0 +1,121 @@
+# Minecraft Terrain Shape Generation
+Minecraft terrain shape generation is rather complex. There are 5 noise generators:
+
+ * Biome Influence - determines how much the biome properties influence the noise.
+ * Depth - Determines the general height values of the terrain.
+ * Lower and Upper limit - Determines the lower and upper limit for the computed density.
+ * Main - Determines the interpolation factor between the lower and upper limit noise values.
+ <TODO: Noise Generator Parameters and Implementation>
+## Noise Generation
+Noise is generated at a resolution of `5x17x5` for a chunk of size `16x128x16`. Each noise value represents a end of one `4x8x4` section of blocks, and the start of another. Noise values are trilinearly interpolated between for each individual block coordinate. This is done to significantly increase the performance of world generation due to the amount of time that Perlin noise generation takes relative to other processes. In addition, it makes the noise more smooth. Both of these properties are documented on Notch's blog. 
+## Biome Chaos
+For each horizontal position in the chunk, a `BiomeChaos` value is calculated from the temperature and rainfall values. This is what makes hot and rainy values more chaotic that cold and dry biomes. This is also the only way that biomes influence the terrain's shape, in stark contrast to the world generation of modern Minecraft.
+```rust
+GetBiomeChaos(Noise: real, Rain: real, Temperature: real) -> real {
+	let Factor = 1.0 - Pow(1.0 - Rain * Temperature, 4);
+	let Chaos = (Noise / 512.0 + 0.5) * Factor + 0.5;
+	return Clamp(Chaos, 0.5, 1.5);
+}
+```
+## Heightmap
+In addition, a height "center" is calculated from the noise. The height center determines the general border between ground and sky. In density computation, locations below the height center have increased density while those above have decreased density. The height center of each horizontal position forms a sort of heightmap.
+```rust
+const DepthBase = 8.5;
+GetHeightCenter(Noise: real) -> real {
+	let Depth = (Noise / 8000.0) * 3.0;
+	if Depth < 0 {
+		Depth *= 0.3;
+	}
+	
+	let Deviation = Clamp(Abs(Depth) - 2, -2.0, 1.0);
+	if Deviation < 0 {
+		Deviation /= 1.4;
+	} else {
+		Deviation /= 2.0;
+	}
+
+	return DepthBase + Deviation * (DepthBase / 8.0);
+}
+```
+In this snippet, the final value of the `Deviation` variable has a range of approximately 12 blocks below to approximately 4 blocks above the `DepthBase`. The value of `DepthBase` is important in the calculation: `8.5 * 8` is a Y value of 68, slightly above sea level.
+
+## Density
+
+Each noise value actually represents a density, where densities above 0.0 are solid blocks. 
+```rust
+const HeightStretch = 12.0;
+const LowerLimitScale = 512.0;
+const UpperLimitScale = 512.0;
+const MainScale = 20.0;
+const TaperBase = 13.0;
+
+GetDensityAt(Y: int, Chaos: real, HeightCenter: real, NoiseLower: real, NoiseUpper: real, NoiseMain: real) -> real {
+	let DistanceAboveHeightCenter = Y - HeightCenter;
+	if DistanceAboveHeightCenter < 0 {
+		// Make areas below the height center more shallow
+		DistanceAboveHeightCenter *= 4.0;
+	}
+	
+	let Calmness = DistanceAboveHeightCenter * HeightStretch;
+	
+	let Lower = NoiseLower / LowerLimitScale;
+	let Upper = NoiseUpper / UpperLimitScale;
+	let Main = Clamp(NoiseMain / MainScale, 0.0, 1.0);
+	let Density = Lerp(Main, Lower, Upper) - (Calmness / Chaos);
+
+	let TaperFactor = (Max(Y, TaperBase) - TaperBase) / 3;
+	Density *=  1.0 - TaperFactor;
+	Density -= 10.0 * TaperFactor;
+
+	return Density;
+}
+```
+The DistanceAboveHeightCenter variable is multiplied by 4 if the Y coordinate is below the height center. This creates flat lowlands and oceans, while still keeping steep hills. This is then factored into the Calmness variable. The Calmness variable is the effect the heightmap has on the density. Finally, the TaperFactor reduces the density significantly around Y=112.
+
+# Block Selection
+
+Block selection follows a simple algorithm:
+```rust
+const SeaCoord = 63;
+SelectBlock(Density: real, Temperature: real, Y: int) -> Block {
+	if Density > 0 {
+		Stone
+	} else if Y == SeaCoord && Temperature < 0.5 {
+		Ice
+	} else if Y <= SeaCoord {
+		StationaryWater
+	} else {
+		Air
+	}
+}
+```
+Effectively, a density of anything above 0 is stone. Otherwise, blocks below sea level become water. The rest of the blocks are air. If the temperature is below 0.5 (50%), then the top layer of water is frozen into ice.
+# Density Array Access
+The Density array is accessed using Trilinear interpolation:
+```rust
+TrilinearInterpolate(Array: real[5][5][17], Piece: Vector3<int>, Inner: Vector3<int>) {
+	Lerp(Inner.Z/4.0,
+		Lerp(Inner.X/4.0
+			Lerp(Inner.Y/8.0,
+				Array[XPiece][ZPiece][YPiece],
+				Array[XPiece][ZPiece][YPiece + 1]
+			),
+			Lerp(Inner.Y/8.0
+				Array[XPiece + 1][ZPiece][YPiece],
+				Array[XPiece + 1][ZPiece][YPiece + 1]
+			)
+		),
+		Lerp(Inner.X/4.0
+			Lerp(Inner.Y/8.0
+				Array[XPiece][ZPiece + 1][YPiece],
+				Array[XPiece][ZPiece + 1][YPiece + 1],
+			),
+			Lerp(Inner.Y/8.0
+				Array[XPiece + 1][ZPiece + 1][YPiece],
+				Array[XPiece + 1][ZPiece + 1][YPiece + 1],
+			)
+		)
+	)
+}
+```
+

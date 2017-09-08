@@ -1,0 +1,77 @@
+# Biome Generation
+Minecraft biome generation is simple, but effective. It is designed so that in general, biomes placed next to each other will make at least a little sense. This is not true in some areas however (Tundras next to Savannas), but at least prevents things like rainforests from appearing next to taigas.
+
+## Noise Generation
+Biome generation uses a modified Simplex noise generator. Instead of a `40.0` scale factor, Minecraft uses a `70.0` scale factor. It also uses a modified `Grad()` function:
+```rust
+Vector2[] GRAD_VECTORS = [
+	( 1,  1),
+	(-1,  1),
+	( 1, -1),
+	(-1, -1),
+	( 1,  0),
+	(-1,  0),
+	( 1,  0),
+	(-1,  0),
+	( 0,  1),
+	( 0, -1),
+	( 0,  1),
+	( 0, -1)
+];
+
+Function Grad(Hash: integer, X: real, Y: real) -> real {
+	return Dot(GRAD_VECTORS[Hash % 12], (X, Y));
+}
+
+Function Dot(A: Vector, B: Vector) -> real {
+	return A.X * B.X + A.Y * B.Y;
+}
+```
+## Biome Properties Calculation
+This function takes 3 inputs corresponding to each noise generator, producing a temperature and rain value.
+```rust
+Function CalculateBiomeProperties(MixinIn: real, TIn: real, RIn: real) -> (Temperature: real, Rain: real) {
+	Mixin = MixinIn * 1.1 + 0.5;
+	
+	TMixed = (TIn * 0.15 + 0.70) * 0.990 + Mixin * 0.010;
+	TOut = Clamp(1.0 - (1.0 - TMixed)^2, 0.0, 1.0);
+	
+	RMixed = (RIn * 0.15 + 0.50) * 0.998 + Mixin * 0.002;
+	ROut = Clamp(RMixed, 0.0, 1.0);
+	
+	return (TOut, ROut);
+}
+```
+
+## Biome Lookup
+Internally, Minecraft uses a biome lookup table of resolution 64x64. This must be accounted for in biome lookup or biomes will be off very sligtly.
+```rust
+Function LookupBiomeRounded(Temperature, Rain) -> Biome {
+	TLookup = RoundIntoInteger(Temperature * 64) / 64;
+	RLookup = RoundIntoInteger(Rain * 64) / 64;
+	
+	// You could use a lookup table instead for a big speedup.
+	return BiomeLookup(TLookup, RLookup);
+}
+```
+
+## Biomes
+There are 11 biomes, but only 10 are used. The unused biome, IceDesert, does not ever generate due to a bug. This table lists the bounding boxes in the lookup of each biome, and some biomes have multiple boxes due to having abnormal shapes. Ranges are expressed in Rust notation where `a..b` means `a <= x < b` and `a...b` means `a <= x <= b`. The `BiomeLookup` function matches the temperature and rainfall against this table, so it is not shown.
+
+When looking up in the following table, the rain is multiplied by the temperature (`Rain *= Temperature`). This makes areas with higher temperatures have higher rainfall.
+
+| Temperature        | Rain               | Biome            |
+|--------------------|--------------------|------------------|
+| `0.00 ..  0.10`    | `0.00 ... 1.00`    | Tundra           |
+| `0.10 ..  0.50`    | `0.00 ..  0.20`    | Tundra           |
+| `0.10 ..  0.50`    | `0.20 ..  0.50`    | Taiga            |
+| `0.10 ..  0.70`    | `0.50 ... 1.00`    | Swampland        |
+| `0.50 ..  0.95`    | `0.00 ..  0.20`    | Savanna          |
+| `0.50 ..  0.97`    | `0.20 ..  0.35`    | Shrubland        |
+| `0.50 ..  0.97`    | `0.35 ..  0.50`    | Forest           |
+| `0.70 ..  0.97`    | `0.50 ... 1.00`    | Forest           |
+| `0.95 ... 1.00`    | `0.00 ..  0.20`    | Desert           |
+| `0.97 ... 1.00`    | `0.20 ..  0.45`    | Plains           |
+| `0.97 ... 1.00`    | `0.45 ..  0.90`    | Seasonal Forest  |
+| `0.97 ... 1.00`    | `0.90 ... 1.00`    | Rainforest       |
+
