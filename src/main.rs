@@ -33,7 +33,7 @@ fn main() {
 	}*/
 	
 	for x in 0..400 {
-		let mut rng = JavaRng::new(100 + x);
+		let rng = JavaRng::new(100 + x);
 		
 		let caves = structure::caves::Caves::for_chunk(rng, (0, 0), (0, 0));
 		println!("{:?}", caves);

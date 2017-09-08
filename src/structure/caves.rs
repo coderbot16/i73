@@ -7,14 +7,15 @@ const MIN_H_SIZE: f64 = 1.5;
 #[derive(Debug)]
 pub struct Caves {
 	state: JavaRng, 
-	chunk_pos: (i32, i32), 
+	chunk: (i32, i32), 
 	from: (i32, i32),
 	remaining: i32,
+	extra: Option<(i32, (f64, f64, f64))>
 }
 
 impl Caves {
-	pub fn for_chunk(mut state: JavaRng, chunk_pos: (i32, i32), from: (i32, i32)) -> Caves {
-		// Many chained RNG calls allow high values, but makes most values low. 
+	pub fn for_chunk(mut state: JavaRng, chunk: (i32, i32), from: (i32, i32)) -> Caves {
+		// Many chained RNG calls allow high values, but make most values low. 
 		// Appears as the right half of a normal distribution.
 		// Gaah borrow checker
 		let mut remaining = state.next_i32(40);
@@ -28,37 +29,7 @@ impl Caves {
 			remaining = 0;
 		}
 		
-		Caves { state, chunk_pos, from, remaining }
-	}
-	
-	fn next_direct(&mut self) -> Start {
-		let     x = self.state.next_i32(16);
-		let mut y = self.state.next_i32(120);
-		        y = self.state.next_i32(y + 8);
-		let     z = self.state.next_i32(16);
-		
-		let orgin = (x as f64, y as f64, z as f64);
-		
-		if self.state.next_i32(4) == 0 {
-			let circular = Start::circular(&mut self.state, self.chunk_pos, orgin);
-			
-			println!("Circular: {:?}", circular);
-			
-			// 1 to 4 branches from the circular cave
-			let extra = 1 + self.state.next_i32(4);
-			
-			println!("Extra: {}", extra);
-			
-			unimplemented!() // Create (branches) addititional Cave Starts in addition to the circular start
-		} else {
-			Start::normal(&mut self.state, self.chunk_pos, orgin)
-		}
-	}
-}
-
-impl ExactSizeIterator for Caves {
-	fn len(&self) -> usize {
-		self.remaining as usize
+		Caves { state, chunk, from, remaining, extra: None }
 	}
 }
 
@@ -66,13 +37,44 @@ impl Iterator for Caves {
 	type Item = Start;
 	
 	fn next(&mut self) -> Option<Start> {
-		if self.len() == 0 {
+		if self.remaining == 0 {
 			return None;
 		}
 		
 		self.remaining -= 1;
 		
-		Some(self.next_direct())
+		if let &mut Some((ref mut extra, orgin)) = &mut self.extra {
+			if *extra > 0 {
+				*extra -= 1;
+				
+				return Some(Start::normal(&mut self.state, self.chunk, orgin));
+			}
+		}
+		
+		self.extra = None;
+		
+		let     x = self.state.next_i32(16);
+		let mut y = self.state.next_i32(120);
+		        y = self.state.next_i32(y + 8);
+		let     z = self.state.next_i32(16);
+		
+		let orgin = (
+			(self.from.0 * 16 + x) as f64, 
+			y                      as f64, 
+			(self.from.1 * 16 + z) as f64
+		);
+		
+		if self.state.next_i32(4) == 0 {
+			let circular = Start::circular(&mut self.state, self.chunk, orgin);
+			let extra = 1 + self.state.next_i32(4);
+			
+			self.remaining += extra;
+			self.extra = Some((extra, orgin));
+			
+			Some(circular)
+		} else {
+			Some(Start::normal(&mut self.state, self.chunk, orgin))
+		}
 	}
 }
 
@@ -83,7 +85,7 @@ struct SystemSize {
 }
 
 impl SystemSize {
-	fn state(&self, max_chunk_radius: i32, rng: &mut JavaRng) -> SystemSizeState {
+	fn into_state(&self, max_chunk_radius: i32, rng: &mut JavaRng) -> SystemSizeState {
 		let max_block_radius = max_chunk_radius * 16 - 16;
 		
 		let max = self.max.unwrap_or_else(|| max_block_radius - rng.next_i32(max_block_radius / 4));
@@ -169,7 +171,7 @@ impl Start {
 		}
 	}
 	
-	fn tunnel(&self) -> Tunnel {
+	fn into_tunnel(&self) -> Tunnel {
 		Tunnel {
 			state: JavaRng::new(self.seed),
 			position: self.position,
