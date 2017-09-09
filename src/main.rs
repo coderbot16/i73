@@ -40,6 +40,7 @@ fn main() {
 		
 		for start in caves {
 			println!("{:?}", start);
+			println!("{:?}", start.to_tunnel(8));
 		}
 	}
 	

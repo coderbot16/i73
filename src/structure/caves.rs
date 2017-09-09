@@ -1,4 +1,5 @@
 use rng::JavaRng;
+use trig::TrigLookup;
 
 const NOTCH_PI: f32 = 3.141593; // TODO: Check
 const PI_DIV_2: f32 = 1.570796;
@@ -85,26 +86,32 @@ struct SystemSize {
 }
 
 impl SystemSize {
-	fn into_state(&self, max_chunk_radius: i32, rng: &mut JavaRng) -> SystemSizeState {
+	fn to_state(&self, rng: &mut JavaRng, max_chunk_radius: i32, max_width: f32) -> SystemSizeState {
 		let max_block_radius = max_chunk_radius * 16 - 16;
 		
 		let max = self.max.unwrap_or_else(|| max_block_radius - rng.next_i32(max_block_radius / 4));
+		let split = rng.next_i32(max / 2) + max / 4;
+		let split = if max_width > 1.0 {Some(split)} else {None};
 		
-		let (current, split_threshold) = match self.current {
-			Some(current) => (current, Some(rng.next_i32(max / 2) + max / 4)),
-			None          => (max / 2, None)
+		let (current, split_threshold, max_iter, can_constrict) = match self.current {
+			Some(current) => (current, split, max, true ),
+			None          => (max / 2, None,  1,   false)
 		};
 		
-		SystemSizeState { max, current, split_threshold }
+		SystemSizeState { max, current, split_threshold, max_iter, can_constrict }
 	}
 }
 
 #[derive(Debug)]
 struct SystemSizeState {
-	current: i32,
-	max:     i32,
-	/// At this point, the cave will split into 2.
-	split_threshold: Option<i32>
+	current:    i32,
+	max:        i32,
+	max_iter:   i32,
+	/// At this point, the tunnel will split into 2. None if it won't split.
+	split_threshold: Option<i32>,
+	/// Whether the tunnel can randomly not carve (25% chance by default), which varies the radius of the cave. 
+	/// It can also result in a very thin hole between 2 parts of the same cave.
+	can_constrict: bool
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -121,6 +128,25 @@ struct Position {
 	yaw_velocity: f32,
 	/// Rate of change for the vertical angle
 	pitch_velocity: f32
+}
+
+impl Position {
+	fn step(&mut self, rng: &mut JavaRng, trig: &TrigLookup, pitch_keep: f32) {
+		let cos_pitch = trig.cos(self.pitch);
+		
+		self.block.0 += (trig.cos(self.yaw) * cos_pitch) as f64;
+		self.block.1 +=  trig.sin(self.pitch)            as f64;
+		self.block.2 += (trig.sin(self.yaw) * cos_pitch) as f64;
+		
+		self.pitch *= pitch_keep;
+		self.pitch += self.pitch_velocity * 0.1;
+		self.yaw += self.yaw_velocity * 0.1;
+		
+		self.pitch_velocity *= 0.9;
+		self.yaw_velocity *= 0.75;
+		self.pitch_velocity += (rng.next_f32() - rng.next_f32()) * rng.next_f32() * 2.0;
+		self.yaw_velocity += (rng.next_f32() - rng.next_f32()) * rng.next_f32() * 4.0;
+	}
 }
 
 #[derive(Debug)]
@@ -171,24 +197,22 @@ impl Start {
 		}
 	}
 	
-	fn into_tunnel(&self) -> Tunnel {
-		Tunnel {
-			state: JavaRng::new(self.seed),
-			position: self.position,
-			size_state: unimplemented!(),
-			yaw_keep: unimplemented!(),
-			max_width: self.max_width,
-			vertical_multiplier: self.vertical_multiplier
-		}
+	pub fn to_tunnel(&self, max_chunk_radius: i32) -> Tunnel {
+		let mut state = JavaRng::new(self.seed);
+		let size_state = self.size.to_state(&mut state, max_chunk_radius, self.max_width);
+		let pitch_keep = if state.next_i32(6) == 0 { 0.92 } else { 0.7 };
+		
+		Tunnel { state, position: self.position, size_state, pitch_keep, max_width: self.max_width, vertical_multiplier: self.vertical_multiplier }
 	}
 }
 
-struct Tunnel {
+#[derive(Debug)]
+pub struct Tunnel {
 	state: JavaRng,
 	position: Position,
 	size_state: SystemSizeState,
-	/// Decided by is_steep_cave
-	yaw_keep: f32,
+	/// 0.92 = Steep, 0.7 = Normal
+	pitch_keep: f32,
 	max_width: f32,
 	vertical_multiplier: f64
 }

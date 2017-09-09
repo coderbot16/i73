@@ -28,9 +28,7 @@ impl JavaRng {
 		if (max & -max) == max  {// i.e., n is a power of 2
 			let max = max as u64;
 			
-			//println!("rng: next_i32({}) => {}", max, ((max * (self.next(31) as u64)) >> 31) as i32);
-			
-			return ((max * (self.next(31) as u64)) >> 31) as i32;
+			return ((max.wrapping_mul(self.next(31) as u64)) >> 31) as i32;
 		}
      
 		let mut bits = self.next(31) as i32;
@@ -41,13 +39,11 @@ impl JavaRng {
 			val = bits % max;
 		}
 		
-		//println!("rng: next_i32({}) => {}", max, val);
-		
 		val
 	}
 	
 	pub fn next_i64(&mut self) -> i64 {
-		((self.next(32) as i64) << 32) | (self.next(32) as i64)
+		((self.next(32) as i64) << 32).wrapping_add(self.next(32) as i64)
 	}
 	
 	pub fn next_f32(&mut self) -> f32 {
@@ -58,6 +54,6 @@ impl JavaRng {
 		let high = (self.next(26) as i64) << 27;
 		let low = self.next(27) as i64;
 		
-		((high | low) as f64) / F64_DIV
+		(high.wrapping_add(low) as f64) / F64_DIV
 	}
 }
