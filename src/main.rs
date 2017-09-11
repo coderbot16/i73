@@ -1,5 +1,11 @@
 #![feature(exclusive_range_pattern)]
 
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate nbt_serde;
+extern crate byteorder;
+
 mod noise;
 mod rng;
 mod biome;
@@ -11,6 +17,7 @@ mod noise_field;
 mod decorator;
 mod trig;
 mod structure;
+mod generator;
 
 use rng::JavaRng;
 use noise::{simplex, octaves, perlin, Permutations};

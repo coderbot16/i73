@@ -5,3 +5,7 @@ authors = ["coderbot <coderbot16@gmail.com>"]
 
 [dependencies]
 nalgebra = "0.11.0"
+hematite-nbt-serde = { git = "https://github.com/PistonDevelopers/hematite_nbt.git" }
+serde = "0.9"
+serde_derive = "0.9"
+byteorder = "1.0"
