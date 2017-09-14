@@ -94,6 +94,10 @@ impl NibbleVec {
 		NibbleVec(Vec::with_capacity(nibbles / 2))
 	}
 	
+	pub fn filled() -> Self {
+		NibbleVec(vec![0; 2048])
+	}
+	
 	fn get(&self, at: SectionCoords) -> i8 {
 		let (index, shift) = at.nibble();
 		(self.0[index]&(0xF << shift)) >> shift

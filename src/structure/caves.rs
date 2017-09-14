@@ -342,7 +342,6 @@ impl Tunnel {
 		self.position.distance_from_chunk_squared() - remaining * remaining > buffer * buffer
 	}
 	
-	// Returns horizontal radius and vertical radius.
 	fn get_blob_size(&self, trig: &TrigLookup) -> BlobSize {
 		BlobSize::from_horizontal(
 			MIN_H_SIZE + (trig.sin(self.size_state.current as f32 * NOTCH_PI / self.size_state.max as f32) * self.blob_size_factor) as f64, 

@@ -71,6 +71,7 @@ impl LakeShape {
 				rng.next_f64() * (h - diameter.2 - 2.0) + 1.0 + radius.2
 			);
 			
+			// TODO: Reduce size of possible bounding box.
 			for x in 1..settings.max_h {
 				for y in 1..settings.max_y {
 					for z in 1..settings.max_h {

@@ -1,2 +1,2 @@
-mod flat;
-mod region;
+pub mod flat;
+pub mod region;

@@ -9,3 +9,4 @@ hematite-nbt-serde = { git = "https://github.com/PistonDevelopers/hematite_nbt.g
 serde = "0.9"
 serde_derive = "0.9"
 byteorder = "1.0"
+deflate = "0.7.16"
