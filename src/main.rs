@@ -6,6 +6,7 @@ extern crate serde_derive;
 extern crate nbt_serde;
 extern crate byteorder;
 extern crate deflate;
+extern crate bit_vec;
 
 mod noise;
 mod rng;
