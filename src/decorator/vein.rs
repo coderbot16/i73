@@ -5,16 +5,23 @@ use trig::TrigLookup;
 /// For when you don't have the time to type out all the digits of π or Math.PI.
 const NOTCHIAN_PI: f32 = 3.1415927;
 
-// Some info on the "size" variable:
-// http://www.minecraftforum.net/forums/minecraft-discussion/discussion/2207780-how-spawn-size-correlates-to-actual-vein-size-of
+/// The radius is in the range `[0.0, 0.5+size/RADIUS_DIVISOR]`
+const RADIUS_DIVISOR: f64 = 16.0;
+/// The length is `size/LENGTH_DIVISOR`
+const LENGTH_DIVISOR: f32 = 8.0;
 
 #[derive(Debug)]
 pub struct Vein {
+	/// Size of the vein. Controls iterations, radius of the spheroids, and length of the line.
 	size: u32,
+	/// Size as a f64, to avoid excessive casting.
 	size_f64: f64,
+	/// Size as a f32, to avoid excessive casting.
 	size_f32: f32,
+	/// Start point of the line, but not neccesarily the minimum on the Y axis.
 	from: (f64, f64, f64),
-	to: (f64, f64, f64)
+	/// End point of the line, but not neccesarily the maximum on the Y axis.
+	to:   (f64, f64, f64)
 }
 
 impl Vein {
@@ -22,8 +29,8 @@ impl Vein {
 		let size_f32 = size as f32;
 		
 		let angle = rng.next_f32() * NOTCHIAN_PI;
-		let x_size = trig.sin(angle) * size_f32 / 8.0;
-		let z_size = trig.cos(angle) * size_f32 / 8.0;
+		let x_size = trig.sin(angle) * size_f32 / LENGTH_DIVISOR;
+		let z_size = trig.cos(angle) * size_f32 / LENGTH_DIVISOR;
 		
 		let from = (
 			(base.0       as f32 + x_size) as f64,
@@ -50,7 +57,7 @@ impl Vein {
 			lerp_fraction(index_f64, self.size_f64, self.from.2, self.to.2)
 		);
 		
-		let radius_multiplier = rng.next_f64() * self.size_f64 / 16.0;
+		let radius_multiplier = rng.next_f64() * self.size_f64 / RADIUS_DIVISOR;
 		
 		let diameter = (trig.sin(index_f32 * NOTCHIAN_PI / self.size_f32) + 1.0f32) as f64 * radius_multiplier + 1.0;
 		let radius = diameter / 2.0;
@@ -75,9 +82,9 @@ impl Vein {
 #[derive(Debug)]
 pub struct Blob {
 	center: (f64, f64, f64),
-	radius: f64,
-	lower: (i32, i32, i32),
-	upper: (i32, i32, i32)
+	radius:  f64,
+	lower:  (i32, i32, i32),
+	upper:  (i32, i32, i32)
 }
 
 /// Preforms linear interpolation using a fraction expressed as `index/size`.

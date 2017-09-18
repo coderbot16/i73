@@ -30,12 +30,12 @@ pub struct Chunk {
 	pub heightmap: Vec<i32>,
 	#[serde(rename="Sections")]
 	pub sections: Vec<Section>,
-	/*#[serde(rename="Entities")]
-	entities: Vec<HashMap<String, Value>>,
+	#[serde(rename="Entities")]
+	pub entities: Vec<HashMap<String, ()>>,
 	#[serde(rename="TileEntities")]
-	tile_entities: Vec<HashMap<String, Value>>,
+	pub tile_entities: Vec<HashMap<String, ()>>,
 	#[serde(rename="TileTicks")]
-	tile_ticks: Vec<HashMap<String, Value>>*/
+	pub tile_ticks: Vec<HashMap<String, ()>>
 }
 
 #[derive(Debug, Serialize, Deserialize)]

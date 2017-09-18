@@ -1,10 +1,20 @@
 use rng::JavaRng;
 use trig::TrigLookup;
 use std::cmp::{min, max};
+use distribution::rarity::{Rarity, HalfNormal3, Rare};
 
 const NOTCH_PI: f32 = 3.141593; // TODO: Check
 const PI_DIV_2: f32 = 1.570796;
 const MIN_H_SIZE: f64 = 1.5;
+
+/// Make many chunks not spawn cave starts at all, otherwise the world would look like swiss cheese. 
+/// Note that caves starting in other chunks can still carve through this chunk.
+/// Offsets the fact that a single cave start can branch many times.
+/// Also make most chunks that do contain caves contain few, but have the potential to contain many.
+static RARITY: Rare<HalfNormal3> = Rare {
+	base: HalfNormal3 { max: 39 },
+	rarity: 15
+};
 
 fn floor_capped(t: f64) -> i32 {
 	t.floor().max(-2147483648.0).min(2147483647.0) as i32
@@ -21,19 +31,7 @@ pub struct Caves {
 
 impl Caves {
 	pub fn for_chunk(mut state: JavaRng, chunk: (i32, i32), from: (i32, i32)) -> Caves {
-		// Many chained RNG calls allow high values, but make most values low. 
-		// Appears as the right half of a normal distribution.
-		// Gaah borrow checker
-		let mut remaining = state.next_i32(40);
-		remaining = state.next_i32(remaining + 1);
-		remaining = state.next_i32(remaining + 1);
-		
-		// Make many chunks not spawn cave starts at all, otherwise the world would look like swiss cheese. 
-		// Note that caves starting in other chunks can still carve through this chunk.
-		// Offsets the fact that a single cave start can branch many times.
-		if state.next_i32(15) != 0 {
-			remaining = 0;
-		}
+		let remaining = RARITY.get(&mut state, chunk);
 		
 		Caves { state, chunk, from, remaining, extra: None }
 	}

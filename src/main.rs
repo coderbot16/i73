@@ -20,6 +20,8 @@ mod decorator;
 mod trig;
 mod structure;
 mod generator;
+mod distribution;
+mod chunk;
 
 use rng::JavaRng;
 use noise::{simplex, octaves, perlin, Permutations};
@@ -33,10 +35,10 @@ use nbt_serde::encode;
 extern crate nalgebra;
 
 fn main() {
-	use decorator::large_tree::{LargeTreeSettings, LargeTree};
+	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
 	let settings = LargeTreeSettings::default();
 	
-	for i in 0..1/*0*/ {
+	for i in 0..1 {
 		let mut rng = JavaRng::new(100 + i);
 		let shape = settings.tree((0, 0, 0), &mut rng, None, 20);
 		
@@ -54,12 +56,11 @@ fn main() {
 			
 			y -= 1;
 		}
-	}
+	}*/
 	
-	/*use generator::flat::{ChunkRoot, Chunk, Section, NibbleVec};
+	use generator::flat::{ChunkRoot, Chunk, Section, NibbleVec};
 	use generator::region::RegionWriter;
 	
-	// TODO: Hematite NBT writes List<i32>/List<i8> instead of IntArray/ByteArray.
 	let root = ChunkRoot {
 		version: 0,
 		chunk: Chunk {
@@ -75,13 +76,16 @@ fn main() {
 			sections: vec![
 				Section {
 					y: 0,
-					blocks: vec![1; 4096],
+					blocks: vec![16; 4096],
 					add: None,
 					data: NibbleVec::filled(),
 					block_light: NibbleVec::filled(),
 					sky_light: NibbleVec::filled()
 				}
-			]
+			],
+			entities: vec![],
+			tile_entities: vec![],
+			tile_ticks: vec![]
 		}
 	};
 	
@@ -93,7 +97,7 @@ fn main() {
 	writer.finish().unwrap();
 	
 	let mut file = File::create("/home/coderbot/c.0.0.nbt").unwrap();
-	encode::to_writer(&mut file, &root, None).unwrap();*/
+	encode::to_writer(&mut file, &root, None).unwrap();
 	
 	/*let trig = trig::TrigLookup::new();
 	
