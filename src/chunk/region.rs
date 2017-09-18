@@ -1,6 +1,6 @@
 use byteorder::{ByteOrder, BigEndian, ReadBytesExt, WriteBytesExt};
 use std::io::{Write, Read, Result, Seek, SeekFrom, Error, ErrorKind};
-use generator::flat::ChunkRoot;
+use chunk::anvil::ChunkRoot;
 use deflate::Compression;
 use deflate::write::ZlibEncoder;
 use nbt_serde::encode;

@@ -58,8 +58,8 @@ fn main() {
 		}
 	}*/
 	
-	use generator::flat::{ChunkRoot, Chunk, Section, NibbleVec};
-	use generator::region::RegionWriter;
+	use chunk::anvil::{ChunkRoot, Chunk, Section, NibbleVec};
+	use chunk::region::RegionWriter;
 	
 	let root = ChunkRoot {
 		version: 0,
