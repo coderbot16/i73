@@ -16,6 +16,14 @@ impl<B> Chunk<B> where B: Eq + Hash + Clone {
 		}
 	}
 	
+	/// Finds a free entry in the entries table and adds the target, or reallocates if there are no free entries. 
+	/// Additionally, if the target is already in the palette, it returns the index of that.
+	fn ensure_available(&mut self, target: B) {
+		unimplemented!()
+	}
+	
+	// TODO: Methods to work with the palette: pruning, etc.
+	
 	pub fn palette_mut(&mut self) -> &mut Palette<B> {
 		&mut self.palette
 	}
@@ -85,8 +93,6 @@ impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
 	}
 }
 
-// TODO: Reference counting for the palette.
-
 #[derive(Debug)]
 pub struct Palette<B> where B: Eq + Hash + Clone {
 	entries: Vec<Option<B>>,
@@ -99,12 +105,6 @@ impl<B> Palette<B> where B: Eq + Hash + Clone {
 			entries: vec![None; 1<<bits_per_entry],
 			reverse: HashMap::new()
 		}
-	}
-	
-	/// Finds a free entry in the entries table and adds the target, or returns None if there are no free entries. 
-	/// Additionally, if the target is already in the palette, it returns the index of that.
-	fn insert(&mut self, target: B) -> Option<usize> {
-		unimplemented!()
 	}
 	
 	/// Replaces the entry at `index` with the target, even if `index` was previously vacant. 
@@ -122,6 +122,7 @@ impl<B> Palette<B> where B: Eq + Hash + Clone {
 
 pub struct PackedBlockStorage {
 	storage: Vec<u64>,
+	counts: Vec<usize>,
 	bits_per_entry: usize,
 	bitmask: u64
 }
@@ -133,8 +134,12 @@ enum Indices {
 
 impl PackedBlockStorage {
 	pub fn new(bits_per_entry: usize) -> Self {
+		let mut counts = vec![0; 1<<bits_per_entry];
+		counts[0] = 4096;
+		
 		PackedBlockStorage {
 			storage: vec![0; bits_per_entry * 512],
+			counts,
 			bits_per_entry,
 			bitmask: (1 << (bits_per_entry as u64)) - 1
 		}
@@ -155,7 +160,18 @@ impl PackedBlockStorage {
 		}
 	}
 	
+	pub fn get_count<B>(&self, association: &PaletteAssociation<B>) -> usize where B: Eq + Hash + Clone {
+		self.counts[association.raw_value()]
+	}
+	
 	pub fn get<'p, B>(&self, position: BlockPosition, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+		if self.bits_per_entry == 0 {
+			return PaletteAssociation {
+				palette,
+				value: 0
+			}
+		}
+		
 		let index = position.chunk_yzx() as usize;
 		
 		let (indices, sub_index) = self.indices(index);
@@ -175,8 +191,16 @@ impl PackedBlockStorage {
 	}
 	
 	pub fn set<'p, B>(&mut self, position: BlockPosition, association: &PaletteAssociation<'p, B>) where B: 'p + Eq + Hash + Clone {
+		if self.bits_per_entry == 0 {
+			return;
+		}
+		
 		let value = association.value as u64;
 		let index = position.chunk_yzx() as usize;
+		
+		let previous = self.get(position, association.palette);
+		self.counts[previous.raw_value()] -= 1;
+		self.counts[association.raw_value()] += 1;
 		
 		let (indices, sub_index) = self.indices(index);
 		match indices {
