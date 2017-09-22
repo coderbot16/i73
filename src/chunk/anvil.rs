@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use chunk::position::BlockPosition;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChunkRoot {
@@ -55,31 +56,19 @@ pub struct Section {
 }
 
 impl Section {
-	fn set_block(&mut self, at: SectionCoords, id: AnvilId) {
+	fn set_block(&mut self, at: BlockPosition, id: AnvilId) {
 		
 	}
 	
-	fn get_block(&self, at: SectionCoords) -> AnvilId {
+	fn get_block(&self, at: BlockPosition) -> AnvilId {
 		match self.add {
 			Some(ref add) => unimplemented!(),
 			None => unimplemented!()
 		}
 	}
 	
-	fn get_light(&self, at: SectionCoords) -> Light {
+	fn get_light(&self, at: BlockPosition) -> Light {
 		Light((self.sky_light.get(at) << 4) | self.block_light.get(at))
-	}
-}
-
-#[derive(Debug, Copy, Clone)]
-struct SectionCoords(u16);
-impl SectionCoords {
-	fn new(x: u8, y: u8, z: u8) -> Self {
-		SectionCoords(((y as u16) << 8) | ((z as u16) << 4) | (x as u16))
-	}
-	
-	fn nibble(&self) -> (usize, i8) {
-		((self.0 >> 1) as usize, (self.0 & 1) as i8 * 4)
 	}
 }
 
@@ -98,9 +87,22 @@ impl NibbleVec {
 		NibbleVec(vec![0; 2048])
 	}
 	
-	fn get(&self, at: SectionCoords) -> i8 {
-		let (index, shift) = at.nibble();
+	fn get(&self, at: BlockPosition) -> i8 {
+		let (index, shift) = nibble_index(at);
 		(self.0[index]&(0xF << shift)) >> shift
+	}
+	
+	pub fn set(&mut self, at: BlockPosition, value: i8) {
+		let (index, shift) = nibble_index(at);
+		let cleared = !(!self.0[index]) | (0xF << shift);
+		self.0[index] = cleared | ((value&0xF) << shift);
+	}
+	
+	/// Version of `NibbleVec::set` that doesn't clear the value at the position to 0 before preforming bitwise or.
+	/// Use when you know that the value at that position is 0.
+	pub fn set_uncleared(&mut self, at: BlockPosition, value: i8) {
+		let (index, shift) = nibble_index(at);
+		self.0[index] |= ((value&0xF) << shift);
 	}
 }
 
@@ -108,3 +110,8 @@ impl NibbleVec {
 struct AnvilId(u16);
 // Sky<<4 | Block
 struct Light(i8);
+
+fn nibble_index(at: BlockPosition) -> (usize, i8) {
+	let raw = at.chunk_yzx();
+	((raw >> 1) as usize, (raw & 1) as i8 * 4)
+}

@@ -22,6 +22,7 @@ mod structure;
 mod generator;
 mod distribution;
 mod chunk;
+mod totuple;
 
 use rng::JavaRng;
 use noise::{simplex, octaves, perlin, Permutations};
@@ -58,12 +59,39 @@ fn main() {
 		}
 	}*/
 	
-	use chunk::anvil::{ChunkRoot, Chunk, Section, NibbleVec};
+	use chunk::storage::Chunk;
+	use chunk::position::BlockPosition;
+	let mut chunk = Chunk::<u16>::new(4);
+	
+	chunk.palette_mut().replace(0, 0 );
+	chunk.palette_mut().replace(1, 16);
+	
+	{
+		let (blocks, palette) = chunk.freeze_palette();
+		
+		println!("{:?}", palette);
+		
+		let air =   palette.reverse_lookup(&0).unwrap();
+		let stone = palette.reverse_lookup(&16).unwrap();
+		
+		println!("{}, {}", air.raw_value(), stone.raw_value());
+		
+		blocks.set(BlockPosition::new(0, 0, 0), &stone);
+		blocks.set(BlockPosition::new(0, 1, 0), &stone);
+	
+		println!("{:?}", blocks.get(BlockPosition::new(0, 1, 0), &palette).target());
+		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 1), &palette).target());
+		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 0), &palette).target());
+	}
+	
+	let (blocks, data, add) = chunk.to_anvil().unwrap();
+	
+	use chunk::anvil::{self, ChunkRoot, Section, NibbleVec};
 	use chunk::region::RegionWriter;
 	
 	let root = ChunkRoot {
 		version: 0,
-		chunk: Chunk {
+		chunk: anvil::Chunk {
 			x: 0,
 			z: 0,
 			last_update: 0,
@@ -76,9 +104,9 @@ fn main() {
 			sections: vec![
 				Section {
 					y: 0,
-					blocks: vec![16; 4096],
-					add: None,
-					data: NibbleVec::filled(),
+					blocks,
+					add,
+					data,
 					block_light: NibbleVec::filled(),
 					sky_light: NibbleVec::filled()
 				}
@@ -89,7 +117,7 @@ fn main() {
 		}
 	};
 	
-	let file = File::create("/home/coderbot/r.0.0.mca").unwrap();
+	let file = File::create("/home/coderbot/Minecraft/Saves/RegionFileTest/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	println!("Chunk spans {} bytes", writer.chunk(0, 0, &root).unwrap());

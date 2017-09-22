@@ -1,13 +1,126 @@
+use chunk::anvil::NibbleVec;
 use chunk::position::BlockPosition;
+use std::hash::Hash;
+use std::collections::HashMap;
 
-struct Column(Vec<Option<Chunk>>);
-
-struct Chunk {
+pub struct Chunk<B> where B: Eq + Hash + Clone {
 	storage: PackedBlockStorage,
-	palette: () // TODO
+	palette: Palette<B>
 }
 
-struct PackedBlockStorage {
+impl<B> Chunk<B> where B: Eq + Hash + Clone {
+	pub fn new(bits_per_entry: usize) -> Self {
+		Chunk {
+			storage: PackedBlockStorage::new(bits_per_entry),
+			palette: Palette::new(bits_per_entry)
+		}
+	}
+	
+	pub fn palette_mut(&mut self) -> &mut Palette<B> {
+		&mut self.palette
+	}
+	
+	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage, &Palette<B>) {
+		(&mut self.storage, &self.palette)
+	}
+}
+
+impl Chunk<u16> {
+	/// Returns the Blocks, Metadata, and Add arrays for this chunk.
+	/// Returns Err if unable to resolve an association.
+	pub fn to_anvil(&self) -> Result<(Vec<i8>, NibbleVec, Option<NibbleVec>), usize> {
+		let mut blocks = vec![0; 4096];
+		let mut meta = NibbleVec::filled();
+		
+		let mut need_add = false;
+		for entry in self.palette.entries.iter().filter_map(|&f| f) {
+			// Can't express Anvil IDs over 4095 without Add.
+			if entry > 4095 {
+				need_add = true;
+			}
+		}
+		
+		if need_add {
+			let mut add = NibbleVec::filled();
+			
+			for index in 0..4096 {
+				let position = BlockPosition::from_yzx(index);
+				let association = self.storage.get(position, &self.palette);
+				let anvil = association.target().map(|&v| v)?;
+				
+				    blocks[index as usize] = (anvil >> 4)  as i8;
+				meta.set_uncleared(position, (anvil & 0xF) as i8);
+				 add.set_uncleared(position, (anvil >> 12) as i8);
+			}
+			
+			Ok((blocks, meta, Some(add)))
+		} else {
+			for index in 0..4096 {
+				let position = BlockPosition::from_yzx(index);
+				let association = self.storage.get(position, &self.palette);
+				let anvil = association.target().map(|&v| v)?;
+				
+				blocks[index as usize] = (anvil >> 4) as i8;
+				meta.set_uncleared(position, (anvil & 0xF) as i8);
+			}
+			
+			Ok((blocks, meta, None))
+		}
+	}
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+	palette: &'p Palette<B>,
+	value: usize
+}
+
+impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+	pub fn target(&self) -> Result<&B, usize> {
+		self.palette.entries[self.value].as_ref().ok_or(self.value)
+	}
+	
+	pub fn raw_value(&self) -> usize {
+		self.value
+	}
+}
+
+// TODO: Reference counting for the palette.
+
+#[derive(Debug)]
+pub struct Palette<B> where B: Eq + Hash + Clone {
+	entries: Vec<Option<B>>,
+	reverse: HashMap<B, usize>
+}
+
+impl<B> Palette<B> where B: Eq + Hash + Clone {
+	pub fn new(bits_per_entry: usize) -> Self {
+		Palette {
+			entries: vec![None; 1<<bits_per_entry],
+			reverse: HashMap::new()
+		}
+	}
+	
+	/// Finds a free entry in the entries table and adds the target, or returns None if there are no free entries. 
+	/// Additionally, if the target is already in the palette, it returns the index of that.
+	fn insert(&mut self, target: B) -> Option<usize> {
+		unimplemented!()
+	}
+	
+	/// Replaces the entry at `index` with the target, even if `index` was previously vacant. 
+	pub fn replace(&mut self, index: usize, target: B) {
+		self.entries[index] = Some(target.clone());
+		// Only replace entries in the reverse lookup if they don't exist, otherwise keep the previous entry.
+		self.reverse.entry(target).or_insert(index);
+	}
+	
+	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
+	pub fn reverse_lookup<'p>(&'p self, target: &B) -> Option<PaletteAssociation<'p, B>> {
+		self.reverse.get(target).map(|&value| PaletteAssociation { palette: self, value })
+	}
+}
+
+pub struct PackedBlockStorage {
 	storage: Vec<u64>,
 	bits_per_entry: usize,
 	bitmask: u64
@@ -21,7 +134,7 @@ enum Indices {
 impl PackedBlockStorage {
 	pub fn new(bits_per_entry: usize) -> Self {
 		PackedBlockStorage {
-			storage: Vec::with_capacity(bits_per_entry * 512),
+			storage: vec![0; bits_per_entry * 512],
 			bits_per_entry,
 			bitmask: (1 << (bits_per_entry as u64)) - 1
 		}
@@ -42,22 +155,28 @@ impl PackedBlockStorage {
 		}
 	}
 	
-	pub fn get(&self, position: BlockPosition) -> u64 {
-		let index = position.yzx() as usize;
+	pub fn get<'p, B>(&self, position: BlockPosition, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+		let index = position.chunk_yzx() as usize;
 		
 		let (indices, sub_index) = self.indices(index);
 		
-		(match indices {
+		let raw = (match indices {
 			Indices::Single(index) => self.storage[index] >> sub_index,
 			Indices::Double(start, end) => {
 				let end_sub_index = 64 - sub_index;
 				(self.storage[start] >> sub_index) | (self.storage[end] << end_sub_index)
 			}
-		} & self.bitmask)
+		} & self.bitmask);
+		
+		PaletteAssociation {
+			palette,
+			value: raw as usize
+		}
 	}
 	
-	pub fn set(&mut self, position: BlockPosition, value: u64) {
-		let index = position.yzx() as usize;
+	pub fn set<'p, B>(&mut self, position: BlockPosition, association: &PaletteAssociation<'p, B>) where B: 'p + Eq + Hash + Clone {
+		let value = association.value as u64;
+		let index = position.chunk_yzx() as usize;
 		
 		let (indices, sub_index) = self.indices(index);
 		match indices {

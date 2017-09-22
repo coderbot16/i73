@@ -7,7 +7,7 @@ impl BlockPosition {
 	/// If the arguments are out of bounds, then they are truncated.
 	pub fn new(x: u8, y: u8, z: u8) -> Self {
 		BlockPosition(
-			(((y&0xF) as u16) << 8) | 
+			((y as u16) << 8) | 
 			(((z&0xF) as u16) << 4) | 
 			((x&0xF) as u16)
 		)
@@ -17,7 +17,7 @@ impl BlockPosition {
 	/// ### Out of bounds behavior
 	/// If the index is out of bounds, it is truncated.
 	pub fn from_yzx(yzx: u16) -> Self {
-		BlockPosition(yzx & 0xFFF)
+		BlockPosition(yzx & 0xFFFF)
 	}
 	
 	/// Creates a new BlockPosition from a XYZ index.
@@ -42,12 +42,17 @@ impl BlockPosition {
 	
 	/// Returns the Y component.
 	pub fn y(&self) -> u8 {
-		((self.0 & 0xF00) >> 4) as u8
+		(self.0 >> 8) as u8
+	}
+	
+	/// Returns the Y component >> 4, the chunk Y.
+	pub fn chunk_y(&self) -> u8 {
+		(self.0 >> 12) as u8
 	}
 	
 	/// Returns the Y and Z components, represented as `(Y<<4) | Z`.
-	pub fn yz(&self) -> u8 {
-		(self.0 >> 4) as u8
+	pub fn yz(&self) -> u16 {
+		self.0 >> 4
 	}
 	
 	/// Returns the index represented as `(Y<<8) | (Z<<4) | X`.
@@ -55,8 +60,13 @@ impl BlockPosition {
 		self.0
 	}
 	
+	/// Returns the index represented as `(Y<<8) | (Z<<4) | X` modulo 4096, for in-chunk indices.
+	pub fn chunk_yzx(&self) -> u16 {
+		self.0
+	}
+	
 	/// Returns the index represented as `(X<<8) | (Y<<4) | Z`.
 	pub fn xyz(&self) -> u16 {
-		((self.x() as u16) << 8) | (self.yz() as u16)
+		((self.x() as u16) << 8) | self.yz()
 	}
 }
