@@ -72,7 +72,7 @@ impl Section {
 	}
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct NibbleVec(Vec<i8>);
 impl NibbleVec {
 	pub fn new() -> Self {

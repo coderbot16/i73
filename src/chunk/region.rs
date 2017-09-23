@@ -47,7 +47,7 @@ impl<O> RegionWriter<O> where O: Write + Seek {
 		
 		RegionHeaderMut::new(&mut self.header).location(x, z, location);
 		
-		self.out.seek(SeekFrom::Current(location.len_bytes() as i64)).map(|x| x - start)
+		self.out.seek(SeekFrom::Current(location.len_bytes() as i64 - 5)).map(|x| x - start)
 	}
 	
 	pub fn finish(mut self) -> Result<()> {

@@ -1,11 +1,12 @@
-use chunk::storage::{Chunk, Palette, PackedBlockStorage, PaletteAssociation};
+use chunk::storage::{Chunk, Palette, PackedBlockStorage, PaletteAssociation, Target};
 use chunk::position::BlockPosition;
+use chunk::anvil::{self, NibbleVec};
 use std::hash::Hash;
 use totuple::{array_to_tuple_mut_16, array_to_tuple_16, array_to_tuple_mut_9, array_to_tuple_9};
 
-pub struct Column<B>([Chunk<B>; 16]) where B: Eq + Hash + Clone;
+pub struct Column<B>([Chunk<B>; 16]) where B: Target;
 
-impl<B> Column<B> where B: Eq + Hash + Clone {
+impl<B> Column<B> where B: Target {
 	pub fn with_bits(bits_per_entry: usize) -> Self {
 		Column([
 			Chunk::new(bits_per_entry), Chunk::new(bits_per_entry), Chunk::new(bits_per_entry), Chunk::new(bits_per_entry),
@@ -25,6 +26,13 @@ impl<B> Column<B> where B: Eq + Hash + Clone {
 	
 	pub fn chunk_mut(&mut self, index: usize) -> &mut Chunk<B> {
 		&mut self.0[index]
+	}
+	
+	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
+	pub fn ensure_available(&mut self, target: B) {
+		 for chunk in &mut self.0 {
+		 	chunk.ensure_available(target.clone());
+		 }
 	}
 	
 	pub fn freeze_palettes(&mut self) -> (ColumnBlocks, ColumnPalettes<B>) {
@@ -54,23 +62,47 @@ impl<B> Column<B> where B: Eq + Hash + Clone {
 	}
 }
 
+impl Column<u16> {
+	pub fn to_anvil(&self, mut lighting: Vec<Option<(NibbleVec, NibbleVec)>>) -> Result<Vec<anvil::Section>, (usize, usize)> {
+		let mut sections = Vec::with_capacity(16);
+		
+		for (y, (chunk, lighting)) in (self.0.iter().zip(lighting.drain(..))).enumerate() {
+			let (storage, palette) = chunk.freeze_read_only();
+			
+			if let Some(assoc) = palette.reverse_lookup(&0) {
+				if storage.get_count(&assoc) == 4096 {
+					continue;
+				}
+			}
+			
+			let (blocks, data, add) = chunk.to_anvil().map_err(|raw| (y, raw))?;
+			let (block_light, sky_light) = lighting.unwrap_or_else(|| (NibbleVec::filled(), NibbleVec::filled()));
+			
+			sections.push(anvil::Section { y: y as i8, blocks, data, add, block_light, sky_light })
+		}
+		
+		Ok(sections)
+	}
+}
+
 pub struct ColumnBlocks<'a>([&'a mut PackedBlockStorage; 16]);
 impl<'a> ColumnBlocks<'a> {
-	fn get<'p, B>(&self, at: BlockPosition, palettes: ColumnPalettes<'p, B>) -> PaletteAssociation<'p, B> where B: Eq + Hash + Clone {
+	pub fn get<'p, B>(&self, at: BlockPosition, palettes: &ColumnPalettes<'p, B>) -> PaletteAssociation<'p, B> where B: Target {
 		let chunk_y = at.chunk_y() as usize;
 		
 		self.0[chunk_y].get(at, palettes.0[chunk_y])
 	}
 	
-	fn set<B>(&mut self, at: BlockPosition, association: ColumnAssociation<B>) where B: Eq + Hash + Clone {
+	pub fn set<B>(&mut self, at: BlockPosition, association: &ColumnAssociation<B>) where B: Target {
 		let chunk_y = at.chunk_y() as usize;
 		
 		self.0[chunk_y].set(at, &association.0[chunk_y])
 	}
 }
 
-pub struct ColumnPalettes<'a, B>([&'a Palette<B>; 16]) where B: 'a + Eq + Hash + Clone;
-impl<'a, B> ColumnPalettes<'a, B> where B: 'a + Eq + Hash + Clone {
+#[derive(Debug)]
+pub struct ColumnPalettes<'a, B>([&'a Palette<B>; 16]) where B: 'a + Target;
+impl<'a, B> ColumnPalettes<'a, B> where B: 'a + Target {
 	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
 	pub fn reverse_lookup(&self, target: &B) -> Result<ColumnAssociation<B>, usize> {
 		let palettes = array_to_tuple_16(&self.0);
@@ -96,13 +128,38 @@ impl<'a, B> ColumnPalettes<'a, B> where B: 'a + Eq + Hash + Clone {
 	}
 }
 
-pub struct ColumnAssociation<'a, B>([PaletteAssociation<'a, B>; 16]) where B: 'a + Eq + Hash + Clone;
+#[derive(Debug)]
+pub struct ColumnAssociation<'a, B>([PaletteAssociation<'a, B>; 16]) where B: 'a + Target;
+impl<'a, B> ColumnAssociation<'a, B> where B: 'a + Target {
+	pub fn raw_values(&self) -> [usize; 16] {
+		let associations = array_to_tuple_16(&self.0);
+		
+		[
+			associations. 0.raw_value(),
+			associations. 1.raw_value(),
+			associations. 2.raw_value(),
+			associations. 3.raw_value(),
+			associations. 4.raw_value(),
+			associations. 5.raw_value(),
+			associations. 6.raw_value(),
+			associations. 7.raw_value(),
+			associations. 8.raw_value(),
+			associations. 9.raw_value(),
+			associations.10.raw_value(),
+			associations.11.raw_value(),
+			associations.12.raw_value(),
+			associations.13.raw_value(),
+			associations.14.raw_value(),
+			associations.15.raw_value()
+		]
+	}
+}
 
-pub struct Moore<B> where B: Eq + Hash + Clone {
+pub struct Moore<B> where B: Target {
 	columns: [Column<B>; 9]
 }
 
-impl<B> Moore<B> where B: Eq + Hash + Clone {
+impl<B> Moore<B> where B: Target {
 	pub fn new(columns: [Column<B>; 9]) -> Self {
 		Moore { columns }
 	}
@@ -140,8 +197,8 @@ impl<B> Moore<B> where B: Eq + Hash + Clone {
 }
 
 pub struct MooreBlocks<'a>([ColumnBlocks<'a>; 9]);
-pub struct MoorePalettes<'a, B>([ColumnPalettes<'a, B>; 9]) where B: 'a + Eq + Hash + Clone;
-impl<'a, B> MoorePalettes<'a, B> where B: 'a + Eq + Hash + Clone {
+pub struct MoorePalettes<'a, B>([ColumnPalettes<'a, B>; 9]) where B: 'a + Target;
+impl<'a, B> MoorePalettes<'a, B> where B: 'a + Target {
 	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
 	pub fn reverse_lookup(&self, target: &B) -> Result<MooreAssociation<B>, (usize, usize)> {
 		let palettes = array_to_tuple_9(&self.0);
@@ -160,7 +217,7 @@ impl<'a, B> MoorePalettes<'a, B> where B: 'a + Eq + Hash + Clone {
 	}
 }
 
-pub struct MooreAssociation<'a, B>([ColumnAssociation<'a, B>; 9]) where B: 'a + Eq + Hash + Clone;
+pub struct MooreAssociation<'a, B>([ColumnAssociation<'a, B>; 9]) where B: 'a + Target;
 
 fn index(actual: (u8, u8)) -> usize {
 	(actual.0 * 3 + actual.1) as usize

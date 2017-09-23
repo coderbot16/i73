@@ -2,13 +2,19 @@ use chunk::anvil::NibbleVec;
 use chunk::position::BlockPosition;
 use std::hash::Hash;
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
+use std::mem;
+use std::fmt::Debug;
 
-pub struct Chunk<B> where B: Eq + Hash + Clone {
+pub trait Target: Eq + Hash + Clone + Debug {}
+impl<T> Target for T where T: Eq + Hash + Clone + Debug {}
+
+pub struct Chunk<B> where B: Target {
 	storage: PackedBlockStorage,
 	palette: Palette<B>
 }
 
-impl<B> Chunk<B> where B: Eq + Hash + Clone {
+impl<B> Chunk<B> where B: Target {
 	pub fn new(bits_per_entry: usize) -> Self {
 		Chunk {
 			storage: PackedBlockStorage::new(bits_per_entry),
@@ -16,16 +22,34 @@ impl<B> Chunk<B> where B: Eq + Hash + Clone {
 		}
 	}
 	
-	/// Finds a free entry in the entries table and adds the target, or reallocates if there are no free entries. 
-	/// Additionally, if the target is already in the palette, it returns the index of that.
-	fn ensure_available(&mut self, target: B) {
-		unimplemented!()
+	/// Increased the capacity of this chunk's storage by 1 bit, and returns the old storage for reuse purposes.
+	pub fn reserve_bits(&mut self, bits: usize) -> PackedBlockStorage {
+		self.palette.reserve_bits(bits);
+		
+		let mut replacement_storage = PackedBlockStorage::new(self.storage.bits_per_entry + bits);
+		replacement_storage.clone_from(&self.storage, &self.palette);
+		
+		mem::swap(&mut self.storage, &mut replacement_storage);
+		
+		replacement_storage
+	}
+	
+	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
+	pub fn ensure_available(&mut self, target: B) {
+		 if let Err(target) = self.palette.try_insert(target) {
+		 	self.reserve_bits(1);
+		 	self.palette.try_insert(target).expect("There should be room for a new entry, we just made some!");
+		 }
 	}
 	
 	// TODO: Methods to work with the palette: pruning, etc.
 	
 	pub fn palette_mut(&mut self) -> &mut Palette<B> {
 		&mut self.palette
+	}
+	
+	pub fn freeze_read_only(&self) -> (&PackedBlockStorage, &Palette<B>) {
+		(&self.storage, &self.palette)
 	}
 	
 	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage, &Palette<B>) {
@@ -42,7 +66,7 @@ impl Chunk<u16> {
 		
 		let mut need_add = false;
 		for entry in self.palette.entries.iter().filter_map(|&f| f) {
-			// Can't express Anvil IDs over 4095 without Add.
+			// Can't express Anvil IDs over 4095 without Add. TODO: Utilize Counts.
 			if entry > 4095 {
 				need_add = true;
 			}
@@ -68,7 +92,7 @@ impl Chunk<u16> {
 				let association = self.storage.get(position, &self.palette);
 				let anvil = association.target().map(|&v| v)?;
 				
-				blocks[index as usize] = (anvil >> 4) as i8;
+				    blocks[index as usize] = (anvil >> 4)  as i8;
 				meta.set_uncleared(position, (anvil & 0xF) as i8);
 			}
 			
@@ -78,12 +102,12 @@ impl Chunk<u16> {
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+pub struct PaletteAssociation<'p, B> where B: 'p + Target {
 	palette: &'p Palette<B>,
 	value: usize
 }
 
-impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Target {
 	pub fn target(&self) -> Result<&B, usize> {
 		self.palette.entries[self.value].as_ref().ok_or(self.value)
 	}
@@ -94,16 +118,51 @@ impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
 }
 
 #[derive(Debug)]
-pub struct Palette<B> where B: Eq + Hash + Clone {
+pub struct Palette<B> where B: Target {
 	entries: Vec<Option<B>>,
 	reverse: HashMap<B, usize>
 }
 
-impl<B> Palette<B> where B: Eq + Hash + Clone {
+impl<B> Palette<B> where B: Target {
 	pub fn new(bits_per_entry: usize) -> Self {
 		Palette {
 			entries: vec![None; 1<<bits_per_entry],
 			reverse: HashMap::new()
+		}
+	}
+	
+	pub fn reserve_bits(&mut self, bits: usize) {
+		for _ in 0..bits {
+			let additional = self.entries.len();
+			self.entries.reserve(additional);
+			
+			for _ in 0..additional {
+				self.entries.push(None);
+			}
+		}
+	}
+	
+	pub fn try_insert(&mut self, target: B) -> Result<usize, B> {
+		match self.reverse.entry(target.clone()) {
+			Entry::Occupied(occupied) => Ok(*occupied.get()),
+			Entry::Vacant(vacant) => {
+				let mut idx = None;
+				for (index, slot) in self.entries.iter_mut().enumerate() {
+					if slot.is_none() {
+						*slot = Some(target);
+						idx = Some(index);
+						break;
+					}
+				}
+				
+				match idx {
+					Some(index) => {
+						vacant.insert(index);
+						Ok(index)
+					},
+					None => Err(vacant.into_key())
+				}
+			}
 		}
 	}
 	
@@ -115,7 +174,7 @@ impl<B> Palette<B> where B: Eq + Hash + Clone {
 	}
 	
 	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
-	pub fn reverse_lookup<'p>(&'p self, target: &B) -> Option<PaletteAssociation<'p, B>> {
+	pub fn reverse_lookup(&self, target: &B) -> Option<PaletteAssociation<B>> {
 		self.reverse.get(target).map(|&value| PaletteAssociation { palette: self, value })
 	}
 }
@@ -160,11 +219,11 @@ impl PackedBlockStorage {
 		}
 	}
 	
-	pub fn get_count<B>(&self, association: &PaletteAssociation<B>) -> usize where B: Eq + Hash + Clone {
+	pub fn get_count<B>(&self, association: &PaletteAssociation<B>) -> usize where B: Target {
 		self.counts[association.raw_value()]
 	}
 	
-	pub fn get<'p, B>(&self, position: BlockPosition, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Eq + Hash + Clone {
+	pub fn get<'p, B>(&self, position: BlockPosition, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Target {
 		if self.bits_per_entry == 0 {
 			return PaletteAssociation {
 				palette,
@@ -190,7 +249,7 @@ impl PackedBlockStorage {
 		}
 	}
 	
-	pub fn set<'p, B>(&mut self, position: BlockPosition, association: &PaletteAssociation<'p, B>) where B: 'p + Eq + Hash + Clone {
+	pub fn set<B>(&mut self, position: BlockPosition, association: &PaletteAssociation<B>) where B: Target {
 		if self.bits_per_entry == 0 {
 			return;
 		}
@@ -211,5 +270,41 @@ impl PackedBlockStorage {
 				self.storage[end]   = self.storage[end] >> end_sub_index << end_sub_index | (value & self.bitmask) >> end_sub_index;
 			}
 		}
+	}
+	
+	pub fn clone_from<B>(&mut self, from: &PackedBlockStorage, palette: &Palette<B>) -> bool where B: Target {
+		if from.bits_per_entry < self.bits_per_entry {
+			return false;
+		}
+		
+		let added_bits = from.bits_per_entry - self.bits_per_entry;
+		
+		self.counts.clear();
+		
+		for count in &from.counts {
+			self.counts.push(*count);
+		}
+		
+		for _ in 0..added_bits {
+			let add = self.counts.len();
+			self.counts.reserve(add);
+			
+			for _ in 0..add {
+				self.counts.push(0);
+			}
+		}
+		
+		if added_bits == 0 {
+			self.storage.clone_from(&from.storage);
+		} else {
+			// TODO: Optimize this loop!
+			
+			for index in 0..4096 {
+				let position = BlockPosition::from_yzx(index);
+				self.set(position, &from.get(position, palette));
+			}
+		}
+		
+		true
 	}
 }

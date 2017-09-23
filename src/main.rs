@@ -59,32 +59,34 @@ fn main() {
 		}
 	}*/
 	
-	use chunk::storage::Chunk;
+	use chunk::grouping::Column;
 	use chunk::position::BlockPosition;
-	let mut chunk = Chunk::<u16>::new(4);
+	let mut column = Column::<u16>::with_bits(4);
 	
-	chunk.palette_mut().replace(0, 0 );
-	chunk.palette_mut().replace(1, 16);
+	column.ensure_available(0);
+	column.ensure_available(16);
 	
 	{
-		let (blocks, palette) = chunk.freeze_palette();
+		let (mut blocks, palette) = column.freeze_palettes();
 		
 		println!("{:?}", palette);
 		
 		let air =   palette.reverse_lookup(&0).unwrap();
 		let stone = palette.reverse_lookup(&16).unwrap();
 		
-		println!("{}, {}", air.raw_value(), stone.raw_value());
+		println!("{:?}, {:?}", air.raw_values(), stone.raw_values());
 		
 		blocks.set(BlockPosition::new(0, 0, 0), &stone);
 		blocks.set(BlockPosition::new(0, 1, 0), &stone);
+		blocks.set(BlockPosition::new(0, 64, 0), &stone);
 	
 		println!("{:?}", blocks.get(BlockPosition::new(0, 1, 0), &palette).target());
 		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 1), &palette).target());
 		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 0), &palette).target());
+		println!("{:?}", blocks.get(BlockPosition::new(0, 64, 0), &palette).target());
 	}
 	
-	let (blocks, data, add) = chunk.to_anvil().unwrap();
+	let sections = column.to_anvil(vec![None; 16]).unwrap();
 	
 	use chunk::anvil::{self, ChunkRoot, Section, NibbleVec};
 	use chunk::region::RegionWriter;
@@ -101,21 +103,14 @@ fn main() {
 			inhabited_time: 0,
 			biomes: vec![0; 256],
 			heightmap: vec![0; 256],
-			sections: vec![
-				Section {
-					y: 0,
-					blocks,
-					add,
-					data,
-					block_light: NibbleVec::filled(),
-					sky_light: NibbleVec::filled()
-				}
-			],
+			sections,
 			entities: vec![],
 			tile_entities: vec![],
 			tile_ticks: vec![]
 		}
 	};
+	
+	println!("{:?}", root);
 	
 	let file = File::create("/home/coderbot/Minecraft/Saves/RegionFileTest/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();

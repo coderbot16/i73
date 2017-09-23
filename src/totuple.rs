@@ -26,10 +26,10 @@ pub fn array_to_tuple_mut_16<T>(array: &mut [T; 16])
 	);
 	
 	let l4 = (
-		l3.0.split_at_mut(2), l3.1.split_at_mut(2),
-		l3.2.split_at_mut(2), l3.3.split_at_mut(2),
-		l3.4.split_at_mut(2), l3.5.split_at_mut(2),
-		l3.6.split_at_mut(2), l3.7.split_at_mut(2),
+		l3.0.split_at_mut(1), l3.1.split_at_mut(1),
+		l3.2.split_at_mut(1), l3.3.split_at_mut(1),
+		l3.4.split_at_mut(1), l3.5.split_at_mut(1),
+		l3.6.split_at_mut(1), l3.7.split_at_mut(1),
 	);
 	
 	(
@@ -68,10 +68,10 @@ pub fn array_to_tuple_16<T>(array: &[T; 16])
 	);
 	
 	let l4 = (
-		l3.0.split_at(2), l3.1.split_at(2),
-		l3.2.split_at(2), l3.3.split_at(2),
-		l3.4.split_at(2), l3.5.split_at(2),
-		l3.6.split_at(2), l3.7.split_at(2),
+		l3.0.split_at(1), l3.1.split_at(1),
+		l3.2.split_at(1), l3.3.split_at(1),
+		l3.4.split_at(1), l3.5.split_at(1),
+		l3.6.split_at(1), l3.7.split_at(1),
 	);
 	
 	(

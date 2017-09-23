@@ -62,7 +62,7 @@ impl BlockPosition {
 	
 	/// Returns the index represented as `(Y<<8) | (Z<<4) | X` modulo 4096, for in-chunk indices.
 	pub fn chunk_yzx(&self) -> u16 {
-		self.0
+		self.0 & 4095
 	}
 	
 	/// Returns the index represented as `(X<<8) | (Y<<4) | Z`.
