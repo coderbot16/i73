@@ -32,8 +32,17 @@ use nalgebra::{Vector2, Vector3};
 use noise_field::height::{lerp_to_layer, Height, HeightSettings, HeightSource};
 use std::fs::File;
 use nbt_serde::encode;
+use decorator::lake::{LakeShape, LakeBlobs, LakeSettings, LakeBlocks};
 
 extern crate nalgebra;
+
+fn always_true(t: &u16) -> bool {
+	true
+}
+
+fn always_false(t: &u16) -> bool {
+	false
+}
 
 fn main() {
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
@@ -59,68 +68,95 @@ fn main() {
 		}
 	}*/
 	
-	use chunk::grouping::Column;
+	use chunk::grouping::{Moore, Column};
 	use chunk::position::BlockPosition;
-	let mut column = Column::<u16>::with_bits(4);
+	let mut moore = Moore::<u16>::with_bits(4);
 	
-	column.ensure_available(0);
-	column.ensure_available(16);
+	moore.ensure_available(0);
+	moore.ensure_available(16);
 	
-	{
-		let (mut blocks, palette) = column.freeze_palettes();
-		
-		println!("{:?}", palette);
-		
-		let air =   palette.reverse_lookup(&0).unwrap();
-		let stone = palette.reverse_lookup(&16).unwrap();
-		
-		println!("{:?}, {:?}", air.raw_values(), stone.raw_values());
-		
-		blocks.set(BlockPosition::new(0, 0, 0), &stone);
-		blocks.set(BlockPosition::new(0, 1, 0), &stone);
-		blocks.set(BlockPosition::new(0, 64, 0), &stone);
+	let lake_blocks = LakeBlocks {
+		is_liquid:  always_false,
+		is_solid:   always_true,
+		replacable: always_true,
+		liquid: 8*16,
+		carve: 0,
+		solidify: None
+	};
 	
-		println!("{:?}", blocks.get(BlockPosition::new(0, 1, 0), &palette).target());
-		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 1), &palette).target());
-		println!("{:?}", blocks.get(BlockPosition::new(0, 0, 0), &palette).target());
-		println!("{:?}", blocks.get(BlockPosition::new(0, 64, 0), &palette).target());
+	for y in 0..16 {
+		moore.column_mut(0, 0).chunk_mut(y).palette_mut().replace(0, 16);
 	}
 	
-	let sections = column.to_anvil(vec![None; 16]).unwrap();
+	for y in 1..16 {
+		let mut rng = JavaRng::new(100+(y as i64));
+		let settings = LakeSettings::default();
+		let blobs = LakeBlobs::new(&mut rng, &settings);
+		let mut shape = LakeShape::new(&settings);
+		shape.fill(blobs);
+		
+		lake_blocks.fill_and_carve(&shape, &mut moore, (0, y * 16, 0));
+		
+		/*
+		for x in 0..settings.horizontal {
+			for z in 0..settings.horizontal {
+				for y in 0..settings.vertical {
+					let position = BlockPosition::new(x as u8, y as u8, z as u8);
+					
+					if shape.get(x, y, z) {
+						if y >= settings.surface {
+							blocks.set(position, &carve);
+						} else {
+							blocks.set(position, &water);
+						}
+						
+						
+					} else if shape.get_border(x, y, z) {
+						blocks.set(position, &glass);
+					}
+				}
+			}
+		}*/
+	}
 	
 	use chunk::anvil::{self, ChunkRoot, Section, NibbleVec};
 	use chunk::region::RegionWriter;
 	
-	let root = ChunkRoot {
-		version: 0,
-		chunk: anvil::Chunk {
-			x: 0,
-			z: 0,
-			last_update: 0,
-			light_populated: false,
-			terrain_populated: true,
-			v: 0,
-			inhabited_time: 0,
-			biomes: vec![0; 256],
-			heightmap: vec![0; 256],
-			sections,
-			entities: vec![],
-			tile_entities: vec![],
-			tile_ticks: vec![]
-		}
-	};
-	
-	println!("{:?}", root);
-	
 	let file = File::create("/home/coderbot/Minecraft/Saves/RegionFileTest/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
-	println!("Chunk spans {} bytes", writer.chunk(0, 0, &root).unwrap());
+	for x in 0..3 {
+		for z in 0..3 {
+			let sections = moore.column((x as i8) - 1, (z as i8) - 1).to_anvil(vec![None; 16]).unwrap();
+		
+			let root = ChunkRoot {
+				version: 0,
+				chunk: anvil::Chunk {
+					x: (x as i32),
+					z: (z as i32),
+					last_update: 0,
+					light_populated: false,
+					terrain_populated: true,
+					v: 0,
+					inhabited_time: 0,
+					biomes: vec![0; 256],
+					heightmap: vec![0; 256],
+					sections,
+					entities: vec![],
+					tile_entities: vec![],
+					tile_ticks: vec![]
+				}
+			};
+			
+			println!("{:?}", root);
+			
+			println!("Chunk spans {} bytes", writer.chunk(x, z, &root).unwrap());
+			let mut file = File::create(format!("/home/coderbot/c.{}.{}.nbt", x, z)).unwrap();
+			encode::to_writer(&mut file, &root, None).unwrap();
+		}
+	}
 	
 	writer.finish().unwrap();
-	
-	let mut file = File::create("/home/coderbot/c.0.0.nbt").unwrap();
-	encode::to_writer(&mut file, &root, None).unwrap();
 	
 	/*let trig = trig::TrigLookup::new();
 	

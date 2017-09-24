@@ -3,7 +3,7 @@ use rng::JavaRng;
 pub mod dungeon;
 pub mod vein;
 pub mod large_tree;
-mod lake;
+pub mod lake;
 
 // TODO
 type Moore = ();

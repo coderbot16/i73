@@ -1,13 +1,91 @@
 use rng::JavaRng;
 use bit_vec::BitVec;
+use chunk::storage::Target;
+use chunk::matcher::BlockMatcher;
+use chunk::grouping::{Moore, Result};
 
-struct LakeSettings {
-	horizontal: usize,
-	vertical: usize,
+pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+	pub is_liquid:  L,
+	pub is_solid:   S,
+	pub replacable: R,
+	pub liquid:     B,
+	pub carve:      B,
+	pub solidify:   Option<B>
+}
+
+impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+	pub fn check_border(&self, shape: &LakeShape, moore: &mut Moore<B>, lower: (i32, i32, i32)) -> Result<bool> {
+		
+		for x in 0..shape.horizontal {
+			for z in 0..shape.horizontal {
+				let (x_i32, z_i32) = (x as i32, z as i32);
+				
+				for y in 0..shape.surface {
+					if shape.get_border(x, y, z) {
+						let association = moore.get((lower.0 + x_i32, lower.1 + y as i32, lower.2 + z_i32))?;
+						let block = association.target()?;
+						
+						if *block != self.liquid && !self.is_solid.matches(block) {
+							return Ok(false)
+						}
+					}
+				}
+				
+				for y in shape.surface..shape.vertical {
+					if shape.get_border(x, y, z) {
+						if self.is_liquid.matches(moore.get((lower.0 + x_i32, lower.1 + y as i32, lower.2 + z_i32))?.target()?) {
+							return Ok(false);
+						}
+					}
+				}
+			}
+		}
+		
+		Ok(true)
+	}
 	
-	surface: i32,
-	min_blobs: i32,
-	add_blobs: i32
+	pub fn fill_and_carve(&self, shape: &LakeShape, moore: &mut Moore<B>, lower: (i32, i32, i32)) -> Result<()> {
+		moore.ensure_available(self.liquid.clone());
+		moore.ensure_available(self.carve.clone());
+		
+		let (mut blocks, palette) = moore.freeze_palettes();
+		
+		let liquid = palette.reverse_lookup(&self.liquid).unwrap();
+		let carve = palette.reverse_lookup(&self.carve).unwrap();
+		
+		for x in 0..shape.horizontal {
+			for z in 0..shape.horizontal {
+				for y in 0..shape.surface {
+					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
+					
+					if shape.get(x, y, z) {
+						blocks.set(position, &liquid);
+					}
+				}
+				
+				for y in shape.surface..shape.vertical {
+					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
+					
+					if shape.get(x, y, z) {
+						blocks.set(position, &carve);
+					}
+				}
+			}
+		}
+		
+		Ok(())
+	}
+	
+	// TODO: grow_grass, solidify_border
+}
+
+pub struct LakeSettings {
+	pub horizontal: usize,
+	pub vertical: usize,
+	pub surface: usize,
+	
+	pub min_blobs: i32,
+	pub add_blobs: i32
 }
 
 impl Default for LakeSettings {
@@ -22,7 +100,7 @@ impl Default for LakeSettings {
 	}
 }
 
-struct LakeBlobs<'r> {
+pub struct LakeBlobs<'r> {
 	horizontal:      f64,
 	vertical:        f64,
 	remaining_blobs: i32,
@@ -30,7 +108,7 @@ struct LakeBlobs<'r> {
 }
 
 impl<'r> LakeBlobs<'r> {
-	fn new(rng: &'r mut JavaRng, settings: &LakeSettings) -> Self {
+	pub fn new(rng: &'r mut JavaRng, settings: &LakeSettings) -> Self {
 		let remaining_blobs = settings.min_blobs + rng.next_i32(settings.add_blobs + 1);
 		
 		LakeBlobs { 
@@ -74,16 +152,18 @@ impl<'r> Iterator for LakeBlobs<'r> {
 	}
 }
 
-struct Blob {
-	center: (f64, f64, f64),
-	radius: (f64, f64, f64)
+#[derive(Debug)]
+pub struct Blob {
+	pub center: (f64, f64, f64),
+	pub radius: (f64, f64, f64)
 }
 
-struct LakeShape {
+pub struct LakeShape {
 	/// Horizontal size of the lake.
 	horizontal: usize,
 	/// Vertical size of the lake.
 	vertical: usize,
+	surface: usize,
 	/// Defines the volume of the lake. 
 	liquid: BitVec,
 	/// Defines the blocks bordering the volume of the lake.
@@ -91,42 +171,43 @@ struct LakeShape {
 }
 
 impl LakeShape {
-	fn new(settings: &LakeSettings) -> Self {
+	pub fn new(settings: &LakeSettings) -> Self {
 		LakeShape {
 			horizontal: settings.horizontal,
 			vertical: settings.vertical,
+			surface: settings.surface,
 			liquid: BitVec::from_elem(settings.horizontal * settings.horizontal * settings.vertical, false),
 			border: BitVec::from_elem(settings.horizontal * settings.horizontal * settings.vertical, false)
 		}
 	}
 	
-	fn clear(&mut self) {
+	pub fn clear(&mut self) {
 		self.liquid.clear()
 	}
 	
-	fn set(&mut self, x: usize, y: usize, z: usize, bit: bool) {
+	pub fn set(&mut self, x: usize, y: usize, z: usize, bit: bool) {
 		self.liquid.set((x * self.horizontal + z) * self.vertical + y, bit);
 	}
 	
-	fn get(&self, x: usize, y: usize, z: usize) -> bool {
+	pub fn get(&self, x: usize, y: usize, z: usize) -> bool {
 		self.liquid.get((x * self.horizontal + z) * self.vertical + y).unwrap()
 	}
 	
-	fn set_border(&mut self, x: usize, y: usize, z: usize, bit: bool) {
+	pub fn set_border(&mut self, x: usize, y: usize, z: usize, bit: bool) {
 		self.border.set((x * self.horizontal + z) * self.vertical + y, bit);
 	}
 	
-	fn get_border(&self, x: usize, y: usize, z: usize) -> bool {
+	pub fn get_border(&self, x: usize, y: usize, z: usize) -> bool {
 		self.border.get((x * self.horizontal + z) * self.vertical + y).unwrap()
 	}
 	
-	fn fill(&mut self, blobs: LakeBlobs) {
+	pub fn fill(&mut self, blobs: LakeBlobs) {
 		for blob in blobs {
 			self.add_blob(blob);
 		}
 	}
 	
-	fn add_blob(&mut self, blob: Blob) {
+	pub fn add_blob(&mut self, blob: Blob) {
 		// TODO: Reduce size of possible bounding box.
 		for x in 1..(self.horizontal - 1) {
 			for y in 1..(self.vertical - 1) {
@@ -142,13 +223,14 @@ impl LakeShape {
 						axis_distances.1 * axis_distances.1 + 
 						axis_distances.2 * axis_distances.2;
 					
-					self.set(x, y, z, distance_squared < 1.0);
+					let preexisting = self.get(x, y, z);
+					self.set(x, y, z, preexisting || distance_squared < 1.0);
 		 		}
 		 	}
 		}
 	}
 	
-	fn update_border(&mut self) {
+	pub fn update_border(&mut self) {
 		self.border.clear();
 		
 		let y_max = self.vertical - 1;

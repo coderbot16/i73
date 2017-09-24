@@ -4,6 +4,42 @@ use chunk::anvil::{self, NibbleVec};
 use std::hash::Hash;
 use totuple::{array_to_tuple_mut_16, array_to_tuple_16, array_to_tuple_mut_9, array_to_tuple_9};
 
+pub type Result<T> = ::std::result::Result<T, AccessError>;
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum AccessError {
+	OutOfBounds((i32, i32, i32)),
+	PaletteDesync { moore: usize, column: usize },
+}
+
+impl AccessError {
+	pub fn with_moore(self, moore: usize) -> Self {
+		match self {
+			AccessError::OutOfBounds(oob) => AccessError::OutOfBounds(oob),
+			AccessError::PaletteDesync { column, .. } => AccessError::PaletteDesync { moore, column }
+		}
+	}
+}
+
+impl From<(i32, i32, i32)> for AccessError {
+	fn from(from: (i32, i32, i32)) -> Self {
+		AccessError::OutOfBounds(from)
+	}
+}
+
+impl From<usize> for AccessError {
+	fn from(from: usize) -> Self {
+		AccessError::PaletteDesync { moore: 0, column: from }
+	}
+}
+
+impl From<(usize, usize)> for AccessError {
+	fn from(from: (usize, usize)) -> Self {
+		AccessError::PaletteDesync { moore: from.1, column: from.0 }
+	}
+}
+
+#[derive(Debug)]
 pub struct Column<B>([Chunk<B>; 16]) where B: Target;
 
 impl<B> Column<B> where B: Target {
@@ -26,6 +62,12 @@ impl<B> Column<B> where B: Target {
 	
 	pub fn chunk_mut(&mut self, index: usize) -> &mut Chunk<B> {
 		&mut self.0[index]
+	}
+	
+	pub fn get(&self, at: BlockPosition) -> PaletteAssociation<B> {
+		let chunk_y = at.chunk_y() as usize;
+		
+		self.0[chunk_y].get(at)
 	}
 	
 	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
@@ -63,7 +105,7 @@ impl<B> Column<B> where B: Target {
 }
 
 impl Column<u16> {
-	pub fn to_anvil(&self, mut lighting: Vec<Option<(NibbleVec, NibbleVec)>>) -> Result<Vec<anvil::Section>, (usize, usize)> {
+	pub fn to_anvil(&self, mut lighting: Vec<Option<(NibbleVec, NibbleVec)>>) -> Result<Vec<anvil::Section>> {
 		let mut sections = Vec::with_capacity(16);
 		
 		for (y, (chunk, lighting)) in (self.0.iter().zip(lighting.drain(..))).enumerate() {
@@ -85,6 +127,7 @@ impl Column<u16> {
 	}
 }
 
+#[derive(Debug)]
 pub struct ColumnBlocks<'a>([&'a mut PackedBlockStorage; 16]);
 impl<'a> ColumnBlocks<'a> {
 	pub fn get<'p, B>(&self, at: BlockPosition, palettes: &ColumnPalettes<'p, B>) -> PaletteAssociation<'p, B> where B: Target {
@@ -104,7 +147,7 @@ impl<'a> ColumnBlocks<'a> {
 pub struct ColumnPalettes<'a, B>([&'a Palette<B>; 16]) where B: 'a + Target;
 impl<'a, B> ColumnPalettes<'a, B> where B: 'a + Target {
 	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
-	pub fn reverse_lookup(&self, target: &B) -> Result<ColumnAssociation<B>, usize> {
+	pub fn reverse_lookup(&self, target: &B) -> Result<ColumnAssociation<B>> {
 		let palettes = array_to_tuple_16(&self.0);
 		
 		Ok(ColumnAssociation ([
@@ -155,21 +198,44 @@ impl<'a, B> ColumnAssociation<'a, B> where B: 'a + Target {
 	}
 }
 
+#[derive(Debug)]
 pub struct Moore<B> where B: Target {
 	columns: [Column<B>; 9]
 }
 
 impl<B> Moore<B> where B: Target {
+	pub fn with_bits(bits_per_entry: usize) -> Self {
+		Moore { columns: [
+			Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry),
+			Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry),
+			Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry), Column::with_bits(bits_per_entry)
+		]}
+	}
+	
 	pub fn new(columns: [Column<B>; 9]) -> Self {
 		Moore { columns }
 	}
 	
-	pub fn column(&self, relative: (i8, i8)) -> &Column<B> {
-		&self.columns[index_relative(relative)]
+	pub fn column(&self, x: i8, z: i8) -> &Column<B> {
+		&self.columns[index_relative(x, z)]
 	}
 	
-	pub fn column_mut(&mut self, relative: (i8, i8)) -> &mut Column<B> {
-		&mut self.columns[index_relative(relative)]
+	pub fn column_mut(&mut self, x: i8, z: i8) -> &mut Column<B> {
+		&mut self.columns[index_relative(x, z)]
+	}
+	
+	
+	pub fn get(&self, at: (i32, i32, i32)) -> Result<PaletteAssociation<B>> {
+		let (column, inner) = coords_to_indices(at)?;
+		
+		Ok(self.columns[column].get(inner))
+	}
+	
+	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
+	pub fn ensure_available(&mut self, target: B) {
+		 for column in &mut self.columns {
+		 	column.ensure_available(target.clone());
+		 }
 	}
 	
 	pub fn freeze_palettes(&mut self) -> (MooreBlocks, MoorePalettes<B>) {
@@ -194,35 +260,87 @@ impl<B> Moore<B> where B: Target {
 			])
 		)
 	}
+	
+	pub fn into_columns(self) -> [Column<B>; 9] {
+		self.columns
+	}
 }
 
+#[derive(Debug)]
 pub struct MooreBlocks<'a>([ColumnBlocks<'a>; 9]);
-pub struct MoorePalettes<'a, B>([ColumnPalettes<'a, B>; 9]) where B: 'a + Target;
+impl<'a> MooreBlocks<'a> {
+	pub fn get<'p, B>(&self, at: (i32, i32, i32), palettes: &MoorePalettes<'p, B>) -> Result<PaletteAssociation<'p, B>> where B: Target {
+		let (column, inner) = coords_to_indices(at)?;
+		
+		Ok(self.0[column].get(inner, &palettes.0[column]))
+	}
+	
+	pub fn set<B>(&mut self, at: (i32, i32, i32), association: &MooreAssociation<B>) -> Result<()> where B: Target {
+		let (column, inner) = coords_to_indices(at)?;
+		
+		self.0[column].set(inner, &association.0[column]);
+		Ok(())
+	}
+}
+
+#[derive(Debug)]
+pub struct MoorePalettes<'a, B>(pub [ColumnPalettes<'a, B>; 9]) where B: 'a + Target;
 impl<'a, B> MoorePalettes<'a, B> where B: 'a + Target {
 	/// Gets an association that will reference back to the target. Note that several indices may point to the same target, this returns one of them.
-	pub fn reverse_lookup(&self, target: &B) -> Result<MooreAssociation<B>, (usize, usize)> {
+	pub fn reverse_lookup(&self, target: &B) -> Result<MooreAssociation<B>> {
 		let palettes = array_to_tuple_9(&self.0);
 		
 		Ok(MooreAssociation ([
-			palettes. 0.reverse_lookup(target).map_err(|e| (e, 0usize))?,
-			palettes. 1.reverse_lookup(target).map_err(|e| (e, 1usize))?,
-			palettes. 2.reverse_lookup(target).map_err(|e| (e, 2usize))?,
-			palettes. 3.reverse_lookup(target).map_err(|e| (e, 3usize))?,
-			palettes. 4.reverse_lookup(target).map_err(|e| (e, 4usize))?,
-			palettes. 5.reverse_lookup(target).map_err(|e| (e, 5usize))?,
-			palettes. 6.reverse_lookup(target).map_err(|e| (e, 6usize))?,
-			palettes. 7.reverse_lookup(target).map_err(|e| (e, 7usize))?,
-			palettes. 8.reverse_lookup(target).map_err(|e| (e, 8usize))?
+			palettes. 0.reverse_lookup(target).map_err(|e| e.with_moore(0))?,
+			palettes. 1.reverse_lookup(target).map_err(|e| e.with_moore(1))?,
+			palettes. 2.reverse_lookup(target).map_err(|e| e.with_moore(2))?,
+			palettes. 3.reverse_lookup(target).map_err(|e| e.with_moore(3))?,
+			palettes. 4.reverse_lookup(target).map_err(|e| e.with_moore(4))?,
+			palettes. 5.reverse_lookup(target).map_err(|e| e.with_moore(5))?,
+			palettes. 6.reverse_lookup(target).map_err(|e| e.with_moore(6))?,
+			palettes. 7.reverse_lookup(target).map_err(|e| e.with_moore(7))?,
+			palettes. 8.reverse_lookup(target).map_err(|e| e.with_moore(8))?
 		]))
 	}
 }
 
+#[derive(Debug)]
 pub struct MooreAssociation<'a, B>([ColumnAssociation<'a, B>; 9]) where B: 'a + Target;
-
-fn index(actual: (u8, u8)) -> usize {
-	(actual.0 * 3 + actual.1) as usize
+impl<'a, B> MooreAssociation<'a, B> where B: 'a + Target {
+	pub fn raw_values(&self) -> [[usize; 16]; 9] {
+		let associations = array_to_tuple_9(&self.0);
+		
+		[
+			associations. 0.raw_values(),
+			associations. 1.raw_values(),
+			associations. 2.raw_values(),
+			associations. 3.raw_values(),
+			associations. 4.raw_values(),
+			associations. 5.raw_values(),
+			associations. 6.raw_values(),
+			associations. 7.raw_values(),
+			associations. 8.raw_values()
+		]
+	}
 }
 
-fn index_relative(relative: (i8, i8)) -> usize {
-	index(((relative.0 + 1) as u8, (relative.1 + 1) as u8))
+fn index(x: u8, z: u8) -> usize {
+	(x * 3 + z) as usize
+}
+
+fn index_relative(x: i8, z: i8) -> usize {
+	index((x + 1) as u8, (z + 1) as u8)
+}
+
+fn coords_to_indices(at: (i32, i32, i32)) -> Result<(usize, BlockPosition)> {
+	let actual = (at.0 + 16, at.1, at.2 + 16);
+	
+	if actual.0 < 0 || actual.0 >= 48 || actual.1 < 0 || actual.1 > 255 || actual.2 < 0 || actual.2 >= 48 {
+		Err(at.into())
+	} else {
+		let inner = BlockPosition::new((actual.0 as u8) % 16, actual.1 as u8, (actual.2 as u8) % 16);
+		let column = index((actual.0 as u8) / 16, (actual.2 as u8) / 16);
+		
+		Ok((column, inner))
+	}
 }

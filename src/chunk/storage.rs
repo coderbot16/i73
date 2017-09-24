@@ -9,6 +9,7 @@ use std::fmt::Debug;
 pub trait Target: Eq + Hash + Clone + Debug {}
 impl<T> Target for T where T: Eq + Hash + Clone + Debug {}
 
+#[derive(Debug)]
 pub struct Chunk<B> where B: Target {
 	storage: PackedBlockStorage,
 	palette: Palette<B>
@@ -40,6 +41,10 @@ impl<B> Chunk<B> where B: Target {
 		 	self.reserve_bits(1);
 		 	self.palette.try_insert(target).expect("There should be room for a new entry, we just made some!");
 		 }
+	}
+	
+	pub fn get(&self, position: BlockPosition) -> PaletteAssociation<B> {
+		self.storage.get(position, &self.palette)
 	}
 	
 	// TODO: Methods to work with the palette: pruning, etc.
@@ -168,7 +173,32 @@ impl<B> Palette<B> where B: Target {
 	
 	/// Replaces the entry at `index` with the target, even if `index` was previously vacant. 
 	pub fn replace(&mut self, index: usize, target: B) {
-		self.entries[index] = Some(target.clone());
+		let mut old = Some(target.clone());
+		mem::swap(&mut old, &mut self.entries[index]);
+		
+		if let Some(old_target) = old {
+			let mut other_reference = None;
+		
+			for (index, entry) in self.entries.iter().enumerate() {
+				if let &Some(ref other) = entry {
+					if *other == old_target {
+						other_reference = Some(index);
+						break;
+					}
+				}
+			}
+			
+			if let Entry::Occupied(mut occ) = self.reverse.entry(old_target) {
+				if let Some(other) = other_reference {
+					if *occ.get() == index {
+						occ.insert(other);
+					}
+				} else {
+					occ.remove();
+				}
+			}
+		}
+		
 		// Only replace entries in the reverse lookup if they don't exist, otherwise keep the previous entry.
 		self.reverse.entry(target).or_insert(index);
 	}
@@ -179,6 +209,7 @@ impl<B> Palette<B> where B: Target {
 	}
 }
 
+#[derive(Debug)]
 pub struct PackedBlockStorage {
 	storage: Vec<u64>,
 	counts: Vec<usize>,
