@@ -69,7 +69,7 @@ fn main() {
 		}
 	}*/
 	
-	use chunk::grouping::{Moore, Column};
+	/*use chunk::grouping::{Moore, Column};
 	use chunk::position::BlockPosition;
 	let mut moore = Moore::<u16>::with_bits(4);
 	
@@ -85,9 +85,9 @@ fn main() {
 		solidify: None
 	};
 	
-	/*for y in 0..16 {
+	for y in 0..16 {
 		moore.column_mut(0, 0).chunk_mut(y).palette_mut().replace(0, 16);
-	}*/
+	}
 	
 	for y in 1..16 {
 		let mut rng = JavaRng::new(100+(y as i64));
@@ -151,7 +151,7 @@ fn main() {
 		}
 	}
 	
-	writer.finish().unwrap();
+	writer.finish().unwrap();*/
 	
 	/*
 	let vein = decorator::vein::Vein::create(32, (0, 0, 0), &mut rng, &trig);
@@ -179,7 +179,9 @@ fn main() {
 		println!("{:?}", table.get_item(&mut rng));
 	}*/
 	
-	/*let climate_source = ClimateSource::new(8399452073110208023);
+	use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings};
+	
+	let climate_source = ClimateSource::new(8399452073110208023);
 	let climate_chunk = climate_source.chunk((-35.0 * 16.0, -117.0 * 16.0));
 	
 	for x in 0..16 {
@@ -189,24 +191,40 @@ fn main() {
 		}
 	}
 	
-	let settings = HeightSettings::default();
-	println!("Settings: {:?}", settings);
+	let t_settings = TriNoiseSettings::default();
+	let f_settings = FieldSettings::default();
+	let h_settings = HeightSettings::default();
+	println!("TSettings: {:?}", t_settings);
+	println!("FSettings: {:?}", f_settings);
+	println!("HSettings: {:?}", h_settings);
+	
 	
 	let mut random = JavaRng::new(8399452073110208023);
 	
-	// Initialize the previous noise generators.
-	for _ in 0..48 {
+	let tri = TriNoiseSource::new(&mut random, &t_settings);
+	
+	// Initialize the middle noise generators.
+	for _ in 0..8 {
 		let p = Permutations::new(&mut random);
 	}
 	
-	let source = HeightSource::new(&mut random, &settings);
+	let source = HeightSource::new(&mut random, &h_settings);
 	
 	for x in 0..5 {
 		for z in 0..5 {
 			let climate = climate_chunk.get(x * 3 + 1, z * 3 + 1);
-			println!("{:?}", source.sample(Vector2::new(-140.0 + (x as f64), -468.0 + (z as f64)), climate));
+			let height = source.sample(Vector2::new(0.0 + (x as f64), 0.0 + (z as f64)), climate);
+			
+			println!("C = {:.13}, H = {:.13}", height.chaos, height.center);
+			
+			for y in 0..17 {
+				let tri = tri.sample(Vector3::new(x as f64, y as f64, z as f64), y);
+				//println!(" T = {}", tri);
+				
+				println!(" {:.13}", f_settings.compute_noise_value(y as f64, height, tri));
+			}
 		}
-	}*/
+	}
 	
 	//let lookup = ::biome::Lookup::generate();
 	//println!("{}", lookup);

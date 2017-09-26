@@ -1,2 +1,2 @@
 pub mod height;
-mod volume;
+pub mod volume;

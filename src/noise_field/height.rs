@@ -4,10 +4,10 @@ use rng::JavaRng;
 use climate::Climate;
 use sample::Sample;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Height {
-	center: f64,
-	chaos:  f64
+	pub center: f64,
+	pub chaos:  f64
 }
 
 #[derive(Debug)]
