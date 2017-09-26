@@ -1,12 +1,12 @@
 use rng::JavaRng;
 
 pub trait Rarity {
-	fn get(&self, rng: &mut JavaRng, chunk: (i32, i32)) -> i32;
+	fn get(&self, rng: &mut JavaRng) -> i32;
 }
 
 
 impl Rarity for i32 {
-	fn get(&self, rng: &mut JavaRng, chunk: (i32, i32)) -> i32 {
+	fn get(&self, rng: &mut JavaRng) -> i32 {
 		*self
 	}
 }
@@ -18,7 +18,7 @@ pub struct HalfNormal3 {
 }
 
 impl Rarity for HalfNormal3 {
-	fn get(&self, rng: &mut JavaRng, chunk: (i32, i32)) -> i32 {
+	fn get(&self, rng: &mut JavaRng) -> i32 {
 		let result = rng.next_i32(self.max + 1);
 		let result = rng.next_i32(result + 1);
 		rng.next_i32(result + 1)
@@ -33,8 +33,8 @@ pub struct Rare<R> where R: Rarity {
 }
 
 impl<R> Rarity for Rare<R> where R: Rarity {
-	fn get(&self, rng: &mut JavaRng, chunk: (i32, i32)) -> i32 {
-		let candidate = self.base.get(rng, chunk);
+	fn get(&self, rng: &mut JavaRng) -> i32 {
+		let candidate = self.base.get(rng);
 		
 		if rng.next_i32(self.rarity) != 0 {candidate} else {0}
 	}

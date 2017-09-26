@@ -1,3 +1,6 @@
+use chunk::storage::Target;
+use chunk::matcher::BlockMatcher;
+use chunk::grouping::{Moore, Result};
 use rng::JavaRng;
 use trig::TrigLookup;
 
@@ -9,6 +12,39 @@ const NOTCHIAN_PI: f32 = 3.1415927;
 const RADIUS_DIVISOR: f64 = 16.0;
 /// The length is `size/LENGTH_DIVISOR`
 const LENGTH_DIVISOR: f32 = 8.0;
+
+pub struct VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
+	pub replace: R,
+	pub block:   B
+}
+
+impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
+	pub fn generate(&self, vein: &Vein, moore: &mut Moore<B>, rng: &mut JavaRng, trig: &TrigLookup) -> Result<()> {
+		moore.ensure_available(self.block.clone());
+		
+		let (mut blocks, palette) = moore.freeze_palettes();
+		
+		let block = palette.reverse_lookup(&self.block).unwrap();
+		
+		for index in 0..(vein.size+1) {
+			let blob = vein.blob(index, rng, trig);
+			
+			for y in blob.lower.1..(blob.upper.1 + 1) {
+				for z in blob.lower.2..(blob.upper.2 + 1) {
+					for x in blob.lower.2..(blob.upper.2 + 1) {
+						let at = (x, y, z);
+						
+						if blob.distance_squared(at) < 1.0 && self.replace.matches(blocks.get(at, &palette)?.target()?) {
+							blocks.set(at, &block)?;
+						}
+					}
+				}
+			}
+		}
+		
+		Ok(())
+	}
+}
 
 #[derive(Debug)]
 pub struct Vein {
@@ -85,6 +121,16 @@ pub struct Blob {
 	radius:  f64,
 	lower:  (i32, i32, i32),
 	upper:  (i32, i32, i32)
+}
+
+impl Blob {
+	pub fn distance_squared(&self, at: (i32, i32, i32)) -> f64 {
+		let dist_x_sq = ((at.0 as f64 + 0.5 - self.center.0) / self.radius).powi(2);
+		let dist_y_sq = ((at.1 as f64 + 0.5 - self.center.1) / self.radius).powi(2);
+		let dist_z_sq = ((at.2 as f64 + 0.5 - self.center.2) / self.radius).powi(2);
+		
+		dist_x_sq + dist_y_sq + dist_z_sq
+	}
 }
 
 /// Preforms linear interpolation using a fraction expressed as `index/size`.

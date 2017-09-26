@@ -33,6 +33,7 @@ use noise_field::height::{lerp_to_layer, Height, HeightSettings, HeightSource};
 use std::fs::File;
 use nbt_serde::encode;
 use decorator::lake::{LakeShape, LakeBlobs, LakeSettings, LakeBlocks};
+use decorator::vein::{Vein, VeinBlocks};
 
 extern crate nalgebra;
 
@@ -84,9 +85,9 @@ fn main() {
 		solidify: None
 	};
 	
-	for y in 0..16 {
+	/*for y in 0..16 {
 		moore.column_mut(0, 0).chunk_mut(y).palette_mut().replace(0, 16);
-	}
+	}*/
 	
 	for y in 1..16 {
 		let mut rng = JavaRng::new(100+(y as i64));
@@ -96,27 +97,21 @@ fn main() {
 		shape.fill(blobs);
 		
 		lake_blocks.fill_and_carve(&shape, &mut moore, (0, y * 16, 0));
+	}
+	
+	let trig_lookup = trig::TrigLookup::new();
+	let vein_blocks = VeinBlocks {
+		replace: always_true,
+		block:   15*16
+	};
+	
+	let mut rng = JavaRng::new(100);
+	
+	for _ in 0..20 {
+		let (x, y, z) = (rng.next_i32(16), rng.next_i32(64), rng.next_i32(16));
+		let vein = Vein::create(8, (x, y, z), &mut rng, &trig_lookup);
 		
-		/*
-		for x in 0..settings.horizontal {
-			for z in 0..settings.horizontal {
-				for y in 0..settings.vertical {
-					let position = BlockPosition::new(x as u8, y as u8, z as u8);
-					
-					if shape.get(x, y, z) {
-						if y >= settings.surface {
-							blocks.set(position, &carve);
-						} else {
-							blocks.set(position, &water);
-						}
-						
-						
-					} else if shape.get_border(x, y, z) {
-						blocks.set(position, &glass);
-					}
-				}
-			}
-		}*/
+		vein_blocks.generate(&vein, &mut moore, &mut rng, &trig_lookup).unwrap();
 	}
 	
 	use chunk::anvil::{self, ChunkRoot, Section, NibbleVec};
@@ -158,8 +153,7 @@ fn main() {
 	
 	writer.finish().unwrap();
 	
-	/*let trig = trig::TrigLookup::new();
-	
+	/*
 	let vein = decorator::vein::Vein::create(32, (0, 0, 0), &mut rng, &trig);
 	println!("{:?}", vein);
 	

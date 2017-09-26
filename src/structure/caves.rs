@@ -31,7 +31,7 @@ pub struct Caves {
 
 impl Caves {
 	pub fn for_chunk(mut state: JavaRng, chunk: (i32, i32), from: (i32, i32)) -> Caves {
-		let remaining = RARITY.get(&mut state, chunk);
+		let remaining = RARITY.get(&mut state);
 		
 		Caves { state, chunk, from, remaining, extra: None }
 	}
