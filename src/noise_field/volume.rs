@@ -62,8 +62,8 @@ impl TriNoiseSource {
 
 #[derive(Debug)]
 pub struct FieldSettings {
-	pub ground_stretch :   f64,
-	pub seabed_stretch:    f64,
+	pub seabed_stretch :   f64,
+	pub ground_stretch:    f64,
 	pub taper_threshold:   f64,
 	pub height_stretch:    f64
 }
@@ -71,8 +71,8 @@ pub struct FieldSettings {
 impl Default for FieldSettings {
 	fn default() -> Self {
 		FieldSettings {
-			ground_stretch:    4.0,
-			seabed_stretch:    1.0,
+			seabed_stretch:    4.0,
+			ground_stretch:    1.0,
 			taper_threshold:   13.0,
 			height_stretch:    12.0
 		}
@@ -82,10 +82,10 @@ impl Default for FieldSettings {
 impl FieldSettings {
 	// TODO: Replace with FieldSource.
 	pub fn compute_noise_value(&self, y: f64, height: Height, tri_noise: f64) -> f64 {
-		// Reduction factor is 0 if y <= Y_THRESH.
+		// Reduction factor is 0 if y <= taper_threshold.
 		let reduction_factor = (y.max(self.taper_threshold) - self.taper_threshold) / 3.0;
 		let distance = y - height.center;
-		let distance = distance * if distance < 0.0 {self.ground_stretch} else {self.seabed_stretch};
+		let distance = distance * if distance < 0.0 {self.seabed_stretch} else {self.ground_stretch};
 		
 		let reduction = distance * self.height_stretch / height.chaos;
 		let value = tri_noise - reduction;

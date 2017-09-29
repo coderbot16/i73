@@ -1,4 +1,3 @@
-use block::Block;
 use surface::Surface;
 use climate::Climate;
 use std::ops::Range;
@@ -19,11 +18,16 @@ pub enum Biome {
 }
 
 impl Biome {
-	pub fn surface(&self) -> Surface {
-		match *self {
+	pub fn surface(&self) -> () {
+		/*match *self {
 			Biome::Desert => Surface { top: Some(Block::Sand ), fill: Block::Sand },
 			_			  => Surface { top: Some(Block::Grass), fill: Block::Dirt }
-		}
+		}*/
+		
+		// TODO: Properly replace this with the AnvilId system.
+		// Also replace biomes with structs instead.
+		
+		unimplemented!()
 	}
 	
 	pub fn shorthand(&self) -> char {

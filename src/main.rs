@@ -11,7 +11,6 @@ extern crate bit_vec;
 mod noise;
 mod rng;
 mod biome;
-mod block;
 mod sample;
 mod climate;
 mod surface;
