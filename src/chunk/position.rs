@@ -17,7 +17,7 @@ impl BlockPosition {
 	/// ### Out of bounds behavior
 	/// If the index is out of bounds, it is truncated.
 	pub fn from_yzx(yzx: u16) -> Self {
-		BlockPosition(yzx & 0xFFFF)
+		BlockPosition(yzx)
 	}
 	
 	/// Creates a new BlockPosition from a XYZ index.

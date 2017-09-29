@@ -34,14 +34,19 @@ use std::fs::File;
 use nbt_serde::encode;
 use decorator::lake::{LakeShape, LakeBlobs, LakeSettings, LakeBlocks};
 use decorator::vein::{Vein, VeinBlocks};
+use chunk::grouping::{Moore, Column};
+use generator::Pass;
+use generator::overworld_173::{self, Settings};
+use chunk::anvil::{self, ChunkRoot};
+use chunk::region::RegionWriter;
 
 extern crate nalgebra;
 
-fn always_true(t: &u16) -> bool {
+fn always_true(_: &u16) -> bool {
 	true
 }
 
-fn always_false(t: &u16) -> bool {
+fn always_false(_: &u16) -> bool {
 	false
 }
 
@@ -69,14 +74,13 @@ fn main() {
 		}
 	}*/
 	
-	/*use chunk::grouping::{Moore, Column};
-	use chunk::position::BlockPosition;
+	let (shape, paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
 	let mut moore = Moore::<u16>::with_bits(4);
 	
 	moore.ensure_available(0);
 	moore.ensure_available(16);
 	
-	let lake_blocks = LakeBlocks {
+	/*let lake_blocks = LakeBlocks {
 		is_liquid:  always_false,
 		is_solid:   always_true,
 		replacable: always_true,
@@ -112,10 +116,9 @@ fn main() {
 		let vein = Vein::create(8, (x, y, z), &mut rng, &trig_lookup);
 		
 		vein_blocks.generate(&vein, &mut moore, &mut rng, &trig_lookup).unwrap();
-	}
+	}*/
 	
-	use chunk::anvil::{self, ChunkRoot, Section, NibbleVec};
-	use chunk::region::RegionWriter;
+	shape.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
 	let file = File::create("/home/coderbot/Minecraft/Saves/RegionFileTest/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
@@ -151,15 +154,7 @@ fn main() {
 		}
 	}
 	
-	writer.finish().unwrap();*/
-	
-	/*
-	let vein = decorator::vein::Vein::create(32, (0, 0, 0), &mut rng, &trig);
-	println!("{:?}", vein);
-	
-	for x in 0..33 {
-		println!("{:?}", vein.blob(x, &mut rng, &trig));
-	}*/
+	writer.finish().unwrap();
 	
 	/*for x in 0..400 {
 		let rng = JavaRng::new(100 + x);
@@ -179,67 +174,6 @@ fn main() {
 		println!("{:?}", table.get_item(&mut rng));
 	}*/
 	
-	use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings};
-	
-	let climate_source = ClimateSource::new(8399452073110208023);
-	let climate_chunk = climate_source.chunk((-35.0 * 16.0, -117.0 * 16.0));
-	
-	for x in 0..16 {
-		for z in 0..16 {
-			let climate = climate_chunk.get(x, z);
-			//println!("{:?}", climate);
-		}
-	}
-	
-	let t_settings = TriNoiseSettings::default();
-	let f_settings = FieldSettings::default();
-	let h_settings = HeightSettings::default();
-	println!("TSettings: {:?}", t_settings);
-	println!("FSettings: {:?}", f_settings);
-	println!("HSettings: {:?}", h_settings);
-	
-	
-	let mut random = JavaRng::new(8399452073110208023);
-	
-	let tri = TriNoiseSource::new(&mut random, &t_settings);
-	
-	// Initialize the middle noise generators.
-	for _ in 0..8 {
-		let p = Permutations::new(&mut random);
-	}
-	
-	let source = HeightSource::new(&mut random, &h_settings);
-	
-	for x in 0..5 {
-		for z in 0..5 {
-			let climate = climate_chunk.get(x * 3 + 1, z * 3 + 1);
-			let height = source.sample(Vector2::new(0.0 + (x as f64), 0.0 + (z as f64)), climate);
-			
-			println!("C = {:.13}, H = {:.13}", height.chaos, height.center);
-			
-			for y in 0..17 {
-				let tri = tri.sample(Vector3::new(x as f64, y as f64, z as f64), y);
-				//println!(" T = {}", tri);
-				
-				println!(" {:.13}", f_settings.compute_noise_value(y as f64, height, tri));
-			}
-		}
-	}
-	
 	//let lookup = ::biome::Lookup::generate();
 	//println!("{}", lookup);
-	
-	//let perlin = perlin::Perlin::from_rng(&mut JavaRng::new(100), Vector3::new(0.5, 0.5, 0.5), 1.0);
-	//let table = perlin.generate_y_table(0.0, 4);
-	
-	//println!("{:?}", perlin);
-	//println!("{:.18}", perlin.generate(Vector3::new(0.0, 0.0, 0.0)));
-
-	/*for x in 0..4 {
-		for z in 0..4 {
-			for y in 0..4 {
-				println!("{:.16}", perlin.generate_override(Vector3::new(x as f64, y as f64, z as f64), table[y]));
-			}
-		}
-	}*/
 }
