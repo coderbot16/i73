@@ -56,17 +56,6 @@ pub struct Section {
 }
 
 impl Section {
-	fn set_block(&mut self, at: BlockPosition, id: AnvilId) {
-		
-	}
-	
-	fn get_block(&self, at: BlockPosition) -> AnvilId {
-		match self.add {
-			Some(ref add) => unimplemented!(),
-			None => unimplemented!()
-		}
-	}
-	
 	fn get_light(&self, at: BlockPosition) -> Light {
 		Light((self.sky_light.get(at) << 4) | self.block_light.get(at))
 	}
@@ -102,7 +91,7 @@ impl NibbleVec {
 	/// Use when you know that the value at that position is 0.
 	pub fn set_uncleared(&mut self, at: BlockPosition, value: i8) {
 		let (index, shift) = nibble_index(at);
-		self.0[index] |= ((value&0xF) << shift);
+		self.0[index] |= (value&0xF) << shift;
 	}
 }
 

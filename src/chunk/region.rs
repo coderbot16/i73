@@ -22,7 +22,7 @@ impl<O> RegionWriter<O> where O: Write + Seek {
 	pub fn chunk(&mut self, x: u8, z: u8, chunk: &ChunkRoot) -> Result<u64> {
 		let start = self.out.seek(SeekFrom::Current(0))?;
 		// Write a fake placeholder header.
-		ChunkHeader { len: 1, compression: 2 }.write(&mut self.out);
+		ChunkHeader { len: 1, compression: 2 }.write(&mut self.out)?;
 		
 		{
 			let mut encoder = ZlibEncoder::new(&mut self.out, Compression::Default);
@@ -38,7 +38,7 @@ impl<O> RegionWriter<O> where O: Write + Seek {
 		
 		// Fixup the placeholder header.
 		self.out.seek(SeekFrom::Start(start))?;
-		ChunkHeader { len: true_length as u32, compression: 2 }.write(&mut self.out);
+		ChunkHeader { len: true_length as u32, compression: 2 }.write(&mut self.out)?;
 		
 		let location = ChunkLocation::from_parts(
 			(start / 4096) as u32,

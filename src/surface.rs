@@ -5,8 +5,9 @@ const SEA_COORD:  u32 = 63;
 const BEACH_LOW:  u32 = SEA_COORD - 3;
 const BEACH_HIGH: u32 = SEA_COORD + 2;
 
+#[derive(Clone, Eq, PartialEq, Debug)]
 pub struct Surface<B> where B: Target {
-	pub top:  Option<B>,
+	pub top:  B,
 	pub fill: B
 }
 
@@ -17,7 +18,7 @@ enum Beach {
 }
 
 impl Beach {
-	fn surface<B>(&self, biome: &Biome) -> Surface<B> where B: Target {
+	fn surface<B>(&self, _: &Biome) -> Surface<B> where B: Target {
 		/*match *self {
 			Beach::Sand   => Surface { top: Some(Block::Sand), fill: Block::Sand },
 			Beach::Gravel => Surface { top: None, fill: Block::Gravel },
@@ -34,8 +35,8 @@ struct Stack {
 }
 
 impl Stack {
-	fn surface<B>(&self, y: u32, last: &Surface<B>) -> Surface<B> where B: Target {
-		let mut surface = if self.depth <= 0 {
+	fn surface<B>(&self, y: u32, _/*last*/: &Surface<B>) -> Surface<B> where B: Target {
+		let mut surface: Surface<B> = if self.depth <= 0 {
 			//Surface { top: None, fill: Block::Stone }
 			unimplemented!()
 		} else if y >= BEACH_LOW && y <= BEACH_HIGH {
@@ -46,8 +47,7 @@ impl Stack {
 		};
 		
 		if y < SEA_COORD {
-			unimplemented!()
-			//surface.top = Some(surface.fill);
+			surface.top = surface.fill.clone();
 		}
 		
 		surface

@@ -1,4 +1,5 @@
-#![feature(exclusive_range_pattern)]
+// TODO: Remove this when i73 becomes a library.
+#![allow(dead_code)]
 
 extern crate serde;
 #[macro_use]
@@ -22,32 +23,17 @@ mod generator;
 mod distribution;
 mod chunk;
 mod totuple;
+mod segmented;
 
-use rng::JavaRng;
-use noise::{simplex, octaves, perlin, Permutations};
-use sample::Sample;
-use climate::ClimateSource;
-use nalgebra::{Vector2, Vector3};
-use noise_field::height::{lerp_to_layer, Height, HeightSettings, HeightSource};
 use std::fs::File;
 use nbt_serde::encode;
-use decorator::lake::{LakeShape, LakeBlobs, LakeSettings, LakeBlocks};
-use decorator::vein::{Vein, VeinBlocks};
-use chunk::grouping::{Moore, Column};
+use chunk::grouping::Moore;
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
 
 extern crate nalgebra;
-
-fn always_true(_: &u16) -> bool {
-	true
-}
-
-fn always_false(_: &u16) -> bool {
-	false
-}
 
 fn main() {
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
@@ -73,16 +59,19 @@ fn main() {
 		}
 	}*/
 	
-	let (shape, paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
+	let (shape, _) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
 	let mut moore = Moore::<u16>::with_bits(4);
 	
 	moore.ensure_available(0);
 	moore.ensure_available(16);
 	
-	/*let lake_blocks = LakeBlocks {
-		is_liquid:  always_false,
-		is_solid:   always_true,
-		replacable: always_true,
+	/*
+	use chunk::matcher;
+	
+	let lake_blocks = LakeBlocks {
+		is_liquid:  matcher::None,
+		is_solid:   matcher::All,
+		replacable: matcher::All,
 		liquid: 8*16,
 		carve: 0,
 		solidify: None
@@ -119,7 +108,7 @@ fn main() {
 	
 	shape.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
-	let file = File::create("/home/coderbot/Minecraft/Saves/RegionFileTest/region/r.0.0.mca").unwrap();
+	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	for x in 0..3 {
@@ -148,7 +137,7 @@ fn main() {
 			println!("{:?}", root);
 			
 			println!("Chunk spans {} bytes", writer.chunk(x, z, &root).unwrap());
-			let mut file = File::create(format!("/home/coderbot/c.{}.{}.nbt", x, z)).unwrap();
+			let mut file = File::create(format!("out/alpha/c.{}.{}.nbt", x, z)).unwrap();
 			encode::to_writer(&mut file, &root, None).unwrap();
 		}
 	}
@@ -172,7 +161,4 @@ fn main() {
 	for _ in 0..4096 {
 		println!("{:?}", table.get_item(&mut rng));
 	}*/
-	
-	//let lookup = ::biome::Lookup::generate();
-	//println!("{}", lookup);
 }

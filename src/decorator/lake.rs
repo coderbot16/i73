@@ -59,7 +59,7 @@ impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: 
 					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
 					
 					if shape.get(x, y, z) {
-						blocks.set(position, &liquid);
+						blocks.set(position, &liquid)?;
 					}
 				}
 				
@@ -67,7 +67,7 @@ impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: 
 					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
 					
 					if shape.get(x, y, z) {
-						blocks.set(position, &carve);
+						blocks.set(position, &carve)?;
 					}
 				}
 			}

@@ -77,6 +77,6 @@ impl HeightSource {
 /// 3 => 10
 /// 4 => 13
 /// ```
-pub fn lerp_to_layer(lerp: Vector2<i32>) -> Vector2<i32> {
+pub fn lerp_to_layer(lerp: Vector2<usize>) -> Vector2<usize> {
 	lerp.map(|x| x*3 + 1)
 }

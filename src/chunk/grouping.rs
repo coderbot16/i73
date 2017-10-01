@@ -1,7 +1,6 @@
 use chunk::storage::{Chunk, Palette, PackedBlockStorage, PaletteAssociation, Target};
 use chunk::position::BlockPosition;
 use chunk::anvil::{self, NibbleVec};
-use std::hash::Hash;
 use totuple::{array_to_tuple_mut_16, array_to_tuple_16, array_to_tuple_mut_9, array_to_tuple_9};
 
 pub type Result<T> = ::std::result::Result<T, AccessError>;

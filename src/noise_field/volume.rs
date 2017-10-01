@@ -3,9 +3,8 @@ use noise::octaves::PerlinOctaves;
 use nalgebra::Vector3;
 use noise_field::height::Height;
 
-const H_NOISE_SIZE: usize = 5;
-const Y_NOISE_SIZE: usize = 17;
-const  VOLUME_SIZE: usize = H_NOISE_SIZE * Y_NOISE_SIZE * H_NOISE_SIZE;
+pub const H_NOISE_SIZE: usize = 5;
+pub const Y_NOISE_SIZE: usize = 17;
 
 #[derive(Debug)]
 pub struct TriNoiseSettings {

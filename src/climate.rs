@@ -1,7 +1,6 @@
 use nalgebra::Vector2;
 use noise::octaves::SimplexOctaves;
 use rng::JavaRng;
-use biome::Biome;
 use sample::Sample;
 
 const  TEMP_COEFF: i64 = 9871;
@@ -74,7 +73,7 @@ impl Climate {
 		self.rainfall
 	}
 	
-	fn adjusted_rainfall(&self) -> f64 {
+	pub fn adjusted_rainfall(&self) -> f64 {
 		self.temperature * self.rainfall
 	}
 	
@@ -83,24 +82,5 @@ impl Climate {
 		let factor = 1.0 - f64::powi(1.0 - self.adjusted_rainfall(), 4);
 		let influence = factor * (scaled_noise + 0.5) + 0.5;
 		influence.max(0.5).min(1.5)
-	}
-	
-	/// Gets the exact biome corresponding to the climate. Prefer a biome::Lookup instead.
-	pub fn biome_exact(&self) -> Biome {
-		match (self.temperature, self.adjusted_rainfall()) {
-			(0.00.. 0.10,	0.00...1.00) => Biome::Tundra,
-			(0.10.. 0.50,  	0.00.. 0.20) => Biome::Tundra,
-			(0.10.. 0.50,	0.20.. 0.50) => Biome::Taiga,
-			(0.10.. 0.70,	0.50...1.00) => Biome::Swampland,
-			(0.50.. 0.95,	0.00.. 0.20) => Biome::Savanna,
-			(0.50.. 0.97,	0.20.. 0.35) => Biome::Shrubland,
-			(0.50.. 0.97,  	0.35.. 0.50) => Biome::Forest,
-			(0.70.. 0.97,	0.50...1.00) => Biome::Forest,
-			(0.95...1.00,	0.00.. 0.20) => Biome::Desert,
-			(0.97...1.00,	0.20.. 0.45) => Biome::Plains,
-			(0.97...1.00,	0.45.. 0.90) => Biome::SeasonalForest,
-			(0.97...1.00,	0.90...1.00) => Biome::Rainforest,
-			(_,_) => unreachable!()
-		}
 	}
 }

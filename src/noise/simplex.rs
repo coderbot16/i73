@@ -72,17 +72,17 @@ impl Sample for Simplex {
 		let y2 = y0 - 1.0 + G2 * 2.0;
 		
 		// TODO: This is broken for negative coords.
-		let x_I = ((fx % 256.0) as u16) % 255;
-		let y_I = ((fy % 256.0) as u16) % 255;
+		let x_i = ((fx % 256.0) as u16) % 255;
+		let y_i = ((fy % 256.0) as u16) % 255;
 		
 		let t0 = f64::max(0.5 - x0*x0 - y0*y0, 0.0);
-		let n0 = f64::powi(t0, 4) * grad(self.hash(x_I + self.hash(y_I)), x0, y0);
+		let n0 = f64::powi(t0, 4) * grad(self.hash(x_i + self.hash(y_i)), x0, y0);
 		
 		let t1 = f64::max(0.5 - x1*x1 - y1*y1, 0.0);
-		let n1 = f64::powi(t1, 4) * grad(self.hash(x_I + bias.x + self.hash(y_I + bias.y)), x1, y1);
+		let n1 = f64::powi(t1, 4) * grad(self.hash(x_i + bias.x + self.hash(y_i + bias.y)), x1, y1);
 		
 		let t2 = f64::max(0.5 - x2*x2 - y2*y2, 0.0);
-		let n2 = f64::powi(t2, 4) * grad(self.hash(x_I + 1 + self.hash(y_I + 1)), x2, y2);
+		let n2 = f64::powi(t2, 4) * grad(self.hash(x_i + 1 + self.hash(y_i + 1)), x2, y2);
 		
 		(70.0 * self.amplitude) * (n0 + n1 + n2)
 	}

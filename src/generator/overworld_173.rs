@@ -2,13 +2,14 @@ use rng::JavaRng;
 use noise::Permutations;
 use climate::ClimateSource;
 use noise_field::height::{HeightSettings, HeightSource};
-use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings};
+use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, H_NOISE_SIZE, Y_NOISE_SIZE};
 use generator::Pass;
 use chunk::position::BlockPosition;
 use chunk::storage::Target;
 use chunk::grouping::{Column, Result};
 use sample::Sample;
 use nalgebra::{Vector2, Vector3};
+use noise_field::height::lerp_to_layer;
 
 pub struct Settings<B> where B: Target {
 	shape_blocks: ShapeBlocks<B>,
@@ -92,7 +93,7 @@ pub struct ShapePass<B> where B: Target {
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
 	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
-		let offset = (
+		let offset = Vector2::new(
 			(chunk.0 as f64) * 4.0,
 			(chunk.1 as f64) * 4.0
 		);
@@ -104,15 +105,17 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		
 		let climate_chunk = self.climate.chunk(block_offset);
 		
-		let mut field = [[[0f64; 5]; 17]; 5];
+		let mut field = [[[0f64; H_NOISE_SIZE]; Y_NOISE_SIZE]; H_NOISE_SIZE];
 	
-		for x in 0..5 {
-			for z in 0..5 {
-				let climate = climate_chunk.get(x * 3 + 1, z * 3 + 1);
-				let height = self.height.sample(Vector2::new(offset.0 + (x as f64), offset.1 + (z as f64)), climate);
+		for x in 0..H_NOISE_SIZE {
+			for z in 0..H_NOISE_SIZE {
+				let layer = lerp_to_layer(Vector2::new(x, z));
 				
-				for y in 0..17 {
-					let tri = self.tri.sample(Vector3::new(offset.0 + x as f64, y as f64, offset.1 + z as f64), y);
+				let climate = climate_chunk.get(layer.x, layer.y);
+				let height = self.height.sample(offset + Vector2::new(x as f64, z as f64), climate);
+				
+				for y in 0..Y_NOISE_SIZE {
+					let tri = self.tri.sample(Vector3::new(offset.x + x as f64, y as f64, offset.y + z as f64), y);
 					
 					field[x][y][z] = self.field.compute_noise_value(y as f64, height, tri);
 				}
@@ -155,7 +158,7 @@ pub struct PaintPass {
 	thickness: [Permutations; 4]  // TODO
 }
 
-fn trilinear(array: &[[[f64; 5]; 17]; 5], position: BlockPosition) -> f64 {
+fn trilinear(array: &[[[f64; H_NOISE_SIZE]; Y_NOISE_SIZE]; H_NOISE_SIZE], position: BlockPosition) -> f64 {
 	let inner = (
 		((position.x() % 4) as f64) / 4.0,
 		((position.y() % 8) as f64) / 8.0,

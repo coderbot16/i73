@@ -266,13 +266,13 @@ impl PackedBlockStorage {
 		
 		let (indices, sub_index) = self.indices(index);
 		
-		let raw = (match indices {
+		let raw = match indices {
 			Indices::Single(index) => self.storage[index] >> sub_index,
 			Indices::Double(start, end) => {
 				let end_sub_index = 64 - sub_index;
 				(self.storage[start] >> sub_index) | (self.storage[end] << end_sub_index)
 			}
-		} & self.bitmask);
+		} & self.bitmask;
 		
 		PaletteAssociation {
 			palette,

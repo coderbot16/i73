@@ -1,6 +1,49 @@
 use surface::Surface;
 use climate::Climate;
-use std::ops::Range;
+use chunk::storage::Target;
+use std::borrow::Cow;
+use std::fmt::Display;
+use segmented::Segmented;
+
+pub static DEFAULT_BIOMES: [BiomeDef<u16, char>; 11] = [
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '0', name: Cow::Borrowed("Rainforest"     ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '1', name: Cow::Borrowed("Swampland"      ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '2', name: Cow::Borrowed("Seasonal Forest") },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '3', name: Cow::Borrowed("Forest"         ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '4', name: Cow::Borrowed("Savanna"        ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '5', name: Cow::Borrowed("Shrubland"      ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '6', name: Cow::Borrowed("Taiga"          ) },
+	BiomeDef { surface: Surface {top: 12, fill: 12 }, id: '7', name: Cow::Borrowed("Desert"         ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '8', name: Cow::Borrowed("Plains"         ) },
+	BiomeDef { surface: Surface {top: 12, fill: 12 }, id: '9', name: Cow::Borrowed("Ice Desert"     ) },
+	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: 'A', name: Cow::Borrowed("Tundra"         ) }
+];
+
+pub fn default_grid() -> Grid<u16, char> {
+	let mut grid = Grid::new(DEFAULT_BIOMES[0].clone());
+	
+	grid.add((0.00, 0.10), (0.00, 1.00), DEFAULT_BIOMES[Biome::Tundra as usize].clone());
+	grid.add((0.10, 0.50), (0.00, 0.20), DEFAULT_BIOMES[Biome::Tundra as usize].clone());
+	grid.add((0.10, 0.50), (0.20, 0.50), DEFAULT_BIOMES[Biome::Taiga as usize].clone());
+	grid.add((0.10, 0.70), (0.50, 1.00), DEFAULT_BIOMES[Biome::Swampland as usize].clone());
+	grid.add((0.50, 0.95), (0.00, 0.20), DEFAULT_BIOMES[Biome::Savanna as usize].clone());
+	grid.add((0.50, 0.97), (0.20, 0.35), DEFAULT_BIOMES[Biome::Shrubland as usize].clone());
+	grid.add((0.50, 0.97), (0.35, 0.50), DEFAULT_BIOMES[Biome::Forest as usize].clone());
+	grid.add((0.70, 0.97), (0.50, 1.00), DEFAULT_BIOMES[Biome::Forest as usize].clone());
+	grid.add((0.95, 1.00), (0.00, 0.20), DEFAULT_BIOMES[Biome::Desert as usize].clone());
+	grid.add((0.97, 1.00), (0.20, 0.45), DEFAULT_BIOMES[Biome::Plains as usize].clone());
+	grid.add((0.97, 1.00), (0.45, 0.90), DEFAULT_BIOMES[Biome::SeasonalForest as usize].clone());
+	grid.add((0.97, 1.00), (0.90, 1.00), DEFAULT_BIOMES[Biome::Rainforest as usize].clone());
+	
+	grid
+}
+
+#[derive(Debug, Clone)]
+pub struct BiomeDef<B, I> where B: Target, I: Clone {
+	pub surface: Surface<B>,
+	pub id:   I,
+	pub name: Cow<'static, str>
+}
 
 #[derive(Debug, Copy, Clone)]
 pub enum Biome {
@@ -13,134 +56,71 @@ pub enum Biome {
 	Taiga,
 	Desert,
 	Plains,
-	//IceDesert,
+	IceDesert,
 	Tundra
 }
 
-impl Biome {
-	pub fn surface(&self) -> () {
-		/*match *self {
-			Biome::Desert => Surface { top: Some(Block::Sand ), fill: Block::Sand },
-			_			  => Surface { top: Some(Block::Grass), fill: Block::Dirt }
-		}*/
+pub struct Grid<B, I>(pub Segmented<Segmented<BiomeDef<B, I>>>) where B: Target, I: Clone;
+impl<B, I> Grid<B, I> where B: Target, I: Clone {
+	fn new_temperatures(biome: BiomeDef<B, I>) -> Segmented<BiomeDef<B, I>> {
+		let mut temperatures = Segmented::new(biome.clone());
+		temperatures.add_boundary(1.0, biome.clone());
 		
-		// TODO: Properly replace this with the AnvilId system.
-		// Also replace biomes with structs instead.
-		
-		unimplemented!()
+		temperatures
 	}
 	
-	pub fn shorthand(&self) -> char {
-		match *self {
-			Biome::Rainforest     => 'R',
-			Biome::Swampland      => 'S',
-			Biome::SeasonalForest => 'G',
-			Biome::Forest         => 'F',
-			Biome::Savanna        => 'Q',
-			Biome::Shrubland      => 'N',
-			Biome::Taiga          => 'T',
-			Biome::Desert         => 'D',
-			Biome::Plains         => 'P',
-			Biome::Tundra         => 'U'
-		}
+	pub fn new(default: BiomeDef<B, I>) -> Self {
+		let temperatures = Self::new_temperatures(default);
+		
+		let mut grid = Segmented::new(temperatures.clone());
+		grid.add_boundary(1.0, temperatures.clone());
+		
+		Grid(grid)
+	}
+	
+	pub fn add(&mut self, temperature: (f64, f64), rainfall: (f64, f64), biome: BiomeDef<B, I>) {
+		self.0.for_all_aligned(rainfall.0, rainfall.1, &|| Self::new_temperatures(biome.clone()), &|temperatures| {
+			temperatures.for_all_aligned(temperature.0, temperature.1, &|| biome.clone(), &|existing| {
+				*existing = biome.clone();
+			})
+		})
+	}
+	
+	pub fn lookup(&self, climate: Climate) -> &BiomeDef<B, I> {
+		self.0.get(climate.adjusted_rainfall()).get(climate.temperature())
 	}
 }
 
-// TODO: Add Grid to allow for configurable biomes, and a possibly? faster lookup.
-
-/*pub struct Grid(Vec<RainColumn>);
-impl Grid {
-	pub fn new() -> Self {
-		Grid(Vec::new())
-	}
-	
-	pub fn insert(&mut self, temperature: Range<f64>, rainfall: Range<f64>, biome: Biome) {
-		unimplemented!()
-		// This function needs to locate the overlapping columns, subdivide them if neccesary, and for each overlapping column do the same thing with the rows inside.
-	}
-	
-	fn find_column(&self, rainfall: f64) -> Option<&[Cell]> {
-		for &RainColumn { ref rain, ref entries } in &self.0 {
-			if rain.contains(rainfall) {
-				return Some(&entries);
-			}
-		}
+pub struct Lookup<B, I>(Box<[BiomeDef<B, I>]>) where B: Target, I: Clone;
+impl<B, I> Lookup<B, I> where B: Target, I: Clone {
+	pub fn generate(grid: &Grid<B, I>) -> Self {
+		let mut lookup = Vec::with_capacity(4096);
 		
-		None
-	}
-	
-	fn find_column_mut(&mut self, rainfall: f64) -> Option<&mut Vec<Cell>> {
-		for &mut RainColumn { ref rain, ref mut entries } in &mut self.0 {
-			if rain.contains(rainfall) {
-				return Some(entries);
-			}
-		}
-		
-		None
-	}
-	
-	pub fn lookup(&self, climate: Climate) -> Option<Biome> {
-		match self.find_column(climate.rainfall()) {
-			Some(entries) => {
-				for &Cell { ref temperature, biome } in entries {
-					if temperature.contains(climate.temperature()) {
-						return Some(biome);
-					}
-				}
+		for index in 0..4096 {
+			let (temperature, rainfall) = (index / 64, index % 64);
+			
+			let climate = Climate::new((temperature as f64) / 63.0, (rainfall as f64) / 63.0);
 				
-				None
-			},
-			None => None
-		}
-	}
-}*/
-
-/*struct Grid(Vec<RainColumn>);
-
-impl Grid {
-	
-}
-
-pub struct Selection<T> {
-	range: Range<f64>,
-	part: T
-}
-
-type RainColumn = Selection<Vec<TempRow>>;
-type TempRow = Selection<Biome>;*/
-
-pub struct Lookup(pub [[Biome; 64]; 64]);
-impl Lookup {
-	pub fn generate(/*grid: &Grid*/) -> Option<Self> {
-		let mut lookup = [[Biome::Plains; 64]; 64];
-		
-		for (temperature, rainfalls) in lookup.iter_mut().enumerate() {
-			for (rainfall, biome) in rainfalls.iter_mut().enumerate() {
-				let climate = Climate::new((temperature as f64) / 63.0, (rainfall as f64) / 63.0);
-				
-				*biome = climate.biome_exact();
-				
-				/*match grid.lookup(climate) {
-					Some(cell) => *biome = cell,
-					None => return None
-				}*/
-			}
+			lookup.push(grid.lookup(climate).clone());
 		}
 		
-		Some(Lookup(lookup))
+		Lookup(lookup.into_boxed_slice())
 	}
 	
-	pub fn lookup(&self, climate: Climate) -> Biome {
-		let (temperature, rainfall) = ((climate.temperature() * 63.0) as usize, (climate.rainfall() * 63.0) as usize);
-		self.0[temperature][rainfall]
+	fn lookup_raw(&self, temperature: usize, rainfall: usize) -> &BiomeDef<B, I> {
+		&self.0[temperature * 64 + rainfall]
+	}
+	
+	pub fn lookup(&self, climate: Climate) -> &BiomeDef<B, I> {
+		self.lookup_raw((climate.temperature() * 63.0) as usize, (climate.rainfall() * 63.0) as usize)
 	}
 }
 
-impl ::std::fmt::Display for Lookup {
+impl<B, I> Display for Lookup<B, I> where B: Target, I: Clone + Display {
 	fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
 		for rain in 0..64 {
 			for temp in 0..64 {
-				write!(f, "{} ", self.0[temp][63-rain].shorthand())?;
+				write!(f, "{} ", self.lookup_raw(temp, 63-rain).id)?;
 			}
 			writeln!(f, "")?;
 		}
@@ -148,3 +128,25 @@ impl ::std::fmt::Display for Lookup {
 		Ok(())
 	}
 }
+
+
+/*
+	/// Gets the exact biome corresponding to the climate. Prefer a biome::Lookup instead.
+	pub fn biome_exact(&self) -> Biome {
+		match (self.temperature, self.adjusted_rainfall()) {
+			(0.00.. 0.10,	0.00...1.00) => Biome::Tundra,
+			(0.10.. 0.50,  	0.00.. 0.20) => Biome::Tundra,
+			(0.10.. 0.50,	0.20.. 0.50) => Biome::Taiga,
+			(0.10.. 0.70,	0.50...1.00) => Biome::Swampland,
+			(0.50.. 0.95,	0.00.. 0.20) => Biome::Savanna,
+			(0.50.. 0.97,	0.20.. 0.35) => Biome::Shrubland,
+			(0.50.. 0.97,  	0.35.. 0.50) => Biome::Forest,
+			(0.70.. 0.97,	0.50...1.00) => Biome::Forest,
+			(0.95...1.00,	0.00.. 0.20) => Biome::Desert,
+			(0.97...1.00,	0.20.. 0.45) => Biome::Plains,
+			(0.97...1.00,	0.45.. 0.90) => Biome::SeasonalForest,
+			(0.97...1.00,	0.90...1.00) => Biome::Rainforest,
+			(_,_) => unreachable!()
+		}
+	}
+*/

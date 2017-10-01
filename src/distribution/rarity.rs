@@ -6,7 +6,7 @@ pub trait Rarity {
 
 
 impl Rarity for i32 {
-	fn get(&self, rng: &mut JavaRng) -> i32 {
+	fn get(&self, _: &mut JavaRng) -> i32 {
 		*self
 	}
 }
