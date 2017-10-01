@@ -77,10 +77,11 @@ impl Climate {
 		self.temperature * self.rainfall
 	}
 	
-	/// scaled_noise is `noise / biome_influence_scale`
-	pub fn chaos(&self, scaled_noise: f64) -> f64 {
-		let factor = 1.0 - f64::powi(1.0 - self.adjusted_rainfall(), 4);
-		let influence = factor * (scaled_noise + 0.5) + 0.5;
-		influence.max(0.5).min(1.5)
+	/// Returns a value between 0.0 and 1.0 that lowers/raises the chaos.
+	/// Temperature and Rainfall at 100% results in 1.0, which is the 
+	/// influence factor for generators without biomes.
+	/// This means that no biome is in fact signalling rainforest-like terrain.
+	pub fn influence_factor(&self) -> f64 {
+		1.0 - f64::powi(1.0 - self.adjusted_rainfall(), 4)
 	}
 }

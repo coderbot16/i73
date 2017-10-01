@@ -180,12 +180,11 @@ impl Perlin {
 		) * self.amplitude
 	}
 	
-	pub fn generate_y_table(&self, start: f64, count: usize) -> Vec<f64> {
-		let mut table = Vec::with_capacity(count);
+	pub fn generate_y_table(&self, start: f64, table: &mut [f64]) {
 		let mut actual_y = 0.0;
 		let mut last_p = 65535;
 		
-		for offset in 0..count {
+		for (offset, entry) in table.iter_mut().enumerate() {
 			let y = (start + (offset as f64)) * self.scale.y + self.p.offset.y;
 			let floored = floor_capped(y);
 			let p = (floored % 256.0) as u16;
@@ -197,10 +196,8 @@ impl Perlin {
 			
 			last_p = p;
 			
-			table.push(actual_y);
+			*entry = actual_y;
 		}
-		
-		table
 	}
 }
 

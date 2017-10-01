@@ -31,7 +31,7 @@ impl Default for Settings<u16> {
 	}
 }
 
-pub fn passes<B>(seed: i64, settings: Settings<B>) -> (ShapePass<B>, PaintPass) where B: Target {
+pub fn passes<B>(seed: i64, settings: Settings<B>) -> (ShapePass<B>, PaintPass<B>) where B: Target {
 	let mut rng = JavaRng::new(seed);
 	
 	let tri = TriNoiseSource::new(&mut rng, &settings.tri);
@@ -60,7 +60,7 @@ pub fn passes<B>(seed: i64, settings: Settings<B>) -> (ShapePass<B>, PaintPass) 
 	
 	(
 		ShapePass { climate, blocks: settings.shape_blocks, tri, height, field, sea_coord: settings.sea_coord },
-		PaintPass { beach, thickness }
+		PaintPass { beach, thickness, phantom: ::std::marker::PhantomData }
 	)
 }
 
@@ -153,9 +153,16 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 	}
 }
 
-pub struct PaintPass {
+pub struct PaintPass<B> where B: Target {
 	beach:     [Permutations; 4], // TODO
-	thickness: [Permutations; 4]  // TODO
+	thickness: [Permutations; 4], // TODO
+	phantom:   ::std::marker::PhantomData<B> // TODO: Replace with real block parameters.
+}
+
+impl<B> Pass<B> for PaintPass<B> where B: Target {
+	fn apply(&self, _target: &mut Column<B>, _chunk: (i32, i32)) -> Result<()> {
+		unimplemented!()
+	}
 }
 
 fn trilinear(array: &[[[f64; H_NOISE_SIZE]; Y_NOISE_SIZE]; H_NOISE_SIZE], position: BlockPosition) -> f64 {

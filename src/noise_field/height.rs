@@ -52,7 +52,9 @@ impl HeightSource {
 	
 	pub fn sample(&self, point: Vector2<f64>, climate: Climate) -> Height {
 		let scaled_noise = self.biome_influence.sample(point) / self.biome_influence_scale;
-		let chaos = climate.chaos(scaled_noise);
+		
+		let chaos = (climate.influence_factor() * (scaled_noise + 0.5)).max(0.0).min(1.0) + 0.5;
+		
 		let mut depth = self.depth.sample(point) / self.depth_scale;
 		
 		if depth < 0.0 {

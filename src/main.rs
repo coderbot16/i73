@@ -59,11 +59,14 @@ fn main() {
 		}
 	}*/
 	
-	let (shape, _) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
+	let (shape, paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
 	let mut moore = Moore::<u16>::with_bits(4);
 	
 	moore.ensure_available(0);
 	moore.ensure_available(16);
+	
+	shape.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
+	paint.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
 	/*
 	use chunk::matcher;
@@ -105,8 +108,6 @@ fn main() {
 		
 		vein_blocks.generate(&vein, &mut moore, &mut rng, &trig_lookup).unwrap();
 	}*/
-	
-	shape.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
