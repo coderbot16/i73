@@ -42,8 +42,8 @@ pub struct HeightSource {
 impl HeightSource {
 	pub fn new(rng: &mut JavaRng, settings: &HeightSettings) -> Self {
 		HeightSource {
-			biome_influence:       PerlinOctaves::new(rng, 10, settings.biome_influence_coord_scale, 0.0, 0),
-			depth:                 PerlinOctaves::new(rng, 16, settings.depth_coord_scale, 0.0, 0),
+			biome_influence:       PerlinOctaves::new(rng, 10, settings.biome_influence_coord_scale),
+			depth:                 PerlinOctaves::new(rng, 16, settings.depth_coord_scale),
 			biome_influence_scale: settings.biome_influence_scale,
 			depth_scale:           settings.depth_scale,
 			depth_base:            settings.depth_base

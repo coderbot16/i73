@@ -1,5 +1,5 @@
 use rng::JavaRng;
-use noise::octaves::PerlinOctaves;
+use noise::octaves::PerlinOctavesVertical;
 use nalgebra::Vector3;
 use noise_field::height::Height;
 
@@ -30,9 +30,9 @@ impl Default for TriNoiseSettings {
 }
 
 pub struct TriNoiseSource {
-	lower: PerlinOctaves,
-	upper: PerlinOctaves,
-	main:  PerlinOctaves,
+	lower:           PerlinOctavesVertical,
+	upper:           PerlinOctavesVertical,
+	main:            PerlinOctavesVertical,
 	 main_out_scale: f64,
 	upper_out_scale: f64,
 	lower_out_scale: f64
@@ -41,9 +41,9 @@ pub struct TriNoiseSource {
 impl TriNoiseSource {
 	pub fn new(rng: &mut JavaRng, settings: &TriNoiseSettings) -> Self { 
 		TriNoiseSource {
-			lower: PerlinOctaves::new(rng, 16, settings.lower_scale, 0.0, Y_NOISE_SIZE),
-			upper: PerlinOctaves::new(rng, 16, settings.upper_scale, 0.0, Y_NOISE_SIZE),
-			 main: PerlinOctaves::new(rng,  8, settings. main_scale, 0.0, Y_NOISE_SIZE),
+			lower: PerlinOctavesVertical::new(rng, 16, settings.lower_scale, 0.0, Y_NOISE_SIZE),
+			upper: PerlinOctavesVertical::new(rng, 16, settings.upper_scale, 0.0, Y_NOISE_SIZE),
+			 main: PerlinOctavesVertical::new(rng,  8, settings. main_scale, 0.0, Y_NOISE_SIZE),
 			 main_out_scale: settings. main_out_scale,
 			upper_out_scale: settings.upper_out_scale,
 			lower_out_scale: settings.lower_out_scale

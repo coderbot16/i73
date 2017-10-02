@@ -1,5 +1,5 @@
 use rng::JavaRng;
-use noise::Permutations;
+use noise::octaves::PerlinOctaves;
 use climate::ClimateSource;
 use noise_field::height::{HeightSettings, HeightSource};
 use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, H_NOISE_SIZE, Y_NOISE_SIZE};
@@ -13,6 +13,7 @@ use noise_field::height::lerp_to_layer;
 
 pub struct Settings<B> where B: Target {
 	shape_blocks: ShapeBlocks<B>,
+	paint_blocks: PaintBlocks<B>,
 	tri:          TriNoiseSettings,
 	height:       HeightSettings,
 	field:        FieldSettings,
@@ -23,6 +24,7 @@ impl Default for Settings<u16> {
 	fn default() -> Self {
 		Settings {
 			shape_blocks: ShapeBlocks::default(),
+			paint_blocks: PaintBlocks::default(),
 			tri:          TriNoiseSettings::default(),
 			height:       HeightSettings::default(),
 			field:        FieldSettings::default(),
@@ -40,27 +42,17 @@ pub fn passes<B>(seed: i64, settings: Settings<B>) -> (ShapePass<B>, PaintPass<B
 	// Oddly, this "feature" is what causes the sharp walls in beach/biome surfaces.
 	// It is a mystery why the feature exists in the first place.
 	
-	let beach = [
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng)
-	];
+	let sand      = PerlinOctaves::new(&mut JavaRng::new(rng.seed), 4, Vector3::new(1.0 / 32.0, 1.0 / 32.0,        1.0)); // Vertical,   Z =   0.0
+	let gravel    = PerlinOctaves::new(&mut rng,                    4, Vector3::new(1.0 / 32.0,        1.0, 1.0 / 32.0)); // Horizontal, Y = 109.0134
+	let thickness = PerlinOctaves::new(&mut rng,                    4, Vector3::new(1.0 / 16.0, 1.0 / 16.0, 1.0 / 16.0)); // Vertical,   Z =   0.0
 	
-	let thickness = [
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng),
-		Permutations::new(&mut rng)
-	];
-	
-	let height = HeightSource::new(&mut rng, &settings.height);
-	let field = settings.field;
+	let height  = HeightSource::new(&mut rng, &settings.height);
+	let field   = settings.field;
 	let climate = ClimateSource::new(seed);
 	
 	(
 		ShapePass { climate, blocks: settings.shape_blocks, tri, height, field, sea_coord: settings.sea_coord },
-		PaintPass { beach, thickness, phantom: ::std::marker::PhantomData }
+		PaintPass { blocks: settings.paint_blocks, sand, gravel, thickness }
 	)
 }
 
@@ -153,15 +145,89 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 	}
 }
 
+pub struct PaintBlocks<B> where B: Target {
+	air:       B,
+	stone:     B,
+	ocean:     B,
+	gravel:    B,
+	sand:      B,
+	sandstone: B,
+	top_todo:  B,
+	fill_todo: B
+}
+
+impl Default for PaintBlocks<u16> {
+	fn default() -> Self {
+		PaintBlocks {
+			air:        0 * 16,
+			stone:      1 * 16,
+			ocean:      9 * 16,
+			gravel:    13 * 16,
+			sand:      12 * 16,
+			sandstone: 24 * 16,
+			top_todo:   2 * 16, // Grass
+			fill_todo:  3 * 16  // Dirt
+		}
+	}
+}
+
 pub struct PaintPass<B> where B: Target {
-	beach:     [Permutations; 4], // TODO
-	thickness: [Permutations; 4], // TODO
-	phantom:   ::std::marker::PhantomData<B> // TODO: Replace with real block parameters.
+	blocks:    PaintBlocks<B>,
+	sand:      PerlinOctaves,
+	gravel:    PerlinOctaves,
+	thickness: PerlinOctaves
+}
+
+impl<B> PaintPass<B> where B: Target {
+	fn paint_stack(&self, /*_target: &mut Column<B>,*/ x: u8, z: u8, /*TODO: biome: BiomeDef<B, I>,*/ sand: bool, gravel: bool, thickness: i32) {
+		// TODO: Target -> Blocks + Associations
+	}
 }
 
 impl<B> Pass<B> for PaintPass<B> where B: Target {
-	fn apply(&self, _target: &mut Column<B>, _chunk: (i32, i32)) -> Result<()> {
-		unimplemented!()
+	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
+		let block = ((chunk.0 * 16) as f64, (chunk.1 * 16) as f64);
+		let mut rng = JavaRng::new((chunk.0 as i64).wrapping_mul(341873128712).wrapping_add((chunk.1 as i64).wrapping_mul(132897987541)));
+		
+		let      sand_vertical = self.     sand.vertical_ref(block.1, 16);
+		let thickness_vertical = self.thickness.vertical_ref(block.1, 16);
+		
+		let   vertical_offset = Vector3::new(block.0 as f64, block.1 as f64,            0.0);
+		let horizontal_offset = Vector3::new(block.0 as f64,            0.0, block.1 as f64);
+		
+		target.ensure_available(self.blocks.air.clone());
+		target.ensure_available(self.blocks.stone.clone());
+		target.ensure_available(self.blocks.ocean.clone());
+		target.ensure_available(self.blocks.gravel.clone());
+		target.ensure_available(self.blocks.sand.clone());
+		target.ensure_available(self.blocks.sandstone.clone());
+		target.ensure_available(self.blocks.top_todo.clone());
+		target.ensure_available(self.blocks.fill_todo.clone());
+		
+		let (mut blocks, palette) = target.freeze_palettes();
+		
+		let air       = palette.reverse_lookup(&self.blocks.air).unwrap();
+		let stone     = palette.reverse_lookup(&self.blocks.stone).unwrap();
+		let ocean     = palette.reverse_lookup(&self.blocks.ocean).unwrap();
+		let gravel    = palette.reverse_lookup(&self.blocks.gravel).unwrap();
+		let sand      = palette.reverse_lookup(&self.blocks.sand).unwrap();
+		let sandstone = palette.reverse_lookup(&self.blocks.sandstone).unwrap();
+		let top_todo  = palette.reverse_lookup(&self.blocks.top_todo).unwrap();
+		let fill_todo = palette.reverse_lookup(&self.blocks.fill_todo).unwrap();
+		
+		for z in 0..16usize {
+			for x in 0..16usize {
+				let (sand_variation, gravel_variation, thickness_variation) = (rng.next_f64() * 0.2, rng.next_f64() * 0.2, rng.next_f64() * 0.25);
+
+				let   sand    =       sand_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64,      0.0), z) +   sand_variation > 0.0;
+				let gravel    =         self.gravel.generate         (horizontal_offset + Vector3::new(x as f64, 109.0134, z as f64)   ) + gravel_variation > 3.0;
+				let thickness = (thickness_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64,      0.0), z) / 3.0 + 3.0 + thickness_variation) as i32;
+				
+				self.paint_stack(/*target,*/ x as u8, z as u8, sand, gravel, thickness);
+			}
+		}
+		
+		Ok(())
 	}
 }
 

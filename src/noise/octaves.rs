@@ -55,20 +55,15 @@ impl Sample for SimplexOctaves {
 // TODO: Split PerlinOctaves into a 2D version and 3D VerticalView that allows Y axis access.
 // The 3D vertical view should also use a flat array for the YTable as well.
 
-pub struct PerlinOctaves(Vec<(Perlin, Vec<f64>)>);
+pub struct PerlinOctaves(Vec<Perlin>);
 impl PerlinOctaves {
-	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>, start: f64, count: usize) -> Self {
+	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>) -> Self {
 		let mut octaves = Vec::with_capacity(octaves);
 		
 		let mut frequency = 1.0;
 		
 		for _ in 0..octaves.capacity() {
-			let perlin = Perlin::from_rng(rng, scale * frequency, 1.0 / frequency);
-			
-			let mut table = vec![0.0; count];
-			perlin.generate_y_table(start, &mut table);
-			
-			octaves.push((perlin, table));
+			octaves.push(Perlin::from_rng(rng, scale * frequency, 1.0 / frequency));
 			
 			frequency /= 2.0;
 		}
@@ -76,14 +71,32 @@ impl PerlinOctaves {
 		PerlinOctaves(octaves)
 	}
 	
-	pub fn generate_override(&self, point: Vector3<f64>, index: usize) -> f64 {
-		let mut result = 0.0;
+	fn generate_y_tables(&self, y_start: f64, y_count: usize) -> Vec<f64> {
+		let mut tables = vec![0.0; y_count * self.0.len()];
 		
-		for octave in &self.0 {
-			result += octave.0.generate_override(point, octave.1[index])
+		for (perlin, chunk) in self.0.iter().zip(tables.chunks_mut(y_count)) {
+			perlin.generate_y_table(y_start, chunk);
 		}
 		
-		result
+		tables
+	}
+	
+	pub fn vertical_ref(&self, y_start: f64, y_count: usize) -> PerlinOctavesVerticalRef {
+		PerlinOctavesVerticalRef {
+			octaves: &self.0,
+			tables: self.generate_y_tables(y_start, y_count),
+			y_count
+		}
+	}
+	
+	pub fn into_vertical(self, y_start: f64, y_count: usize) -> PerlinOctavesVertical {
+		let tables = self.generate_y_tables(y_start, y_count);
+		
+		PerlinOctavesVertical { octaves: self.0, tables, y_count }
+	}
+	
+	pub fn generate(&self, point: Vector3<f64>) -> f64 {
+		self.0.iter().fold(0.0, |result, perlin| result + perlin.generate(point))
 	}
 }
 
@@ -91,20 +104,49 @@ impl Sample for PerlinOctaves {
 	type Output = f64;
 	
 	fn sample(&self, point: Vector2<f64>) -> Self::Output {
+		self.0.iter().fold(0.0, |result, perlin| result + perlin.sample(point))
+	}
+	
+	fn chunk(&self, chunk: (f64, f64)) -> Layer<Self::Output> {
+		self.0.iter().fold(Layer::fill(0.0), |result, perlin| result + perlin.chunk(chunk))
+	}
+}	
+
+pub struct PerlinOctavesVerticalRef<'a> {
+	octaves: &'a [Perlin],
+	tables:  Vec<f64>,
+	y_count: usize
+}
+
+impl<'a> PerlinOctavesVerticalRef<'a> {
+	pub fn generate_override(&self, point: Vector3<f64>, index: usize) -> f64 {
 		let mut result = 0.0;
 		
-		for octave in &self.0 {
-			result += octave.0.sample(point)
+		for (perlin, table) in self.octaves.iter().zip(self.tables.chunks(self.y_count)) {
+			result += perlin.generate_override(point, table[index])
 		}
 		
 		result
 	}
+}
+
+
+pub struct PerlinOctavesVertical {
+	octaves: Vec<Perlin>,
+	tables:  Vec<f64>,
+	y_count: usize
+}
+
+impl PerlinOctavesVertical {
+	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>, y_start: f64, y_count: usize) -> Self {
+		PerlinOctaves::new(rng, octaves, scale).into_vertical(y_start, y_count)
+	}
 	
-	fn chunk(&self, chunk: (f64, f64)) -> Layer<Self::Output> {
-		let mut result = Layer::fill(0.0);
+	pub fn generate_override(&self, point: Vector3<f64>, index: usize) -> f64 {
+		let mut result = 0.0;
 		
-		for octave in &self.0 {
-			result += octave.0.chunk(chunk);
+		for (perlin, table) in self.octaves.iter().zip(self.tables.chunks(self.y_count)) {
+			result += perlin.generate_override(point, table[index])
 		}
 		
 		result

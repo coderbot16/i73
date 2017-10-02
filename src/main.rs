@@ -27,7 +27,7 @@ mod segmented;
 
 use std::fs::File;
 use nbt_serde::encode;
-use chunk::grouping::Moore;
+use chunk::grouping::{Moore, Column};
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
 use chunk::anvil::{self, ChunkRoot};
@@ -59,14 +59,53 @@ fn main() {
 		}
 	}*/
 	
-	let (shape, paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
+	let (shape, _paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
+	/*
 	let mut moore = Moore::<u16>::with_bits(4);
 	
 	moore.ensure_available(0);
-	moore.ensure_available(16);
+	moore.ensure_available(16);*/
 	
-	shape.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
-	paint.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
+	
+	let file = File::create("out/region/r.0.0.mca").unwrap();
+	let mut writer = RegionWriter::start(file).unwrap();
+	
+	for x in 0..32 {
+		for z in 0..32 {
+			println!("applying to {}, {}", x, z);
+			
+			let mut column = Column::<u16>::with_bits(4);
+			
+			shape.apply(&mut column, (x, z)).unwrap();
+			
+			let sections = column.to_anvil(vec![None; 16]).unwrap();
+		
+			let root = ChunkRoot {
+				version: 0,
+				chunk: anvil::Chunk {
+					x: (x as i32),
+					z: (z as i32),
+					last_update: 0,
+					light_populated: false,
+					terrain_populated: true,
+					v: 0,
+					inhabited_time: 0,
+					biomes: vec![0; 256],
+					heightmap: vec![0; 256],
+					sections,
+					entities: vec![],
+					tile_entities: vec![],
+					tile_ticks: vec![]
+				}
+			};
+			
+			println!("Chunk spans {} bytes", writer.chunk(x as u8, z as u8, &root).unwrap());
+		}
+	}
+	
+	writer.finish().unwrap();
+	
+	//paint.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
 	/*
 	use chunk::matcher;
@@ -109,7 +148,7 @@ fn main() {
 		vein_blocks.generate(&vein, &mut moore, &mut rng, &trig_lookup).unwrap();
 	}*/
 	
-	let file = File::create("out/region/r.0.0.mca").unwrap();
+	/*let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	for x in 0..3 {
@@ -135,7 +174,7 @@ fn main() {
 				}
 			};
 			
-			println!("{:?}", root);
+			//println!("{:?}", root);
 			
 			println!("Chunk spans {} bytes", writer.chunk(x, z, &root).unwrap());
 			let mut file = File::create(format!("out/alpha/c.{}.{}.nbt", x, z)).unwrap();
@@ -143,7 +182,7 @@ fn main() {
 		}
 	}
 	
-	writer.finish().unwrap();
+	writer.finish().unwrap();*/
 	
 	/*for x in 0..400 {
 		let rng = JavaRng::new(100 + x);
