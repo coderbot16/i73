@@ -60,6 +60,15 @@ impl<B> Chunk<B> where B: Target {
 	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage, &Palette<B>) {
 		(&mut self.storage, &self.palette)
 	}
+	
+	/// Preforms the ensure_available, reverse_lookup, and set calls all in one.
+	/// Prefer freezing the palette for larger scale block sets.
+	pub fn set_immediate(&mut self, position: BlockPosition, target: &B) {
+		self.ensure_available(target.clone());
+		let association = self.palette.reverse_lookup(&target).unwrap();
+		
+		self.storage.set(position, &association);
+	}
 }
 
 impl Chunk<u16> {
@@ -86,8 +95,8 @@ impl Chunk<u16> {
 				let anvil = association.target().map(|&v| v)?;
 				
 				    blocks[index as usize] = (anvil >> 4)  as i8;
-				meta.set_uncleared(position, (anvil & 0xF) as i8);
-				 add.set_uncleared(position, (anvil >> 12) as i8);
+				meta.set_uncleared(position, (anvil & 0xF) as u8);
+				 add.set_uncleared(position, (anvil >> 12) as u8);
 			}
 			
 			Ok((blocks, meta, Some(add)))
@@ -98,7 +107,7 @@ impl Chunk<u16> {
 				let anvil = association.target().map(|&v| v)?;
 				
 				    blocks[index as usize] = (anvil >> 4)  as i8;
-				meta.set_uncleared(position, (anvil & 0xF) as i8);
+				meta.set_uncleared(position, (anvil & 0xF) as u8);
 			}
 			
 			Ok((blocks, meta, None))

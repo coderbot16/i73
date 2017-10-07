@@ -14,7 +14,6 @@ mod rng;
 mod biome;
 mod sample;
 mod climate;
-mod surface;
 mod noise_field;
 mod decorator;
 mod trig;
@@ -24,18 +23,99 @@ mod distribution;
 mod chunk;
 mod totuple;
 mod segmented;
+mod dynamics;
 
 use std::fs::File;
-use nbt_serde::encode;
+//use nbt_serde::encode;
+use chunk::storage::Chunk;
 use chunk::grouping::{Moore, Column};
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
+use chunk::position::BlockPosition;
 
 extern crate nalgebra;
 
 fn main() {
+	/*use dynamics::light::{self, LightingQueue, Lighting, BlockLightSources};
+	
+	let mut column = Column::<u16>::with_bits(4);
+	column.chunk_mut(0).palette_mut().replace(0,  0 * 16);
+	column.chunk_mut(0).palette_mut().replace(1, 89 * 16);
+	column.chunk_mut(0).palette_mut().replace(2,  1 * 16);
+	column.chunk_mut(0).set_immediate(BlockPosition::new(7, 7, 7), &(89 * 16));
+	
+	{
+		let (blocks, palette) = column.chunk_mut(0).freeze_palette();
+		
+		let stone = palette.reverse_lookup(&16).unwrap();
+		
+		for x in 0..1792 {
+			let pos = BlockPosition::from_yzx(x);
+			
+			blocks.set(pos, &stone);
+		}
+	}
+	
+	let mut sources = BlockLightSources::new(4);
+	sources.set_emission(1, 15);
+	
+	let mut queue = LightingQueue::new();
+	let mut light = Lighting::new(sources, 4);
+	
+	light.set(&mut queue, BlockPosition::new(7, 7, 7), 15);
+	println!("{:?}", light);
+	
+	while light.step(&column.chunk(0), &mut queue) {
+		println!("{:?}", light);
+	}
+	
+	println!("-- done --");
+	
+	let file = File::create("out/region/r.0.0.mca").unwrap();
+	let mut writer = RegionWriter::start(file).unwrap();
+	
+	let mut heightmap = (Box::new(light::generate_heightmap(&column, &0)) as Box<[u32]>).into_vec();
+	
+	{
+		{
+			let (blocks, data, add) = column.chunk(0).to_anvil().unwrap();
+			
+			let root = ChunkRoot {
+				version: 0,
+				chunk: anvil::Chunk {
+					x: 0,
+					z: 0,
+					last_update: 0,
+					light_populated: false,
+					terrain_populated: true,
+					v: 0,
+					inhabited_time: 0,
+					biomes: vec![0; 256],
+					heightmap,
+					sections: vec![anvil::Section {
+						y: 0,
+						blocks,
+						add,
+						data,
+						block_light: light.to_anvil(),
+						sky_light: anvil::NibbleVec::filled()
+					}],
+					entities: vec![],
+					tile_entities: vec![],
+					tile_ticks: vec![]
+				}
+			};
+			
+			println!("Chunk spans {} bytes", writer.chunk(0, 0, &root).unwrap());
+			let mut file = File::create(format!("/home/coderbot/c.0.0.nbt")).unwrap();
+			encode::to_writer(&mut file, &root, None).unwrap();
+		}
+	}
+	
+	writer.finish().unwrap();*/
+	
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
 	let settings = LargeTreeSettings::default();
 	
@@ -59,7 +139,7 @@ fn main() {
 		}
 	}*/
 	
-	let (shape, _paint) = overworld_173::passes::<u16>(8399452073110208023, Settings::default());
+	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default());
 	/*
 	let mut moore = Moore::<u16>::with_bits(4);
 	
@@ -77,6 +157,7 @@ fn main() {
 			let mut column = Column::<u16>::with_bits(4);
 			
 			shape.apply(&mut column, (x, z)).unwrap();
+			paint.apply(&mut column, (x, z)).unwrap();
 			
 			let sections = column.to_anvil(vec![None; 16]).unwrap();
 		

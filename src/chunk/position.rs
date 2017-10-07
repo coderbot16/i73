@@ -1,4 +1,4 @@
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct BlockPosition(u16);
 
 impl BlockPosition {
@@ -68,5 +68,59 @@ impl BlockPosition {
 	/// Returns the index represented as `(X<<8) | (Y<<4) | Z`.
 	pub fn xyz(&self) -> u16 {
 		((self.x() as u16) << 8) | self.yz()
+	}
+	
+	/// Returns the chunk_yzx index into a nibble array. Returns in the form (index, shift).
+	pub fn chunk_nibble_yzx(&self) -> (usize, i8) {
+		let raw = self.chunk_yzx();
+		((raw >> 1) as usize, (raw & 1) as i8 * 4)
+	}
+	
+	pub fn minus_x(&self) -> Option<BlockPosition> {
+		if self.x() != 0 {
+			Some(BlockPosition(self.0 - 0x0001))
+		} else {
+			None
+		}
+	}
+	
+	pub fn plus_x(&self) -> Option<BlockPosition> {
+		if self.x() != 15 {
+			Some(BlockPosition(self.0 + 0x0001))
+		} else {
+			None
+		}
+	}
+	
+	pub fn minus_z(&self) -> Option<BlockPosition> {
+		if self.z() != 0 {
+			Some(BlockPosition(self.0 - 0x0010))
+		} else {
+			None
+		}
+	}
+	
+	pub fn plus_z(&self) -> Option<BlockPosition> {
+		if self.z() != 15 {
+			Some(BlockPosition(self.0 + 0x0010))
+		} else {
+			None
+		}
+	}
+	
+	pub fn minus_y(&self) -> Option<BlockPosition> {
+		if self.y() > 0 {
+			Some(BlockPosition(self.0 - 0x0100))
+		} else {
+			None
+		}
+	}
+	
+	pub fn plus_y(&self) -> Option<BlockPosition> {
+		if self.y() <= 15 {
+			Some(BlockPosition(self.0 + 0x0100))
+		} else {
+			None
+		}
 	}
 }

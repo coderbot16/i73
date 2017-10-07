@@ -10,7 +10,7 @@ impl<T, B> BlockMatcher<B> for T where T: Fn(&B) -> bool, B: Target {
 	}
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct All;
 
 impl<B> BlockMatcher<B> for All where B: Target {
@@ -19,11 +19,29 @@ impl<B> BlockMatcher<B> for All where B: Target {
 	}
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct None;
 
 impl<B> BlockMatcher<B> for None where B: Target {
 	fn matches(&self, _block: &B) -> bool {
 		false
+	}
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct Is<B>(pub B) where B: Target;
+
+impl<B> BlockMatcher<B> for Is<B> where B: Target {
+	fn matches(&self, block: &B) -> bool {
+		*block == self.0
+	}
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct IsNot<B>(pub B) where B: Target;
+
+impl<B> BlockMatcher<B> for IsNot<B> where B: Target {
+	fn matches(&self, block: &B) -> bool {
+		*block != self.0
 	}
 }

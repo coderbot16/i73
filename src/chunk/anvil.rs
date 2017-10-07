@@ -28,7 +28,7 @@ pub struct Chunk {
 	#[serde(rename="Biomes")]
 	pub biomes: Vec<i8>,
 	#[serde(rename="HeightMap")]
-	pub heightmap: Vec<i32>,
+	pub heightmap: Vec<u32>,
 	#[serde(rename="Sections")]
 	pub sections: Vec<Section>,
 	#[serde(rename="Entities")]
@@ -62,35 +62,39 @@ impl Section {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct NibbleVec(Vec<i8>);
+pub struct NibbleVec(Vec<u8>);
 impl NibbleVec {
-	pub fn new() -> Self {
-		NibbleVec(Vec::new())
-	}
-	
 	pub fn with_capacity(nibbles: usize) -> Self {
 		NibbleVec(Vec::with_capacity(nibbles / 2))
+	}
+	
+	pub fn from_vec(vec: Vec<u8>) -> Option<Self> {
+		if vec.len() != 2048 {
+			return None
+		}
+		
+		Some(NibbleVec(vec))
 	}
 	
 	pub fn filled() -> Self {
 		NibbleVec(vec![0; 2048])
 	}
 	
-	fn get(&self, at: BlockPosition) -> i8 {
-		let (index, shift) = nibble_index(at);
+	fn get(&self, at: BlockPosition) -> u8 {
+		let (index, shift) = at.chunk_nibble_yzx();
 		(self.0[index]&(0xF << shift)) >> shift
 	}
 	
-	pub fn set(&mut self, at: BlockPosition, value: i8) {
-		let (index, shift) = nibble_index(at);
+	pub fn set(&mut self, at: BlockPosition, value: u8) {
+		let (index, shift) = at.chunk_nibble_yzx();
 		let cleared = !(!self.0[index]) | (0xF << shift);
 		self.0[index] = cleared | ((value&0xF) << shift);
 	}
 	
 	/// Version of `NibbleVec::set` that doesn't clear the value at the position to 0 before preforming bitwise or.
 	/// Use when you know that the value at that position is 0.
-	pub fn set_uncleared(&mut self, at: BlockPosition, value: i8) {
-		let (index, shift) = nibble_index(at);
+	pub fn set_uncleared(&mut self, at: BlockPosition, value: u8) {
+		let (index, shift) = at.chunk_nibble_yzx();
 		self.0[index] |= (value&0xF) << shift;
 	}
 }
@@ -98,9 +102,4 @@ impl NibbleVec {
 // Add<<12 | Block<<4 | Data
 struct AnvilId(u16);
 // Sky<<4 | Block
-struct Light(i8);
-
-fn nibble_index(at: BlockPosition) -> (usize, i8) {
-	let raw = at.chunk_yzx();
-	((raw >> 1) as usize, (raw & 1) as i8 * 4)
-}
+struct Light(u8);

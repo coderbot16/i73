@@ -1,75 +1,57 @@
-use surface::Surface;
 use climate::Climate;
 use chunk::storage::Target;
 use std::borrow::Cow;
 use std::fmt::Display;
 use segmented::Segmented;
 
-pub static DEFAULT_BIOMES: [BiomeDef<u16, char>; 11] = [
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '0', name: Cow::Borrowed("Rainforest"     ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '1', name: Cow::Borrowed("Swampland"      ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '2', name: Cow::Borrowed("Seasonal Forest") },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '3', name: Cow::Borrowed("Forest"         ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '4', name: Cow::Borrowed("Savanna"        ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '5', name: Cow::Borrowed("Shrubland"      ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '6', name: Cow::Borrowed("Taiga"          ) },
-	BiomeDef { surface: Surface {top: 12, fill: 12 }, id: '7', name: Cow::Borrowed("Desert"         ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: '8', name: Cow::Borrowed("Plains"         ) },
-	BiomeDef { surface: Surface {top: 12, fill: 12 }, id: '9', name: Cow::Borrowed("Ice Desert"     ) },
-	BiomeDef { surface: Surface {top:  2, fill:  3 }, id: 'A', name: Cow::Borrowed("Tundra"         ) }
-];
-
 pub fn default_grid() -> Grid<u16, char> {
-	let mut grid = Grid::new(DEFAULT_BIOMES[0].clone());
+	//           Biome { surface: Surface {top: 12*16, fill: 12*16, chain: vec![24*16] }, id: '9', name: Cow::Borrowed("Ice Desert"     ) };
+	let plains = Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '8', name: Cow::Borrowed("Plains"         ) };
+	let tundra = Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: 'A', name: Cow::Borrowed("Tundra"         ) };
+	let forest = Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '3', name: Cow::Borrowed("Forest"         ) };
 	
-	grid.add((0.00, 0.10), (0.00, 1.00), DEFAULT_BIOMES[Biome::Tundra as usize].clone());
-	grid.add((0.10, 0.50), (0.00, 0.20), DEFAULT_BIOMES[Biome::Tundra as usize].clone());
-	grid.add((0.10, 0.50), (0.20, 0.50), DEFAULT_BIOMES[Biome::Taiga as usize].clone());
-	grid.add((0.10, 0.70), (0.50, 1.00), DEFAULT_BIOMES[Biome::Swampland as usize].clone());
-	grid.add((0.50, 0.95), (0.00, 0.20), DEFAULT_BIOMES[Biome::Savanna as usize].clone());
-	grid.add((0.50, 0.97), (0.20, 0.35), DEFAULT_BIOMES[Biome::Shrubland as usize].clone());
-	grid.add((0.50, 0.97), (0.35, 0.50), DEFAULT_BIOMES[Biome::Forest as usize].clone());
-	grid.add((0.70, 0.97), (0.50, 1.00), DEFAULT_BIOMES[Biome::Forest as usize].clone());
-	grid.add((0.95, 1.00), (0.00, 0.20), DEFAULT_BIOMES[Biome::Desert as usize].clone());
-	grid.add((0.97, 1.00), (0.20, 0.45), DEFAULT_BIOMES[Biome::Plains as usize].clone());
-	grid.add((0.97, 1.00), (0.45, 0.90), DEFAULT_BIOMES[Biome::SeasonalForest as usize].clone());
-	grid.add((0.97, 1.00), (0.90, 1.00), DEFAULT_BIOMES[Biome::Rainforest as usize].clone());
+	let mut grid = Grid::new(plains.clone());
+	
+	grid.add((0.00, 0.10), (0.00, 1.00), tundra.clone()                                                                                                            );
+	grid.add((0.10, 0.50), (0.00, 0.20), tundra                                                                                                                    );
+	grid.add((0.10, 0.50), (0.20, 0.50), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '6', name: Cow::Borrowed("Taiga"          ) });
+	grid.add((0.10, 0.70), (0.50, 1.00), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '1', name: Cow::Borrowed("Swampland"      ) });
+	grid.add((0.50, 0.95), (0.00, 0.20), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '4', name: Cow::Borrowed("Savanna"        ) });
+	grid.add((0.50, 0.97), (0.20, 0.35), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '5', name: Cow::Borrowed("Shrubland"      ) });
+	grid.add((0.50, 0.97), (0.35, 0.50), forest.clone()                                                                                                            );
+	grid.add((0.70, 0.97), (0.50, 1.00), forest                                                                                                                    );
+	grid.add((0.95, 1.00), (0.00, 0.20), Biome { surface: Surface {top: 12*16, fill: 12*16, chain: vec![24*16] }, id: '7', name: Cow::Borrowed("Desert"         ) });
+	grid.add((0.97, 1.00), (0.20, 0.45), plains                                                                                                                    );
+	grid.add((0.97, 1.00), (0.45, 0.90), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '2', name: Cow::Borrowed("Seasonal Forest") });
+	grid.add((0.97, 1.00), (0.90, 1.00), Biome { surface: Surface {top:  2*16, fill:  3*16, chain: vec![     ] }, id: '0', name: Cow::Borrowed("Rainforest"     ) });
 	
 	grid
 }
 
 #[derive(Debug, Clone)]
-pub struct BiomeDef<B, I> where B: Target, I: Clone {
+pub struct Biome<B, I> where B: Target, I: Clone {
 	pub surface: Surface<B>,
 	pub id:   I,
 	pub name: Cow<'static, str>
 }
 
-#[derive(Debug, Copy, Clone)]
-pub enum Biome {
-	Rainforest,
-	Swampland,
-	SeasonalForest,
-	Forest,
-	Savanna,
-	Shrubland,
-	Taiga,
-	Desert,
-	Plains,
-	IceDesert,
-	Tundra
+#[derive(Clone, Eq, PartialEq, Debug)]
+pub struct Surface<B> where B: Target {
+	pub top:  B,
+	pub fill: B,
+	pub chain: Vec<B>
 }
 
-pub struct Grid<B, I>(pub Segmented<Segmented<BiomeDef<B, I>>>) where B: Target, I: Clone;
+pub struct Grid<B, I>(pub Segmented<Segmented<Biome<B, I>>>) where B: Target, I: Clone;
 impl<B, I> Grid<B, I> where B: Target, I: Clone {
-	fn new_temperatures(biome: BiomeDef<B, I>) -> Segmented<BiomeDef<B, I>> {
+	fn new_temperatures(biome: Biome<B, I>) -> Segmented<Biome<B, I>> {
 		let mut temperatures = Segmented::new(biome.clone());
 		temperatures.add_boundary(1.0, biome.clone());
 		
 		temperatures
 	}
 	
-	pub fn new(default: BiomeDef<B, I>) -> Self {
+	pub fn new(default: Biome<B, I>) -> Self {
 		let temperatures = Self::new_temperatures(default);
 		
 		let mut grid = Segmented::new(temperatures.clone());
@@ -78,7 +60,7 @@ impl<B, I> Grid<B, I> where B: Target, I: Clone {
 		Grid(grid)
 	}
 	
-	pub fn add(&mut self, temperature: (f64, f64), rainfall: (f64, f64), biome: BiomeDef<B, I>) {
+	pub fn add(&mut self, temperature: (f64, f64), rainfall: (f64, f64), biome: Biome<B, I>) {
 		self.0.for_all_aligned(rainfall.0, rainfall.1, &|| Self::new_temperatures(biome.clone()), &|temperatures| {
 			temperatures.for_all_aligned(temperature.0, temperature.1, &|| biome.clone(), &|existing| {
 				*existing = biome.clone();
@@ -86,12 +68,12 @@ impl<B, I> Grid<B, I> where B: Target, I: Clone {
 		})
 	}
 	
-	pub fn lookup(&self, climate: Climate) -> &BiomeDef<B, I> {
+	pub fn lookup(&self, climate: Climate) -> &Biome<B, I> {
 		self.0.get(climate.adjusted_rainfall()).get(climate.temperature())
 	}
 }
 
-pub struct Lookup<B, I>(Box<[BiomeDef<B, I>]>) where B: Target, I: Clone;
+pub struct Lookup<B, I>(Box<[Biome<B, I>]>) where B: Target, I: Clone;
 impl<B, I> Lookup<B, I> where B: Target, I: Clone {
 	pub fn generate(grid: &Grid<B, I>) -> Self {
 		let mut lookup = Vec::with_capacity(4096);
@@ -107,11 +89,11 @@ impl<B, I> Lookup<B, I> where B: Target, I: Clone {
 		Lookup(lookup.into_boxed_slice())
 	}
 	
-	fn lookup_raw(&self, temperature: usize, rainfall: usize) -> &BiomeDef<B, I> {
+	fn lookup_raw(&self, temperature: usize, rainfall: usize) -> &Biome<B, I> {
 		&self.0[temperature * 64 + rainfall]
 	}
 	
-	pub fn lookup(&self, climate: Climate) -> &BiomeDef<B, I> {
+	pub fn lookup(&self, climate: Climate) -> &Biome<B, I> {
 		self.lookup_raw((climate.temperature() * 63.0) as usize, (climate.rainfall() * 63.0) as usize)
 	}
 }
