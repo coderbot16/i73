@@ -127,7 +127,7 @@ impl Column<u16> {
 }
 
 #[derive(Debug)]
-pub struct ColumnBlocks<'a>([&'a mut PackedBlockStorage; 16]);
+pub struct ColumnBlocks<'a>([&'a mut PackedBlockStorage<BlockPosition>; 16]);
 impl<'a> ColumnBlocks<'a> {
 	pub fn get<'p, B>(&self, at: BlockPosition, palettes: &ColumnPalettes<'p, B>) -> PaletteAssociation<'p, B> where B: Target {
 		let chunk_y = at.chunk_y() as usize;

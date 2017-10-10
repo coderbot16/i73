@@ -4,6 +4,7 @@ use std::hash::Hash;
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 use std::mem;
+use std::marker::PhantomData;
 use std::fmt::Debug;
 
 pub trait Target: Eq + Hash + Clone + Debug {}
@@ -11,7 +12,7 @@ impl<T> Target for T where T: Eq + Hash + Clone + Debug {}
 
 #[derive(Debug)]
 pub struct Chunk<B> where B: Target {
-	storage: PackedBlockStorage,
+	storage: PackedBlockStorage<BlockPosition>,
 	palette: Palette<B>
 }
 
@@ -24,10 +25,10 @@ impl<B> Chunk<B> where B: Target {
 	}
 	
 	/// Increased the capacity of this chunk's storage by 1 bit, and returns the old storage for reuse purposes.
-	pub fn reserve_bits(&mut self, bits: usize) -> PackedBlockStorage {
+	pub fn reserve_bits(&mut self, bits: usize) -> PackedBlockStorage<BlockPosition> {
 		self.palette.reserve_bits(bits);
 		
-		let mut replacement_storage = PackedBlockStorage::new(self.storage.bits_per_entry + bits);
+		let mut replacement_storage = PackedBlockStorage::new(self.storage.bits_per_entry() + bits);
 		replacement_storage.clone_from(&self.storage, &self.palette);
 		
 		mem::swap(&mut self.storage, &mut replacement_storage);
@@ -53,11 +54,11 @@ impl<B> Chunk<B> where B: Target {
 		&mut self.palette
 	}
 	
-	pub fn freeze_read_only(&self) -> (&PackedBlockStorage, &Palette<B>) {
+	pub fn freeze_read_only(&self) -> (&PackedBlockStorage<BlockPosition>, &Palette<B>) {
 		(&self.storage, &self.palette)
 	}
 	
-	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage, &Palette<B>) {
+	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage<BlockPosition>, &Palette<B>) {
 		(&mut self.storage, &self.palette)
 	}
 	
@@ -216,14 +217,25 @@ impl<B> Palette<B> where B: Target {
 	pub fn reverse_lookup(&self, target: &B) -> Option<PaletteAssociation<B>> {
 		self.reverse.get(target).map(|&value| PaletteAssociation { palette: self, value })
 	}
+	
+	pub fn entries(&self) -> &[Option<B>] {
+		&self.entries
+	}
+}
+
+pub trait PackedIndex: Copy {
+	fn entries() -> usize;
+	fn from_index(index: usize) -> Self;
+	fn to_index(&self) -> usize;
 }
 
 #[derive(Debug)]
-pub struct PackedBlockStorage {
+pub struct PackedBlockStorage<P> where P: PackedIndex {
 	storage: Vec<u64>,
 	counts: Vec<usize>,
 	bits_per_entry: usize,
-	bitmask: u64
+	bitmask: u64,
+	phantom: PhantomData<P>
 }
 
 enum Indices {
@@ -231,16 +243,17 @@ enum Indices {
 	Double(usize, usize)
 }
 
-impl PackedBlockStorage {
+impl<P> PackedBlockStorage<P> where P: PackedIndex {
 	pub fn new(bits_per_entry: usize) -> Self {
 		let mut counts = vec![0; 1<<bits_per_entry];
-		counts[0] = 4096;
+		counts[0] = P::entries();
 		
 		PackedBlockStorage {
-			storage: vec![0; bits_per_entry * 512],
+			storage: vec![0; bits_per_entry * (P::entries() / 64)],
 			counts,
 			bits_per_entry,
-			bitmask: (1 << (bits_per_entry as u64)) - 1
+			bitmask: (1 << (bits_per_entry as u64)) - 1,
+			phantom: PhantomData
 		}
 	}
 	
@@ -263,7 +276,7 @@ impl PackedBlockStorage {
 		self.counts[association.raw_value()]
 	}
 	
-	pub fn get<'p, B>(&self, position: BlockPosition, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Target {
+	pub fn get<'p, B>(&self, position: P, palette: &'p Palette<B>) -> PaletteAssociation<'p, B> where B: 'p + Target {
 		if self.bits_per_entry == 0 {
 			return PaletteAssociation {
 				palette,
@@ -271,7 +284,7 @@ impl PackedBlockStorage {
 			}
 		}
 		
-		let index = position.chunk_yzx() as usize;
+		let index = position.to_index();
 		
 		let (indices, sub_index) = self.indices(index);
 		
@@ -289,13 +302,13 @@ impl PackedBlockStorage {
 		}
 	}
 	
-	pub fn set<B>(&mut self, position: BlockPosition, association: &PaletteAssociation<B>) where B: Target {
+	pub fn set<B>(&mut self, position: P, association: &PaletteAssociation<B>) where B: Target {
 		if self.bits_per_entry == 0 {
 			return;
 		}
 		
 		let value = association.value as u64;
-		let index = position.chunk_yzx() as usize;
+		let index = position.to_index();
 		
 		let previous = self.get(position, association.palette);
 		self.counts[previous.raw_value()] -= 1;
@@ -312,7 +325,7 @@ impl PackedBlockStorage {
 		}
 	}
 	
-	pub fn clone_from<B>(&mut self, from: &PackedBlockStorage, palette: &Palette<B>) -> bool where B: Target {
+	pub fn clone_from<B>(&mut self, from: &PackedBlockStorage<P>, palette: &Palette<B>) -> bool where B: Target {
 		if from.bits_per_entry < self.bits_per_entry {
 			return false;
 		}
@@ -339,12 +352,16 @@ impl PackedBlockStorage {
 		} else {
 			// TODO: Optimize this loop!
 			
-			for index in 0..4096 {
-				let position = BlockPosition::from_yzx(index);
+			for index in 0..P::entries() {
+				let position = P::from_index(index);
 				self.set(position, &from.get(position, palette));
 			}
 		}
 		
 		true
+	}
+	
+	pub fn bits_per_entry(&self) -> usize {
+		self.bits_per_entry
 	}
 }

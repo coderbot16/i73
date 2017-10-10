@@ -13,7 +13,6 @@ mod noise;
 mod rng;
 mod biome;
 mod sample;
-mod climate;
 mod noise_field;
 mod decorator;
 mod trig;
@@ -31,13 +30,21 @@ use chunk::storage::Chunk;
 use chunk::grouping::{Moore, Column};
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
+use generator::sky_173;
+use generator::nether_173;
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
 use chunk::position::BlockPosition;
 
 extern crate nalgebra;
+use nalgebra::Vector3;
 
 fn main() {
+	let reduction_table = nether_173::generate_reduction_table(17);
+	for reduction in &reduction_table {
+		println!("{}", reduction);
+	}
+	
 	/*use dynamics::light::{self, LightingQueue, Lighting, BlockLightSources};
 	
 	let mut column = Column::<u16>::with_bits(4);
@@ -140,12 +147,18 @@ fn main() {
 	}*/
 	
 	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default());
-	/*
-	let mut moore = Moore::<u16>::with_bits(4);
 	
-	moore.ensure_available(0);
-	moore.ensure_available(16);*/
+	let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
 	
+	let default_grid = biome::default_grid();
+	
+	let mut fake_settings = Settings::default();
+	fake_settings.biome_lookup = biome::Lookup::filled(default_grid.lookup(biome::climate::Climate::new(0.5, 0.0)));
+	fake_settings.sea_coord = 31;
+	fake_settings.beach = None;
+	fake_settings.max_bedrock_height = None;
+	
+	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);
 	
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
@@ -180,13 +193,11 @@ fn main() {
 				}
 			};
 			
-			println!("Chunk spans {} bytes", writer.chunk(x as u8, z as u8, &root).unwrap());
+			println!("Chunk spans {} bytes", writer.chunk(x as u8, (z) as u8, &root).unwrap());
 		}
 	}
 	
 	writer.finish().unwrap();
-	
-	//paint.apply(moore.column_mut(0, 0), (3, -2)).unwrap();
 	
 	/*
 	use chunk::matcher;

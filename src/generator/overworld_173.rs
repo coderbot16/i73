@@ -1,10 +1,12 @@
 use rng::JavaRng;
 use noise::octaves::PerlinOctaves;
-use climate::ClimateSource;
+use biome::climate::ClimateSource;
+use biome::source::BiomeSource;
+use biome::{self, Lookup, Surface};
 use noise_field::height::{HeightSettings, HeightSource};
-use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, H_NOISE_SIZE, Y_NOISE_SIZE};
+use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear};
 use generator::Pass;
-use chunk::position::BlockPosition;
+use chunk::position::{BlockPosition, LayerPosition};
 use chunk::storage::Target;
 use chunk::grouping::{Column, Result, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use chunk::matcher::{BlockMatcher, Is, IsNot};
@@ -13,24 +15,28 @@ use nalgebra::{Vector2, Vector3};
 use noise_field::height::lerp_to_layer;
 
 pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	shape_blocks: ShapeBlocks<B>,
-	paint_blocks: PaintBlocks<R, I, B>,
-	tri:          TriNoiseSettings,
-	height:       HeightSettings,
-	field:        FieldSettings,
-	sea_coord:    u8,
-	max_bedrock_height: Option<u8>
+	pub biome_lookup: Lookup<B, char>,     
+	pub shape_blocks: ShapeBlocks<B>,
+	pub paint_blocks: PaintBlocks<R, I, B>,
+	pub tri:          TriNoiseSettings,
+	pub height:       HeightSettings,
+	pub field:        FieldSettings,
+	pub sea_coord:    u8,
+	pub beach:        Option<(u8, u8)>,
+	pub max_bedrock_height: Option<u8>
 }
 
 impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
 	fn default() -> Self {
 		Settings {
+			biome_lookup: Lookup::generate(&biome::default_grid()),
 			shape_blocks: ShapeBlocks::default(),
 			paint_blocks: PaintBlocks::default(),
 			tri:          TriNoiseSettings::default(),
 			height:       HeightSettings::default(),
 			field:        FieldSettings::default(),
 			sea_coord:    63,
+			beach:        Some((59, 65)),
 			max_bedrock_height: Some(5)
 		}
 	}
@@ -54,8 +60,24 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>) -> (ShapePass<B>,
 	let climate = ClimateSource::new(seed);
 	
 	(
-		ShapePass { climate, blocks: settings.shape_blocks, tri, height, field, sea_coord: settings.sea_coord },
-		PaintPass { blocks: settings.paint_blocks, sand, gravel, thickness, sea_coord: settings.sea_coord, max_bedrock_height: settings.max_bedrock_height }
+		ShapePass { 
+			climate, 
+			blocks: settings.shape_blocks, 
+			tri, 
+			height, 
+			field, 
+			sea_coord: settings.sea_coord 
+		},
+		PaintPass { 
+			biomes: BiomeSource::new(seed, settings.biome_lookup), 
+			blocks: settings.paint_blocks, 
+			sand, 
+			gravel, 
+			thickness, 
+			sea_coord: settings.sea_coord, 
+			beach: settings.beach,
+			max_bedrock_height: settings.max_bedrock_height 
+		}
 	)
 }
 
@@ -100,16 +122,16 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		
 		let climate_chunk = self.climate.chunk(block_offset);
 		
-		let mut field = [[[0f64; H_NOISE_SIZE]; Y_NOISE_SIZE]; H_NOISE_SIZE];
+		let mut field = [[[0f64; 5]; 17]; 5];
 	
-		for x in 0..H_NOISE_SIZE {
-			for z in 0..H_NOISE_SIZE {
+		for x in 0..5 {
+			for z in 0..5 {
 				let layer = lerp_to_layer(Vector2::new(x, z));
 				
 				let climate = climate_chunk.get(layer.x, layer.y);
 				let height = self.height.sample(offset + Vector2::new(x as f64, z as f64), climate);
 				
-				for y in 0..Y_NOISE_SIZE {
+				for y in 0..17 {
 					let tri = self.tri.sample(Vector3::new(offset.x + x as f64, y as f64, offset.y + z as f64), y);
 					
 					field[x][y][z] = self.field.compute_noise_value(y as f64, height, tri);
@@ -159,8 +181,6 @@ pub struct PaintBlocks<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B:
 	gravel:    B,
 	sand:      B,
 	sandstone: B,
-	top_todo:  B,
-	fill_todo: B,
 	bedrock:   B
 }
 
@@ -175,8 +195,6 @@ impl Default for PaintBlocks<Is<u16>, IsNot<u16>, u16> {
 			gravel:    13 * 16,
 			sand:      12 * 16,
 			sandstone: 24 * 16,
-			top_todo:   2 * 16, // Grass
-			fill_todo:  3 * 16, // Dirt
 			bedrock:    7 * 16
 		}
 	}
@@ -186,39 +204,64 @@ pub struct PaintAssociations<'a, B> where B: 'a + Target {
 	air:       ColumnAssociation<'a, B>,
 	stone:     ColumnAssociation<'a, B>,
 	ocean:     ColumnAssociation<'a, B>,
-	gravel:    ColumnAssociation<'a, B>,
-	sand:      ColumnAssociation<'a, B>,
-	sandstone: ColumnAssociation<'a, B>,
-	top_todo:  ColumnAssociation<'a, B>,
-	fill_todo: ColumnAssociation<'a, B>,
 	bedrock:   ColumnAssociation<'a, B>
 }
 
+struct SurfaceAssociations<'a, B> where B: 'a + Target {
+	pub top:  ColumnAssociation<'a, B>,
+	pub fill: ColumnAssociation<'a, B>,
+	pub chain: Vec<FollowupAssociation<'a, B>>
+}
+
+impl<'a, B> SurfaceAssociations<'a, B> where B: 'a + Target {
+	fn lookup<'b>(surface: &'b Surface<B>, palette: &'a ColumnPalettes<B>) -> Self {
+		let mut chain = Vec::new();
+		
+		for followup in &surface.chain {
+			chain.push(
+				FollowupAssociation {
+					block:     palette.reverse_lookup(&followup.block).unwrap(),
+					max_depth: followup.max_depth
+				} 
+			)
+		}
+		
+		SurfaceAssociations::<B> {
+			top:   palette.reverse_lookup(&surface.top).unwrap(),
+			fill:  palette.reverse_lookup(&surface.fill).unwrap(),
+			chain
+		}
+	}
+}
+
+struct FollowupAssociation<'a, B> where B: 'a + Target {
+	pub block:     ColumnAssociation<'a, B>,
+	pub max_depth: u32
+}
+
 pub struct PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
+	biomes:    BiomeSource<B, char>,
 	blocks:    PaintBlocks<R, I, B>,
 	sand:      PerlinOctaves,
 	gravel:    PerlinOctaves,
 	thickness: PerlinOctaves,
 	sea_coord: u8,
+	beach:     Option<(u8, u8)>,
 	max_bedrock_height: Option<u8>
 }
 
 impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	fn paint_stack(&self, rng: &mut JavaRng, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations<B>, x: u8, z: u8, /*TODO: biome: Biome<B, I>,*/ sand: bool, gravel: bool, thickness: i32) {	
+	fn paint_stack(&self, rng: &mut JavaRng, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations<B>, x: u8, z: u8, surface: &SurfaceAssociations<B>, beach: &SurfaceAssociations<B>, basin: &SurfaceAssociations<B>, thickness: i32) {	
 		let reset_remaining = match thickness {
 			-1          => None,
 			x if x <= 0 => Some(0),
 			thickness   => Some(thickness as u32)
 		};
 		
-		// TODO: Configuability
-		let beach_min = self.sea_coord - 4;
-		let beach_max = self.sea_coord + 1;
-		
 		let mut remaining = None;
 		let mut followup_index: Option<usize> = None;
-		let mut     top_block = &associations.top_todo;
-		let mut current_block = &associations.fill_todo;
+		
+		let mut current_surface = if thickness <= 0 {basin} else {surface};
 		
 		for y in (0..128).map(|y| 127 - y) {
 			let position = BlockPosition::new(x, y, z);
@@ -229,8 +272,6 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 					continue;
 				}
 			}
-			
-			let empty = if y <= self.sea_coord {&associations.ocean} else {&associations.air};
 			
 			let existing = blocks.get(position, &palette);
 			let target = existing.target();
@@ -248,34 +289,42 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 			match remaining {
 				Some(0) => (),
 				Some(ref mut remaining) => {
-					blocks.set(position, current_block);
+					let block = match followup_index {
+						Some(index) => &current_surface.chain[index].block,
+						None =>        &current_surface.fill
+					};
+					
+					blocks.set(position, block);
 					
 					*remaining -= 1;
 					if *remaining == 0 {
-						// TODO: Followup surfaces (Sand => Sandstone, etc).
-						// TODO: rng.next_i32(4);
+						// TODO: Don't increment the index if it is already out of bounds.
+						let new_index = followup_index.map(|index| index + 1).unwrap_or(0);
+						
+						if new_index < current_surface.chain.len() {
+							*remaining = rng.next_i32((current_surface.chain[new_index].max_depth as i32) + 1) as u32
+						}
+						
+						followup_index = Some(new_index);
 					}
 				},
 				None => {
 					if thickness <= 0 {
-						top_block     = empty;
-						current_block = &associations.stone;
-					} else if y >= beach_min && y <= beach_max {
-						if sand {
-							top_block     = &associations.sand;
-							current_block = &associations.sand;
-						} else if gravel {
-							top_block     = empty;
-							current_block = &associations.gravel;
-						} else {
-							top_block     = &associations.top_todo;
-							current_block = &associations.fill_todo;
+						current_surface = basin;
+					} else if let Some(beach_range) = self.beach {
+						if y >= beach_range.0 && y <= beach_range.1 {
+							current_surface = beach;
 						}
 					}
 			
-					blocks.set(position, if y >= self.sea_coord {top_block} else {current_block});
+					blocks.set(position, if y >= self.sea_coord {&current_surface.top} else {&current_surface.fill});
+				
+					if y <= self.sea_coord && blocks.get(position, palette).target() == Ok(&self.blocks.air) {
+						blocks.set(position, &associations.ocean);
+					}
 			
 					remaining = reset_remaining;
+					followup_index = None;
 				}
 			}
 			
@@ -289,6 +338,9 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		let block = ((chunk.0 * 16) as f64, (chunk.1 * 16) as f64);
 		let mut rng = JavaRng::new((chunk.0 as i64).wrapping_mul(341873128712).wrapping_add((chunk.1 as i64).wrapping_mul(132897987541)));
 		
+		let biome_layer = self.biomes.layer(chunk);
+		let (biomes, biome_palette) = biome_layer.freeze_read_only();
+		
 		let      sand_vertical = self.     sand.vertical_ref(block.1, 16);
 		let thickness_vertical = self.thickness.vertical_ref(block.1, 16);
 		
@@ -301,77 +353,83 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		target.ensure_available(self.blocks.gravel.clone());
 		target.ensure_available(self.blocks.sand.clone());
 		target.ensure_available(self.blocks.sandstone.clone());
-		target.ensure_available(self.blocks.top_todo.clone());
-		target.ensure_available(self.blocks.fill_todo.clone());
 		target.ensure_available(self.blocks.bedrock.clone());
 		
+		for surface in biome_palette.entries().iter().filter_map(Option::as_ref).map(|biome| &biome.surface) {
+			target.ensure_available(surface.top.clone());
+			target.ensure_available(surface.fill.clone());
+				
+			for followup in &surface.chain {
+				target.ensure_available(followup.block.clone());
+			}
+		}
+		
 		let (mut blocks, palette) = target.freeze_palettes();
+		
+		let mut surfaces = Vec::new();
+		
+		for entry in biome_palette.entries() {
+			surfaces.push(
+				entry.as_ref().map(|biome| SurfaceAssociations::lookup(&biome.surface, &palette))
+			);
+		}
 		
 		let associations = PaintAssociations {
 			air:        palette.reverse_lookup(&self.blocks.air).unwrap(),
 			stone:      palette.reverse_lookup(&self.blocks.stone).unwrap(),
 			ocean:      palette.reverse_lookup(&self.blocks.ocean).unwrap(),
-			gravel:     palette.reverse_lookup(&self.blocks.gravel).unwrap(),
-			sand:       palette.reverse_lookup(&self.blocks.sand).unwrap(),
-			sandstone:  palette.reverse_lookup(&self.blocks.sandstone).unwrap(),
-			top_todo:   palette.reverse_lookup(&self.blocks.top_todo).unwrap(),
-			fill_todo:  palette.reverse_lookup(&self.blocks.fill_todo).unwrap(),
 			bedrock:    palette.reverse_lookup(&self.blocks.bedrock).unwrap()
 		};
 		
-		for z in 0..16usize {
-			for x in 0..16usize {
+		let gravel_beach = SurfaceAssociations {
+			top:   palette.reverse_lookup(&self.blocks.air).unwrap(),
+			fill:  palette.reverse_lookup(&self.blocks.gravel).unwrap(),
+			chain: vec![]
+		};
+		
+		let sand_beach   = SurfaceAssociations {
+			top:   palette.reverse_lookup(&self.blocks.sand).unwrap(),
+			fill:  palette.reverse_lookup(&self.blocks.sand).unwrap(),
+			chain: vec![
+				FollowupAssociation {
+					block:     palette.reverse_lookup(&self.blocks.sandstone).unwrap(),
+					max_depth: 3
+				}
+			]
+		};
+		
+		let basin        = SurfaceAssociations {
+			top:   palette.reverse_lookup(&self.blocks.air).unwrap(),
+			fill:  palette.reverse_lookup(&self.blocks.stone).unwrap(),
+			chain: vec![]
+		};
+		
+		for z in 0..16 {
+			for x in 0..16 {
+				let position = LayerPosition::new(x, z);
+				
+				// TODO: BeachSelector
+				
 				let (sand_variation, gravel_variation, thickness_variation) = (rng.next_f64() * 0.2, rng.next_f64() * 0.2, rng.next_f64() * 0.25);
 
-				let   sand    =       sand_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z) +   sand_variation > 0.0;
-				let gravel    =         self.gravel.sample           (horizontal_offset + Vector2::new(x as f64, z as f64     )   ) + gravel_variation > 3.0;
-				let thickness = (thickness_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z) / 3.0 + 3.0 + thickness_variation) as i32;
+				let   sand    =       sand_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z as usize) +   sand_variation > 0.0;
+				let gravel    =         self.gravel.sample           (horizontal_offset + Vector2::new(x as f64, z as f64     )            ) + gravel_variation > 3.0;
+				let thickness = (thickness_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z as usize) / 3.0 + 3.0 + thickness_variation) as i32;
 				
-				self.paint_stack(&mut rng, &mut blocks, &palette, &associations, x as u8, z as u8, sand, gravel, thickness);
+				let surface   = surfaces[biomes.get(position, biome_palette).raw_value()].as_ref().unwrap();
+				
+				let beach = if sand {
+					&sand_beach
+				} else if gravel {
+					&gravel_beach
+				} else {
+					surface
+				};
+				
+				self.paint_stack(&mut rng, &mut blocks, &palette, &associations, x, z, surface, beach, &basin, thickness);
 			}
 		}
 		
 		Ok(())
 	}
-}
-
-fn trilinear(array: &[[[f64; H_NOISE_SIZE]; Y_NOISE_SIZE]; H_NOISE_SIZE], position: BlockPosition) -> f64 {
-	let inner = (
-		((position.x() % 4) as f64) / 4.0,
-		((position.y() % 8) as f64) / 8.0,
-		((position.z() % 4) as f64) / 4.0
-	);
-	
-	let indices = (
-		(position.x() / 4) as usize,
-		(position.y() / 8) as usize,
-		(position.z() / 4) as usize
-	);
-	
-	lerp(inner.2, 
-		lerp(inner.0,
-			lerp(inner.1,
-				array[indices.0    ][indices.1    ][indices.2    ],
-				array[indices.0    ][indices.1 + 1][indices.2    ],
-			),
-			lerp(inner.1,
-				array[indices.0 + 1][indices.1    ][indices.2    ],
-				array[indices.0 + 1][indices.1 + 1][indices.2    ],
-			)
-		),
-		lerp(inner.0,
-			lerp(inner.1,
-				array[indices.0    ][indices.1    ][indices.2 + 1],
-				array[indices.0    ][indices.1 + 1][indices.2 + 1],
-			),
-			lerp(inner.1,
-				array[indices.0 + 1][indices.1    ][indices.2 + 1],
-				array[indices.0 + 1][indices.1 + 1][indices.2 + 1],
-			)
-		)
-	)
-}
-
-fn lerp(t: f64, a: f64, b: f64) -> f64 {
-	a + t * (b - a)
 }

@@ -48,9 +48,15 @@ impl LightingQueue {
 	}
 	
 	pub fn clear(&mut self) {
-		unimplemented!()
-		/*self.primary.clear();
-		self.secondary.clear();*/
+		self.skip = 0;
+		
+		for value in self.primary.iter_mut() {
+			*value = 0;
+		}
+		
+		for value in self.secondary.iter_mut() {
+			*value = 0;
+		}
 	}
 	
 	fn fast_forward(&mut self) -> bool {

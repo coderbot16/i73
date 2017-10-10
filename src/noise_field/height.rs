@@ -1,7 +1,7 @@
 use noise::octaves::PerlinOctaves;
 use nalgebra::{Vector2, Vector3};
 use rng::JavaRng;
-use climate::Climate;
+use biome::climate::Climate;
 use sample::Sample;
 
 #[derive(Debug, Copy, Clone)]
