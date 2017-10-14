@@ -7,6 +7,7 @@ authors = ["coderbot <coderbot16@gmail.com>"]
 nalgebra = "0.11.0"
 hematite-nbt-serde = { git = "https://github.com/coderbot16/hematite_nbt.git" }
 serde = "0.9"
+serde_json = "0.9"
 serde_derive = "0.9"
 byteorder = "1.0"
 deflate = "0.7.16"

@@ -57,6 +57,11 @@ impl BlockPosition {
 		self.0 >> 4
 	}
 	
+	/// Returns the index represented as `(Z<<4) | X`.
+	pub fn zx(&self) -> u8 {
+		(self.0 & 255) as u8
+	}
+	
 	/// Returns the index represented as `(Y<<8) | (Z<<4) | X`.
 	pub fn yzx(&self) -> u16 {
 		self.0

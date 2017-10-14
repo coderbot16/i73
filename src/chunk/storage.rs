@@ -10,7 +10,7 @@ use std::fmt::Debug;
 pub trait Target: Eq + Hash + Clone + Debug {}
 impl<T> Target for T where T: Eq + Hash + Clone + Debug {}
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Chunk<B> where B: Target {
 	storage: PackedBlockStorage<BlockPosition>,
 	palette: Palette<B>
@@ -52,6 +52,10 @@ impl<B> Chunk<B> where B: Target {
 	
 	pub fn palette_mut(&mut self) -> &mut Palette<B> {
 		&mut self.palette
+	}
+	
+	pub fn palette(&self) -> &Palette<B> {
+		&self.palette
 	}
 	
 	pub fn freeze_read_only(&self) -> (&PackedBlockStorage<BlockPosition>, &Palette<B>) {
@@ -132,7 +136,7 @@ impl<'p, B> PaletteAssociation<'p, B> where B: 'p + Target {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Palette<B> where B: Target {
 	entries: Vec<Option<B>>,
 	reverse: HashMap<B, usize>
@@ -229,7 +233,7 @@ pub trait PackedIndex: Copy {
 	fn to_index(&self) -> usize;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PackedBlockStorage<P> where P: PackedIndex {
 	storage: Vec<u64>,
 	counts: Vec<usize>,

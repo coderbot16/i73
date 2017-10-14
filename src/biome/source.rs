@@ -6,20 +6,20 @@ use chunk::storage::Target;
 use nalgebra::Vector2;
 use sample::Sample;
 
-pub struct BiomeSource<B, I> where B: Target, I: Target {
+pub struct BiomeSource<B> where B: Target {
 	climate: ClimateSource,
-	lookup:  Lookup<B, I>
+	lookup:  Lookup<B>
 }
 
-impl<B, I> BiomeSource<B, I> where B: Target, I: Target {
-	pub fn new(seed: i64, lookup: Lookup<B, I>) -> Self {
+impl<B> BiomeSource<B> where B: Target {
+	pub fn new(seed: i64, lookup: Lookup<B>) -> Self {
 		BiomeSource {
 			climate: ClimateSource::new(seed),
 			lookup
 		}
 	}
 	
-	pub fn layer(&self, chunk: (i32, i32)) -> Layer<Biome<B, I>> {
+	pub fn layer(&self, chunk: (i32, i32)) -> Layer<Biome<B>> {
 		let block = (
 			(chunk.0 * 16) as f64,
 			(chunk.1 * 16) as f64
@@ -39,14 +39,5 @@ impl<B, I> BiomeSource<B, I> where B: Target, I: Target {
 		}
 		
 		layer
-	}
-}
-
-impl BiomeSource<u16, char> {
-	pub fn with_default_lookup(seed: i64) -> Self {
-		BiomeSource {
-			climate: ClimateSource::new(seed),
-			lookup:  Lookup::generate(&biome::default_grid())
-		}
 	}
 }

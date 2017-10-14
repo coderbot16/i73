@@ -101,6 +101,10 @@ impl<B> Column<B> where B: Target {
 			])
 		)
 	}
+	
+	pub fn into_chunks(self) -> [Chunk<B>; 16] {
+		self.0
+	}
 }
 
 impl Column<u16> {

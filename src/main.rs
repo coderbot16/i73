@@ -4,6 +4,7 @@
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 extern crate nbt_serde;
 extern crate byteorder;
 extern crate deflate;
@@ -25,7 +26,6 @@ mod segmented;
 mod dynamics;
 
 use std::fs::File;
-//use nbt_serde::encode;
 use chunk::storage::Chunk;
 use chunk::grouping::{Moore, Column};
 use generator::Pass;
@@ -35,17 +35,22 @@ use generator::nether_173;
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
 use chunk::position::BlockPosition;
+use biome::config::BiomesConfig;
+use biome::Lookup;
 
 extern crate nalgebra;
 use nalgebra::Vector3;
 
 fn main() {
-	let reduction_table = nether_173::generate_reduction_table(17);
+	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
+	let grid = biomes_config.to_grid().unwrap();
+	
+	/*let reduction_table = nether_173::generate_reduction_table(17);
 	for reduction in &reduction_table {
 		println!("{}", reduction);
-	}
+	}*/
 	
-	/*use dynamics::light::{self, LightingQueue, Lighting, BlockLightSources};
+	use dynamics::light::{self, LightingQueue, Lighting, BlockLightSources, SkyLightSources, Meta, LayerMask};
 	
 	let mut column = Column::<u16>::with_bits(4);
 	column.chunk_mut(0).palette_mut().replace(0,  0 * 16);
@@ -65,17 +70,8 @@ fn main() {
 		}
 	}
 	
-	let mut sources = BlockLightSources::new(4);
-	sources.set_emission(1, 15);
-	
-	let mut queue = LightingQueue::new();
-	let mut light = Lighting::new(sources, 4);
-	
-	light.set(&mut queue, BlockPosition::new(7, 7, 7), 15);
-	println!("{:?}", light);
-	
-	while light.step(&column.chunk(0), &mut queue) {
-		println!("{:?}", light);
+	/*while light.step(&column.chunk(0), &mut queue) {
+		println!("S {:?}", light);
 	}
 	
 	println!("-- done --");
@@ -116,8 +112,6 @@ fn main() {
 			};
 			
 			println!("Chunk spans {} bytes", writer.chunk(0, 0, &root).unwrap());
-			let mut file = File::create(format!("/home/coderbot/c.0.0.nbt")).unwrap();
-			encode::to_writer(&mut file, &root, None).unwrap();
 		}
 	}
 	
@@ -146,9 +140,14 @@ fn main() {
 		}
 	}*/
 	
-	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default());
+	let mut lighting_info = ::std::collections::HashMap::new();
+	lighting_info.insert( 0 * 16, Meta::new(0));
+	lighting_info.insert( 8 * 16, Meta::new(2));
+	lighting_info.insert( 9 * 16, Meta::new(2));
 	
-	let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
+	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default(), Lookup::generate(&grid));
+	
+	/*let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
 	
 	let default_grid = biome::default_grid();
 	
@@ -158,7 +157,7 @@ fn main() {
 	fake_settings.beach = None;
 	fake_settings.max_bedrock_height = None;
 	
-	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);
+	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 	
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
@@ -172,7 +171,40 @@ fn main() {
 			shape.apply(&mut column, (x, z)).unwrap();
 			paint.apply(&mut column, (x, z)).unwrap();
 			
-			let sections = column.to_anvil(vec![None; 16]).unwrap();
+			let mut column_light = vec![None; 16];
+			
+			let mut mask = LayerMask::default();
+			
+			for y in (0..16).rev() {
+				let chunk = column.chunk(y);
+				
+				let mut meta = Vec::with_capacity(chunk.palette().entries().len());
+				
+				for value in chunk.palette().entries() {
+					if let &Some(ref entry) = value {
+						meta.push(lighting_info.get(entry).map(|&meta| meta).unwrap_or(Meta::new(15)))
+					} else {
+						meta.push(Meta::new(15))
+					}
+				}
+				
+				let sources = SkyLightSources::build(chunk, &meta, mask);
+		
+				let mut queue = LightingQueue::new();
+				let mut light = Lighting::new(sources, meta);
+				
+				light.initial(chunk, &mut queue);
+				light.finish(chunk, &mut queue);
+				
+				// TODO: Inter chunk lighting interactions.
+			
+				let (light_data, sources) = light.decompose();
+				mask = sources.into_mask();
+			
+				column_light[y] = Some((chunk::anvil::NibbleVec::filled(), light_data.to_anvil()));
+			}
+			
+			let sections = column.to_anvil(column_light).unwrap();
 		
 			let root = ChunkRoot {
 				version: 0,

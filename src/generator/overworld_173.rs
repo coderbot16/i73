@@ -14,8 +14,7 @@ use sample::Sample;
 use nalgebra::{Vector2, Vector3};
 use noise_field::height::lerp_to_layer;
 
-pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	pub biome_lookup: Lookup<B, char>,     
+pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {  
 	pub shape_blocks: ShapeBlocks<B>,
 	pub paint_blocks: PaintBlocks<R, I, B>,
 	pub tri:          TriNoiseSettings,
@@ -29,7 +28,6 @@ pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Ta
 impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
 	fn default() -> Self {
 		Settings {
-			biome_lookup: Lookup::generate(&biome::default_grid()),
 			shape_blocks: ShapeBlocks::default(),
 			paint_blocks: PaintBlocks::default(),
 			tri:          TriNoiseSettings::default(),
@@ -42,7 +40,7 @@ impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
 	}
 }
 
-pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>) -> (ShapePass<B>, PaintPass<R, I, B>) where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
+pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Lookup<B>) -> (ShapePass<B>, PaintPass<R, I, B>) where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
 	let mut rng = JavaRng::new(seed);
 	
 	let tri = TriNoiseSource::new(&mut rng, &settings.tri);
@@ -69,7 +67,7 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>) -> (ShapePass<B>,
 			sea_coord: settings.sea_coord 
 		},
 		PaintPass { 
-			biomes: BiomeSource::new(seed, settings.biome_lookup), 
+			biomes: BiomeSource::new(seed, biome_lookup), 
 			blocks: settings.paint_blocks, 
 			sand, 
 			gravel, 
@@ -240,7 +238,7 @@ struct FollowupAssociation<'a, B> where B: 'a + Target {
 }
 
 pub struct PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	biomes:    BiomeSource<B, char>,
+	biomes:    BiomeSource<B>,
 	blocks:    PaintBlocks<R, I, B>,
 	sand:      PerlinOctaves,
 	gravel:    PerlinOctaves,
@@ -263,7 +261,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 		
 		let mut current_surface = if thickness <= 0 {basin} else {surface};
 		
-		for y in (0..128).map(|y| 127 - y) {
+		for y in (0..128).rev() {
 			let position = BlockPosition::new(x, y, z);
 			
 			if let Some(chance) = self.max_bedrock_height {
