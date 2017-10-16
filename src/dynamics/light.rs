@@ -2,7 +2,7 @@ use chunk::storage::{Chunk, Target};
 use chunk::grouping::Column;
 use chunk::position::BlockPosition;
 use chunk::anvil::NibbleVec;
-use std::mem;
+use dynamics::queue::{Queue, LayerMask};
 use std::cmp::max;
 
 type Unpacked = u8;
@@ -31,81 +31,6 @@ pub fn generate_heightmap<B>(column: &Column<B>, target: &B) -> [u32; 256] where
 	heightmap
 }
 
-/// Alternative to a recursive lighting algorithm. Also much faster and more efficient.
-pub struct LightingQueue {
-	primary:   Box<[u64; 64]>,
-	secondary: Box<[u64; 64]>,
-	skip:      usize
-}
-
-impl LightingQueue {
-	pub fn new() -> Self {
-		LightingQueue {
-			primary:   Box::new([0; 64]),
-			secondary: Box::new([0; 64]),
-			skip:      0
-		}
-	}
-	
-	pub fn clear(&mut self) {
-		self.skip = 0;
-		
-		for value in self.primary.iter_mut() {
-			*value = 0;
-		}
-		
-		for value in self.secondary.iter_mut() {
-			*value = 0;
-		}
-	}
-	
-	fn fast_forward(&mut self) -> bool {
-		for (index, block) in (&self.primary[self.skip..]).iter().enumerate() {
-			if *block != 0 {
-				self.skip += index;
-				return true;
-			}
-		}
-		
-		false
-	}
-	
-	fn next(&mut self) -> BlockPosition {
-		let block = self.primary[self.skip];
-		let index = (self.skip * 64) | (block.trailing_zeros() as usize);
-		
-		BlockPosition::from_yzx(index as u16)
-	}
-	
-	fn flip(&mut self) -> bool {
-		self.skip = 0;
-		mem::swap(&mut self.primary, &mut self.secondary);
-		self.fast_forward()
-	}
-	
-	fn dequeue(&mut self, position: BlockPosition) -> bool {
-		let index = position.chunk_yzx() as usize;
-		
-		self.primary[index / 64] &= !(1 << (index % 64));
-		self.fast_forward()
-	}
-	
-	fn enqueue(&mut self, position: BlockPosition) {
-		let index = position.chunk_yzx() as usize;
-		
-		self.secondary[index / 64] |= 1 << (index % 64);
-	}
-	
-	fn enqueue_neighbors(&mut self, position: BlockPosition) {
-		position.minus_x().map(|at| self.enqueue(at));
-		position. plus_x().map(|at| self.enqueue(at));
-		position.minus_z().map(|at| self.enqueue(at));
-		position. plus_z().map(|at| self.enqueue(at));
-		position.minus_y().map(|at| self.enqueue(at));
-		position. plus_y().map(|at| self.enqueue(at));
-	}
-}
-
 pub struct LightingData(Box<[Packed; 2048]>);
 impl LightingData {
 	pub fn new() -> Self {
@@ -120,7 +45,7 @@ impl LightingData {
 		self.0[index] = cleared | (light << shift);
 	}
 	
-	pub fn set(&mut self, queue: &mut LightingQueue, at: BlockPosition, light: Unpacked) {
+	pub fn set(&mut self, queue: &mut Queue, at: BlockPosition, light: Unpacked) {
 		self.set_raw(at, light);
 		queue.enqueue_neighbors(at);
 	}
@@ -141,28 +66,6 @@ impl ::std::fmt::Debug for LightingData {
 	}
 }
 
-#[derive(Debug, Default)]
-pub struct LayerMask([u64; 4]);
-impl LayerMask {
-	pub fn set(&mut self, index: u8, value: bool) {
-		let array_index = (index / 64) as usize;
-		let shift = index % 64;
-		
-		let cleared = self.0[array_index] & !(1 << shift);
-		self.0[array_index] = cleared | ((value as u64) << shift)
-	}
-	
-	pub fn get(&self, index: u8) -> bool {
-		let array_index = (index / 64) as usize;
-		
-		(self.0[array_index] >> ((index % 64) as usize) & 1) == 1
-	}
-	
-	pub fn any(&self) -> bool {
-		(self.0[0] | self.0[1] | self.0[2] | self.0[3]) > 0
-	}
-}
-
 pub struct Lighting<S> where S: LightSources {
 	data: LightingData,
 	emit: Box<[[Packed; 128]; 6]>,
@@ -180,23 +83,21 @@ impl<S> Lighting<S> where S: LightSources {
 		}
 	}
 	
-	fn set_raw(&mut self, at: BlockPosition, light: Unpacked) {
-		self.data.set_raw(at, light)
-	}
-	
-	pub fn set(&mut self, queue: &mut LightingQueue, at: BlockPosition, light: Unpacked) {
-		self.data.set(queue, at, light)
+	pub fn set(&mut self, queue: &mut Queue, at: BlockPosition, light: Unpacked) {
+		if light != self.get(at) {
+			self.data.set(queue, at, light)
+		}
 	}
 	
 	pub fn get(&self, at: BlockPosition) -> Unpacked {
 		self.data.get(at)
 	}
 	
-	pub fn initial<B>(&mut self, chunk: &Chunk<B>, queue: &mut LightingQueue) where B: Target {
+	pub fn initial<B>(&mut self, chunk: &Chunk<B>, queue: &mut Queue) where B: Target {
 		self.sources.initial(chunk, &mut self.data, queue)
 	}
 	
-	pub fn step<B>(&mut self, chunk: &Chunk<B>, queue: &mut LightingQueue) -> bool where B: Target {
+	pub fn step<B>(&mut self, chunk: &Chunk<B>, queue: &mut Queue) -> bool where B: Target {
 		if !queue.flip() {
 			return false;
 		}
@@ -223,9 +124,7 @@ impl<S> Lighting<S> where S: LightSources {
 			
 			let new_light = max(max_value.saturating_sub(1), self.sources.emission(chunk, at)).saturating_sub(self.meta[chunk.get(at).raw_value()].opacity());
 			
-			if new_light != self.get(at) {
-				self.set(queue, at, new_light);
-			}
+			self.set(queue, at, new_light);
 			
 			if !queue.dequeue(at) {
 				return true;
@@ -233,7 +132,7 @@ impl<S> Lighting<S> where S: LightSources {
 		}
 	}
 	
-	pub fn finish<B>(&mut self, chunk: &Chunk<B>, queue: &mut LightingQueue) -> usize where B: Target {
+	pub fn finish<B>(&mut self, chunk: &Chunk<B>, queue: &mut Queue) -> usize where B: Target {
 		let mut iterations = 0;
 		
 		while self.step(chunk, queue) { iterations += 1 };
@@ -292,9 +191,7 @@ impl Default for Meta {
 
 pub trait LightSources {
 	fn emission<B>(&self, chunk: &Chunk<B>, position: BlockPosition) -> Unpacked where B: Target;
-	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut LightingQueue) where B: Target {
-		unimplemented!()
-	}
+	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target;
 }
 
 #[derive(Debug)]
@@ -318,6 +215,10 @@ impl LightSources for BlockLightSources {
 	fn emission<B>(&self, chunk: &Chunk<B>, position: BlockPosition) -> Unpacked where B: Target {
 		self.emission[chunk.get(position).raw_value()]
 	}
+	
+	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target {
+		unimplemented!()
+	}
 }
 
 pub struct SkyLightSources {
@@ -332,7 +233,7 @@ impl SkyLightSources {
 				let position = BlockPosition::new(x, 15, z);
 				
 				if meta[chunk.get(position).raw_value()].opacity() > 0 {
-					no_light.set(z * 16 + x, true)
+					no_light.set_or(z * 16 + x, true)
 				}
 			}
 		}
@@ -383,7 +284,7 @@ impl LightSources for SkyLightSources {
 		}
 	}
 	
-	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut LightingQueue) where B: Target {
+	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target {
 		// TODO: Check if initial lighting is unneccesary or can be skipped in some way.
 		
 		for z in 0..16 {

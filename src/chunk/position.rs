@@ -1,6 +1,7 @@
 use chunk::storage::PackedIndex;
+use std::fmt::{Debug, Formatter, Result};
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub struct BlockPosition(u16);
 
 impl BlockPosition {
@@ -143,6 +144,12 @@ impl PackedIndex for BlockPosition {
 	
 	fn to_index(&self) -> usize {
 		self.chunk_yzx() as usize
+	}
+}
+
+impl Debug for BlockPosition {
+	fn fmt(&self, f: &mut Formatter) -> Result {
+		write!(f, "BlockPosition {{ x: {}, y: {}, z: {}, yzx: {} }}", self.x(), self.y(), self.z(), self.yzx())
 	}
 }
 

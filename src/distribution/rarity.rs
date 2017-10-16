@@ -36,7 +36,7 @@ impl<R> Rarity for Rare<R> where R: Rarity {
 	fn get(&self, rng: &mut JavaRng) -> i32 {
 		let candidate = self.base.get(rng);
 		
-		if rng.next_i32(self.rarity) != 0 {candidate} else {0}
+		if rng.next_i32(self.rarity) == 0 {candidate} else {0}
 	}
 }
 

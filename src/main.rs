@@ -37,6 +37,7 @@ use chunk::region::RegionWriter;
 use chunk::position::BlockPosition;
 use biome::config::BiomesConfig;
 use biome::Lookup;
+use trig::TrigLookup;
 
 extern crate nalgebra;
 use nalgebra::Vector3;
@@ -50,7 +51,8 @@ fn main() {
 		println!("{}", reduction);
 	}*/
 	
-	use dynamics::light::{self, LightingQueue, Lighting, BlockLightSources, SkyLightSources, Meta, LayerMask};
+	use dynamics::light::{self, Lighting, BlockLightSources, SkyLightSources, Meta};
+	use dynamics::queue::{Queue, LayerMask};
 	
 	let mut column = Column::<u16>::with_bits(4);
 	column.chunk_mut(0).palette_mut().replace(0,  0 * 16);
@@ -139,13 +141,25 @@ fn main() {
 			y -= 1;
 		}
 	}*/
-	
+
 	let mut lighting_info = ::std::collections::HashMap::new();
 	lighting_info.insert( 0 * 16, Meta::new(0));
 	lighting_info.insert( 8 * 16, Meta::new(2));
 	lighting_info.insert( 9 * 16, Meta::new(2));
 	
 	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default(), Lookup::generate(&grid));
+	
+	let caves_generator = structure::caves::CavesGenerator { 
+		lookup: TrigLookup::new(), 
+		carve: 0*16,
+		ocean: |ty: &u16| -> bool {
+			*ty == 8*16 || *ty == 9*16
+		},
+		carvable: |ty: &u16| -> bool {
+			*ty == 1*16 || *ty == 2*16 || *ty == 3*16
+		}
+	};
+	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);
 	
 	/*let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
 	
@@ -170,6 +184,7 @@ fn main() {
 			
 			shape.apply(&mut column, (x, z)).unwrap();
 			paint.apply(&mut column, (x, z)).unwrap();
+			caves.apply(&mut column, (x, z)).unwrap();
 			
 			let mut column_light = vec![None; 16];
 			
@@ -190,7 +205,7 @@ fn main() {
 				
 				let sources = SkyLightSources::build(chunk, &meta, mask);
 		
-				let mut queue = LightingQueue::new();
+				let mut queue = Queue::new();
 				let mut light = Lighting::new(sources, meta);
 				
 				light.initial(chunk, &mut queue);
