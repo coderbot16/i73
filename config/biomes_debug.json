@@ -3,7 +3,7 @@
 		"tundra": {
 			"debug_name": "Tundra",
 			"surface": {
-				"top": "2:0",
+				"top": "35:1",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -11,7 +11,7 @@
 		"taiga": {
 			"debug_name": "Taiga",
 			"surface": {
-				"top": "2:0",
+				"top": "35:2",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -19,7 +19,7 @@
 		"swampland": {
 			"debug_name": "Swampland",
 			"surface": {
-				"top": "2:0",
+				"top": "35:3",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -27,7 +27,7 @@
 		"savanna": {
 			"debug_name": "Savanna",
 			"surface": {
-				"top": "2:0",
+				"top": "35:4",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -35,7 +35,7 @@
 		"shrubland": {
 			"debug_name": "Shrubland",
 			"surface": {
-				"top": "2:0",
+				"top": "35:5",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -43,7 +43,7 @@
 		"forest": {
 			"debug_name": "Forest",
 			"surface": {
-				"top": "2:0",
+				"top": "35:6",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -51,7 +51,7 @@
 		"desert": {
 			"debug_name": "Desert",
 			"surface": {
-				"top": "12:0",
+				"top": "35:7",
 				"fill": "12:0",
 				"chain": [
 					{
@@ -64,7 +64,7 @@
 		"plains": {
 			"debug_name": "Plains",
 			"surface": {
-				"top": "2:0",
+				"top": "35:8",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -72,7 +72,7 @@
 		"seasonal_forest": {
 			"debug_name": "Seasonal Forest",
 			"surface": {
-				"top": "2:0",
+				"top": "35:9",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -80,7 +80,7 @@
 		"rainforest": {
 			"debug_name": "Rainforest",
 			"surface": {
-				"top": "2:0",
+				"top": "92:0",
 				"fill": "3:0",
 				"chain": []
 			}
@@ -88,7 +88,7 @@
 		"ice_desert": {
 			"debug_name": "Ice Desert",
 			"surface": {
-				"top": "12:0",
+				"top": "35:11",
 				"fill": "12:0",
 				"chain": [
 					{

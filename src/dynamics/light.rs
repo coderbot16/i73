@@ -232,9 +232,7 @@ impl SkyLightSources {
 			for x in 0..16 {
 				let position = BlockPosition::new(x, 15, z);
 				
-				if meta[chunk.get(position).raw_value()].opacity() > 0 {
-					no_light.set_or(z * 16 + x, true)
-				}
+				no_light.set_or(z * 16 + x, meta[chunk.get(position).raw_value()].opacity() > 0);
 			}
 		}
 		
@@ -270,7 +268,15 @@ impl SkyLightSources {
 		(self.heightmap[(index / 2) as usize] >> shift) & 0xF
 	}
 	
-	pub fn into_mask(self) -> LayerMask {
+	pub fn into_mask(mut self) -> LayerMask {
+		for z in 0..16 {
+			for x in 0..16 {
+				let height = self.height(z * 16 + x);
+				
+				self.no_light.set_or(z * 16 + x, height > 0);
+			}
+		}
+		
 		self.no_light
 	}
 }
