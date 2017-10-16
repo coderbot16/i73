@@ -216,7 +216,7 @@ impl LightSources for BlockLightSources {
 		self.emission[chunk.get(position).raw_value()]
 	}
 	
-	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target {
+	fn initial<B>(&self, _chunk: &Chunk<B>, _data: &mut LightingData, _queue: &mut Queue) where B: Target {
 		unimplemented!()
 	}
 }
@@ -282,7 +282,7 @@ impl SkyLightSources {
 }
 
 impl LightSources for SkyLightSources {
-	fn emission<B>(&self, chunk: &Chunk<B>, position: BlockPosition) -> Unpacked where B: Target {
+	fn emission<B>(&self, _: &Chunk<B>, position: BlockPosition) -> Unpacked where B: Target {
 		if !self.no_light.get(position.zx()) {
 			if position.y() >= self.height(position.zx()) { 15 } else { 0 }
 		} else {
@@ -290,7 +290,7 @@ impl LightSources for SkyLightSources {
 		}
 	}
 	
-	fn initial<B>(&self, chunk: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target {
+	fn initial<B>(&self, _: &Chunk<B>, data: &mut LightingData, queue: &mut Queue) where B: Target {
 		// TODO: Check if initial lighting is unneccesary or can be skipped in some way.
 		
 		for z in 0..16 {

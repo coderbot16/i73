@@ -505,7 +505,7 @@ impl Position {
 }
 
 #[derive(Debug)]
-enum Outcome {
+pub enum Outcome {
 	Split,
 	Constrict,
 	Unreachable,
@@ -528,11 +528,11 @@ impl Outcome {
 }
 
 #[derive(Debug, Copy, Clone)]
-struct BlobSize {
+pub struct BlobSize {
 	/// Radius on the X/Z axis
-	horizontal: f64,
+	pub horizontal: f64,
 	/// Radius on the Y axis
-	vertical: f64
+	pub vertical: f64
 }
 
 impl BlobSize {
@@ -556,13 +556,13 @@ impl BlobSize {
 }
 
 #[derive(Debug)]
-struct Blob {
+pub struct Blob {
 	/// Center of the blob
-	center: (f64, f64, f64),
+	pub center: (f64, f64, f64),
 	/// Size of the blob
-	size: BlobSize,
+	pub size: BlobSize,
 	/// Lower bounds of the feasible region, in chunk coordinates: [0,16), [0,128), [0,16)
-	lower: (u8, u8, u8),
+	pub lower: (u8, u8, u8),
 	/// Upper bounds of the feasible region, in chunk coordiantes: [0,16), [0,128), [0,16)
-	upper: (u8, u8, u8)
+	pub upper: (u8, u8, u8)
 }

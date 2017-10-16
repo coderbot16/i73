@@ -2,7 +2,7 @@ use rng::JavaRng;
 use noise::octaves::PerlinOctaves;
 use biome::climate::ClimateSource;
 use biome::source::BiomeSource;
-use biome::{self, Lookup, Surface};
+use biome::{Lookup, Surface};
 use noise_field::height::{HeightSettings, HeightSource};
 use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear};
 use generator::Pass;

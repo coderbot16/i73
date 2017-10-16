@@ -26,12 +26,9 @@ mod segmented;
 mod dynamics;
 
 use std::fs::File;
-use chunk::storage::Chunk;
-use chunk::grouping::{Moore, Column};
+use chunk::grouping::Column;
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
-use generator::sky_173;
-use generator::nether_173;
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
 use chunk::position::BlockPosition;
@@ -40,7 +37,6 @@ use biome::Lookup;
 use trig::TrigLookup;
 
 extern crate nalgebra;
-use nalgebra::Vector3;
 
 fn main() {
 	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
@@ -51,7 +47,7 @@ fn main() {
 		println!("{}", reduction);
 	}*/
 	
-	use dynamics::light::{self, Lighting, BlockLightSources, SkyLightSources, Meta};
+	use dynamics::light::{Lighting, SkyLightSources, Meta};
 	use dynamics::queue::{Queue, LayerMask};
 	
 	let mut column = Column::<u16>::with_bits(4);

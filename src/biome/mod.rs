@@ -6,7 +6,6 @@ pub mod config;
 use biome::climate::Climate;
 use chunk::storage::Target;
 use std::borrow::Cow;
-use std::fmt::Display;
 use segmented::Segmented;
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
@@ -65,7 +64,7 @@ impl<B> Lookup<B> where B: Target {
 	pub fn filled(biome: &Biome<B>) -> Self {
 		let mut lookup = Vec::with_capacity(4096);
 		
-		for index in 0..4096 {
+		for _ in 0..4096 {
 			lookup.push(biome.clone());
 		}
 		

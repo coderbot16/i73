@@ -1,6 +1,6 @@
 use biome::storage::Layer;
 use chunk::position::LayerPosition;
-use biome::{self, Biome, Lookup};
+use biome::{Biome, Lookup};
 use biome::climate::ClimateSource;
 use chunk::storage::Target;
 use nalgebra::Vector2;

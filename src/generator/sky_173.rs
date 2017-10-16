@@ -80,7 +80,6 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		
 		for i in 0..32768 {
 			let position = BlockPosition::from_yzx(i);
-			let altitude = position.y();
 			
 			let block = if trilinear(&field, position) > 0.0 {
 				&solid
