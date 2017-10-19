@@ -1,4 +1,4 @@
-use chunk::position::BlockPosition;
+use chunk::position::{BlockPosition, LayerPosition};
 use std::mem;
 
 /// Alternative to a recursive lighting algorithm. Also much faster and more efficient.
@@ -79,14 +79,18 @@ impl Queue {
 #[derive(Debug, Default)]
 pub struct LayerMask([u64; 4]);
 impl LayerMask {
-	pub fn set_or(&mut self, index: u8, value: bool) {
+	pub fn set_or(&mut self, position: LayerPosition, value: bool) {
+		let index = position.zx();
+		
 		let array_index = (index / 64) as usize;
 		let shift = index % 64;
 		
 		self.0[array_index] |= (value as u64) << shift
 	}
 	
-	pub fn set(&mut self, index: u8, value: bool) {
+	pub fn set(&mut self, position: LayerPosition, value: bool) {
+		let index = position.zx();
+		
 		let array_index = (index / 64) as usize;
 		let shift = index % 64;
 		
@@ -94,7 +98,9 @@ impl LayerMask {
 		self.0[array_index] = cleared | ((value as u64) << shift)
 	}
 	
-	pub fn get(&self, index: u8) -> bool {
+	pub fn get(&self, position: LayerPosition) -> bool {
+		let index = position.zx();
+		
 		let array_index = (index / 64) as usize;
 		
 		(self.0[array_index] >> ((index % 64) as usize) & 1) == 1

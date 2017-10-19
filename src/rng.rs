@@ -85,11 +85,15 @@ fn step_salted(state: i64, c: i64) -> i64 {
 /// Used commonly in Beta 1.8 and later worldgen for biome generation, among other things.
 #[derive(Debug)]
 pub struct NotchRng {
+	/// Initial value assigned to the RNG at a position before mixing in the coordinates.
 	pub initial: i64,
+	/// The current internal state of the RNG, initialized using `NotchRng::init_at` and modified with the next... functions.
 	pub state:   i64
 }
 
 impl NotchRng {
+	/// Initialize a NotchRng. The seed value usually represents the world seed. 
+	/// The salt is a unique value that differentiates this RNG from other instances with the same world seed.
 	pub fn new(salt: i64, seed: i64) -> Self {
 		let mut primary = salt;
 		

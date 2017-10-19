@@ -1,6 +1,6 @@
 use chunk::storage::{Chunk, Target};
 use chunk::grouping::Column;
-use chunk::position::BlockPosition;
+use chunk::position::{BlockPosition, LayerPosition};
 use chunk::anvil::NibbleVec;
 use dynamics::queue::{Queue, LayerMask};
 use std::cmp::max;
@@ -230,9 +230,10 @@ impl SkyLightSources {
 	pub fn build<B>(chunk: &Chunk<B>, meta: &[Meta], mut no_light: LayerMask) -> Self where B: Target {
 		for z in 0..16 {
 			for x in 0..16 {
-				let position = BlockPosition::new(x, 15, z);
+				let position = LayerPosition::new(x, z);
+				let block_position = BlockPosition::from_layer(15, position);
 				
-				no_light.set_or(z * 16 + x, meta[chunk.get(position).raw_value()].opacity() > 0);
+				no_light.set_or(position, meta[chunk.get(block_position).raw_value()].opacity() > 0);
 			}
 		}
 		
@@ -245,7 +246,7 @@ impl SkyLightSources {
 				
 					if meta[chunk.get(position).raw_value()].opacity() > 0 {
 						let shift = position.chunk_nibble_yzx().1 as u8;
-						let index = (z * 16 + x) as usize / 2;
+						let index = position.zx() as usize / 2;
 						
 						heightmap[index] |= (y + 1) << shift;
 						
@@ -262,7 +263,9 @@ impl SkyLightSources {
 		}
 	}
 	
-	pub fn height(&self, index: u8) -> u8 {
+	pub fn height(&self, position: LayerPosition) -> u8 {
+		let index = position.zx();
+		
 		let shift = (index & 1) as u8 * 4;
 		
 		(self.heightmap[(index / 2) as usize] >> shift) & 0xF
@@ -271,9 +274,11 @@ impl SkyLightSources {
 	pub fn into_mask(mut self) -> LayerMask {
 		for z in 0..16 {
 			for x in 0..16 {
-				let height = self.height(z * 16 + x);
+				let position = LayerPosition::new(x, z);
 				
-				self.no_light.set_or(z * 16 + x, height > 0);
+				let height = self.height(position);
+				
+				self.no_light.set_or(position, height > 0);
 			}
 		}
 		
@@ -283,8 +288,8 @@ impl SkyLightSources {
 
 impl LightSources for SkyLightSources {
 	fn emission<B>(&self, _: &Chunk<B>, position: BlockPosition) -> Unpacked where B: Target {
-		if !self.no_light.get(position.zx()) {
-			if position.y() >= self.height(position.zx()) { 15 } else { 0 }
+		if !self.no_light.get(position.layer()) {
+			if position.y() >= self.height(position.layer()) { 15 } else { 0 }
 		} else {
 			0
 		}
@@ -295,12 +300,14 @@ impl LightSources for SkyLightSources {
 		
 		for z in 0..16 {
 			for x in 0..16 {
-				if self.no_light.get(z * 16 + x) {
+				let position = LayerPosition::new(x, z);
+				
+				if self.no_light.get(position) {
 					continue;
 				}
 				
-				for y in (self.height(z * 16 + x)..16).rev() {
-					data.set(queue, BlockPosition::new(x, y, z), 15);
+				for y in (self.height(position)..16).rev() {
+					data.set(queue, BlockPosition::from_layer(y, position), 15);
 				}
 			}
 		}

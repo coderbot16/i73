@@ -16,6 +16,15 @@ impl BlockPosition {
 		)
 	}
 	
+	/// Creates a new BlockPosition from the Y component and LayerPosition containing the X and Z components.
+	/// Out of bounds is not possible with this function.
+	pub fn from_layer(y: u8, layer: LayerPosition) -> Self {
+		BlockPosition(
+			((y as u16) << 8) |
+			(layer.zx() as u16)
+		)
+	}
+	
 	/// Creates a new BlockPosition from a YZX index.
 	/// ### Out of bounds behavior
 	/// If the index is out of bounds, it is truncated.
@@ -24,6 +33,7 @@ impl BlockPosition {
 	}
 	
 	/// Creates a new BlockPosition from a XYZ index.
+	/// This function only supports Y values from 0 to 15.
 	/// ### Out of bounds behavior
 	/// If the index is out of bounds, it is truncated.
 	pub fn from_xyz(xyz: u16) -> Self {
@@ -63,6 +73,11 @@ impl BlockPosition {
 		(self.0 & 255) as u8
 	}
 	
+	/// Returns the layer position. This is equivalent to `LayerPosition::from_zx(position.zx())`.
+	pub fn layer(&self) -> LayerPosition {
+		LayerPosition::from_zx(self.zx())
+	}
+	
 	/// Returns the index represented as `(Y<<8) | (Z<<4) | X`.
 	pub fn yzx(&self) -> u16 {
 		self.0
@@ -75,7 +90,7 @@ impl BlockPosition {
 	
 	/// Returns the index represented as `(X<<8) | (Y<<4) | Z`.
 	pub fn xyz(&self) -> u16 {
-		((self.x() as u16) << 8) | self.yz()
+		((self.x() as u16) << 8) | (self.yz() & 255)
 	}
 	
 	/// Returns the chunk_yzx index into a nibble array. Returns in the form (index, shift).
