@@ -83,7 +83,7 @@ fn step_salted(state: i64, c: i64) -> i64 {
 
 /// Notch's custom RNG, that can be initialized from a position.
 /// Used commonly in Beta 1.8 and later worldgen for biome generation, among other things.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NotchRng {
 	/// Initial value assigned to the RNG at a position before mixing in the coordinates.
 	pub initial: i64,

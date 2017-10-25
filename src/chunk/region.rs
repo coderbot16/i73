@@ -42,7 +42,7 @@ impl<O> RegionWriter<O> where O: Write + Seek {
 		
 		let location = ChunkLocation::from_parts(
 			(start / 4096) as u32,
-			(extents / 4096 + if extents % 4096 != 0 {1} else {0}) as u8
+			(extents / 4096 + (extents % 4096 != 0) as u64) as u8
 		);
 		
 		RegionHeaderMut::new(&mut self.header).location(x, z, location);

@@ -24,6 +24,7 @@ mod chunk;
 mod totuple;
 mod segmented;
 mod dynamics;
+mod image_ops;
 
 use std::fs::File;
 use chunk::grouping::Column;
@@ -35,19 +36,99 @@ use chunk::position::BlockPosition;
 use biome::config::BiomesConfig;
 use biome::Lookup;
 use trig::TrigLookup;
+use image_ops::Image;
 
 extern crate nalgebra;
 
+fn display_image(map: &Image<bool>) {
+	for z in (0..map.z_size()).rev() {
+		for x in 0..map.x_size() {
+			if x == map.x_size() / 2 {
+				print!("|");
+			}
+			
+			print!("{}", if *map.get(x, z) {'#'} else {'.'});
+		}
+		println!();
+		
+		if z == map.z_size() / 2 {
+			println!("======== ========");
+		}
+	}
+}
+
 fn main() {
-	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
-	let grid = biomes_config.to_grid().unwrap();
+	use image_ops::i80::Continents;
+	use image_ops::filter::{Chain, Source, Filter};
+	use image_ops::zoom::{Zoom, BestCandidate, RandomCandidate};
+	use image_ops::blur::{Blur, XSpill, BoolMix};
+	
+	use rng::NotchRng;
+	
+	let continents = Continents {
+		chance: 10,
+		rng: NotchRng::new(1, 100)
+	};
+	
+	let mut chain = Chain::new();
+	chain.0.push(Box::new(Zoom::new(NotchRng::new(2000, 100), RandomCandidate)));
+	chain.0.push(Box::new(Blur::new(NotchRng::new(   1, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
+	chain.0.push(Box::new(Zoom::new(NotchRng::new(2001, 100), BestCandidate)));
+	chain.0.push(Box::new(Blur::new(NotchRng::new(   2, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
+	chain.0.push(Box::new(Zoom::new(NotchRng::new(2002, 100), BestCandidate)));
+	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
+	chain.0.push(Box::new(Zoom::new(NotchRng::new(2003, 100), BestCandidate)));
+	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
+	chain.0.push(Box::new(Zoom::new(NotchRng::new(2004, 100), BestCandidate)));
+	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
+	
+	println!("{:?} {:?}", chain.input_position((-8, -8)), chain.input_size((16, 16)));
+	
+	let sample = chain.input_size((16, 16));
+	let mut continents_data = Image::new(false, sample.0, sample.1);
+	continents.fill(chain.input_position((-8, -8)), &mut continents_data);
+	
+	let mut out = Image::new(false, 16, 16);
+	chain.filter((-8, -8), &continents_data, &mut out);
+	
+	println!("Out:");
+	display_image(&out);
+	
+	/*let zoom = Zoom::new(NotchRng::new(2000, 100), RandomCandidate);
+	let sample = zoom.input_size((16, 16));
+	
+	let mut continents_data = Image::new(false, sample.0, sample.1);
+	
+	continents.fill(zoom.input_position((-8, -8)), &mut continents_data);
+	
+	println!("( Initial )");
+	display_image(&continents_data);
+	
+	let mut zoomed = Image::new(false, 16, 16);
+	
+	zoom.filter((-8, -8), &continents_data, &mut zoomed);
+	
+	println!("( Zoomed )");
+	display_image(&zoomed);*/
+	
+	
+	
+	/*let mut continents_data = Image::new(false, 16, 16);
+	
+	continents.fill((-8, -8), &mut continents_data);
+	
+	println!("( Initial )");
+	println!("{}", continents_data);*/
+	
+	/*let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
+	let grid = biomes_config.to_grid().unwrap();*/
 	
 	/*let reduction_table = nether_173::generate_reduction_table(17);
 	for reduction in &reduction_table {
 		println!("{}", reduction);
 	}*/
 	
-	use dynamics::light::{Lighting, SkyLightSources, Meta};
+	/*use dynamics::light::{Lighting, SkyLightSources, Meta};
 	use dynamics::queue::{Queue, LayerMask};
 	
 	let mut column = Column::<u16>::with_bits(4);
@@ -66,7 +147,7 @@ fn main() {
 			
 			blocks.set(pos, &stone);
 		}
-	}
+	}*/
 	
 	/*while light.step(&column.chunk(0), &mut queue) {
 		println!("S {:?}", light);
@@ -138,7 +219,7 @@ fn main() {
 		}
 	}*/
 
-	let mut lighting_info = ::std::collections::HashMap::new();
+	/*let mut lighting_info = ::std::collections::HashMap::new();
 	lighting_info.insert( 0 * 16, Meta::new(0));
 	lighting_info.insert( 8 * 16, Meta::new(2));
 	lighting_info.insert( 9 * 16, Meta::new(2));
@@ -155,7 +236,7 @@ fn main() {
 			*ty == 1*16 || *ty == 2*16 || *ty == 3*16
 		}
 	};
-	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);
+	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);*/
 	
 	/*let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
 	
@@ -169,7 +250,7 @@ fn main() {
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 	
-	let file = File::create("out/region/r.0.0.mca").unwrap();
+	/*let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	for x in 0..32 {
@@ -240,7 +321,7 @@ fn main() {
 		}
 	}
 	
-	writer.finish().unwrap();
+	writer.finish().unwrap();*/
 	
 	/*
 	use chunk::matcher;
