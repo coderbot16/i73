@@ -1,4 +1,5 @@
 use chunk::position::{BlockPosition, LayerPosition};
+use std::collections::{HashMap, HashSet};
 use std::mem;
 
 /// Alternative to a recursive lighting algorithm. Also much faster and more efficient.
@@ -37,6 +38,8 @@ impl Queue {
 			}
 		}
 		
+		self.skip = usize::max_value();
+		
 		false
 	}
 	
@@ -73,6 +76,81 @@ impl Queue {
 		position. plus_z().map(|at| self.enqueue(at));
 		position.minus_y().map(|at| self.enqueue(at));
 		position. plus_y().map(|at| self.enqueue(at));
+	}
+}
+
+pub struct WorldQueue {
+	regions: HashMap<(i32, i32), Queue>
+}
+
+impl WorldQueue {
+	pub fn new() -> Self {
+		WorldQueue {
+			regions: HashMap::new()
+		}
+	}
+	
+	pub fn clear(&mut self) {
+		self.regions.clear();
+	}
+	
+	pub fn flip(&mut self) -> bool {
+		let mut removals = HashSet::new();
+		
+		for (region, queue) in self.regions.iter_mut() {
+			if !queue.flip() {
+				removals.insert(*region);
+			}
+		}
+		
+		for removal in removals {
+			self.regions.remove(&removal);
+		}
+		
+		!self.regions.is_empty()
+	}
+	
+	pub fn dequeue_next(&mut self) -> Option<(i32, u8, i32)> {
+		// TODO: Better iteration algorithm.
+		
+		for (&region, queue) in self.regions.iter_mut() {
+			if queue.skip != usize::max_value() {
+				let inner = queue.next();
+				queue.dequeue(inner);
+				
+				return Some((region.0 << 4 | (inner.x() as i32), inner.y(), region.1 << 4 | (inner.z() as i32)))
+			}
+		}
+		
+		None
+	}
+	
+	pub fn enqueue(&mut self, coords: (i32, u8, i32)) {
+		let (region, inner) = Self::split_coords(coords);
+		
+		self.regions.entry(region).or_insert(Queue::new()).enqueue(inner);
+	}
+	
+	pub fn enqueue_neighbors(&mut self, coords: (i32, u8, i32)) {
+		self.enqueue((coords.0 + 1, coords.1,     coords.2    ));
+		self.enqueue((coords.0 - 1, coords.1,     coords.2    ));
+		self.enqueue((coords.0,     coords.1,     coords.2 + 1));
+		self.enqueue((coords.0,     coords.1,     coords.2 - 1));
+		
+		if coords.1 < 255 {
+			self.enqueue((coords.0,     coords.1 + 1, coords.2    ));
+		}
+		
+		if coords.1 > 0 {
+			self.enqueue((coords.0,     coords.1 -1, coords.2    ));
+		}
+	}
+	
+	fn split_coords(coords: (i32, u8, i32)) -> ((i32, i32), BlockPosition) {
+		let region = (coords.0 >> 4, coords.2 >> 4);
+		let inner = BlockPosition::new((coords.0 & 15) as u8, coords.1, (coords.2 & 15) as u8);
+		
+		(region, inner)
 	}
 }
 

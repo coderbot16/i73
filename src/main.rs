@@ -58,7 +58,7 @@ fn display_image(map: &Image<bool>) {
 }
 
 fn main() {
-	use image_ops::i80::Continents;
+	/*use image_ops::i80::Continents;
 	use image_ops::filter::{Chain, Source, Filter};
 	use image_ops::zoom::{Zoom, BestCandidate, RandomCandidate};
 	use image_ops::blur::{Blur, XSpill, BoolMix};
@@ -92,109 +92,10 @@ fn main() {
 	chain.filter((-8, -8), &continents_data, &mut out);
 	
 	println!("Out:");
-	display_image(&out);
+	display_image(&out);*/
 	
-	/*let zoom = Zoom::new(NotchRng::new(2000, 100), RandomCandidate);
-	let sample = zoom.input_size((16, 16));
-	
-	let mut continents_data = Image::new(false, sample.0, sample.1);
-	
-	continents.fill(zoom.input_position((-8, -8)), &mut continents_data);
-	
-	println!("( Initial )");
-	display_image(&continents_data);
-	
-	let mut zoomed = Image::new(false, 16, 16);
-	
-	zoom.filter((-8, -8), &continents_data, &mut zoomed);
-	
-	println!("( Zoomed )");
-	display_image(&zoomed);*/
-	
-	
-	
-	/*let mut continents_data = Image::new(false, 16, 16);
-	
-	continents.fill((-8, -8), &mut continents_data);
-	
-	println!("( Initial )");
-	println!("{}", continents_data);*/
-	
-	/*let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
-	let grid = biomes_config.to_grid().unwrap();*/
-	
-	/*let reduction_table = nether_173::generate_reduction_table(17);
-	for reduction in &reduction_table {
-		println!("{}", reduction);
-	}*/
-	
-	/*use dynamics::light::{Lighting, SkyLightSources, Meta};
-	use dynamics::queue::{Queue, LayerMask};
-	
-	let mut column = Column::<u16>::with_bits(4);
-	column.chunk_mut(0).palette_mut().replace(0,  0 * 16);
-	column.chunk_mut(0).palette_mut().replace(1, 89 * 16);
-	column.chunk_mut(0).palette_mut().replace(2,  1 * 16);
-	column.chunk_mut(0).set_immediate(BlockPosition::new(7, 7, 7), &(89 * 16));
-	
-	{
-		let (blocks, palette) = column.chunk_mut(0).freeze_palette();
-		
-		let stone = palette.reverse_lookup(&16).unwrap();
-		
-		for x in 0..1792 {
-			let pos = BlockPosition::from_yzx(x);
-			
-			blocks.set(pos, &stone);
-		}
-	}*/
-	
-	/*while light.step(&column.chunk(0), &mut queue) {
-		println!("S {:?}", light);
-	}
-	
-	println!("-- done --");
-	
-	let file = File::create("out/region/r.0.0.mca").unwrap();
-	let mut writer = RegionWriter::start(file).unwrap();
-	
-	let mut heightmap = (Box::new(light::generate_heightmap(&column, &0)) as Box<[u32]>).into_vec();
-	
-	{
-		{
-			let (blocks, data, add) = column.chunk(0).to_anvil().unwrap();
-			
-			let root = ChunkRoot {
-				version: 0,
-				chunk: anvil::Chunk {
-					x: 0,
-					z: 0,
-					last_update: 0,
-					light_populated: false,
-					terrain_populated: true,
-					v: 0,
-					inhabited_time: 0,
-					biomes: vec![0; 256],
-					heightmap,
-					sections: vec![anvil::Section {
-						y: 0,
-						blocks,
-						add,
-						data,
-						block_light: light.to_anvil(),
-						sky_light: anvil::NibbleVec::filled()
-					}],
-					entities: vec![],
-					tile_entities: vec![],
-					tile_ticks: vec![]
-				}
-			};
-			
-			println!("Chunk spans {} bytes", writer.chunk(0, 0, &root).unwrap());
-		}
-	}
-	
-	writer.finish().unwrap();*/
+	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
+	let grid = biomes_config.to_grid().unwrap();
 	
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
 	let settings = LargeTreeSettings::default();
@@ -219,7 +120,10 @@ fn main() {
 		}
 	}*/
 
-	/*let mut lighting_info = ::std::collections::HashMap::new();
+	use dynamics::light::{Meta, SkyLightSources, Lighting};
+	use dynamics::queue::{LayerMask, Queue};
+
+	let mut lighting_info = ::std::collections::HashMap::new();
 	lighting_info.insert( 0 * 16, Meta::new(0));
 	lighting_info.insert( 8 * 16, Meta::new(2));
 	lighting_info.insert( 9 * 16, Meta::new(2));
@@ -236,7 +140,7 @@ fn main() {
 			*ty == 1*16 || *ty == 2*16 || *ty == 3*16
 		}
 	};
-	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);*/
+	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);
 	
 	/*let shape = nether_173::passes(-160654125608861039, &nether_173::default_tri_settings(), nether_173::ShapeBlocks::default(), 31);
 	
@@ -250,7 +154,7 @@ fn main() {
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 	
-	/*let file = File::create("out/region/r.0.0.mca").unwrap();
+	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	for x in 0..32 {
@@ -321,7 +225,7 @@ fn main() {
 		}
 	}
 	
-	writer.finish().unwrap();*/
+	writer.finish().unwrap();
 	
 	/*
 	use chunk::matcher;

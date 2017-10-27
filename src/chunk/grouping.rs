@@ -69,6 +69,14 @@ impl<B> Column<B> where B: Target {
 		self.0[chunk_y].get(at)
 	}
 	
+	/// Preforms the ensure_available, reverse_lookup, and set calls all in one.
+	/// As a rule of thumb, this should be faster if you know you are setting less than 16 blocks.
+	pub fn set_immediate(&mut self, position: BlockPosition, target: &B) {
+		let chunk_y = position.chunk_y() as usize;
+		
+		self.0[chunk_y].set_immediate(position, target)
+	}
+	
 	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
 	pub fn ensure_available(&mut self, target: B) {
 		 for chunk in &mut self.0 {
@@ -232,6 +240,14 @@ impl<B> Moore<B> where B: Target {
 		let (column, inner) = coords_to_indices(at)?;
 		
 		Ok(self.columns[column].get(inner))
+	}
+	
+	/// Preforms the ensure_available, reverse_lookup, and set calls all in one.
+	/// As a rule of thumb, this should be faster if you know you are setting less than 144 blocks.
+	pub fn set_immediate(&mut self, at: (i32, i32, i32), target: &B) -> Result<()> {
+		let (column, inner) = coords_to_indices(at)?;
+		
+		Ok(self.columns[column].set_immediate(inner, target))
 	}
 	
 	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.

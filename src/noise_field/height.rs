@@ -71,6 +71,57 @@ impl HeightSource {
 	}
 }
 
+#[derive(Debug)]
+pub struct HeightSettings81 {
+	depth_coord_scale:           Vector3<f64>,
+	depth_scale:                 f64,
+	depth_base:                  f64
+}
+
+impl Default for HeightSettings81 {
+	fn default() -> Self {
+		HeightSettings81 {
+			depth_coord_scale:           Vector3::new(200.0, 0.0, 200.0),
+			depth_scale:                 8000.0,
+			depth_base:                  8.5
+		}
+	}
+}
+
+pub struct HeightSource81 {
+	depth:                 PerlinOctaves,
+	depth_scale:           f64,
+	depth_base:            f64
+}
+
+impl HeightSource81 {
+	pub fn new(rng: &mut JavaRng, settings: &HeightSettings81) -> Self {
+		HeightSource81 {
+			depth:                 PerlinOctaves::new(rng, 16, settings.depth_coord_scale),
+			depth_scale:           settings.depth_scale,
+			depth_base:            settings.depth_base
+		}
+	}
+	
+	pub fn sample(&self, point: Vector2<f64>, biome_height_center: f64, biome_chaos: f64) -> Height {
+		let mut depth = self.depth.sample(point) / self.depth_scale;
+		
+		if depth < 0.0 {
+			depth *= 0.3
+		}
+		
+		depth = depth.abs().min(1.0) * 3.0 - 2.0;
+		depth /= if depth < 0.0 {1.4} else {2.0};
+		
+		depth = depth * 0.2 + biome_height_center;
+		
+		Height { 
+			center: self.depth_base + depth * (self.depth_base / 8.0),
+			chaos: biome_chaos
+		}
+	}
+}
+
 /// Converts form lerp coords (5x5) to layer coords (16x16).
 /// ```
 /// 0 => 1
