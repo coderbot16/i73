@@ -66,6 +66,18 @@ impl ::std::fmt::Debug for LightingData {
 	}
 }
 
+impl Clone for LightingData {
+	fn clone(&self) -> Self {
+		let mut other = Box::new([0; 2048]);
+		
+		other.copy_from_slice(&self.0[..]);
+		
+		LightingData(other)
+	}
+}
+
+
+#[derive(Clone)]
 pub struct Lighting<S> where S: LightSources {
 	data: LightingData,
 	emit: Box<[[Packed; 128]; 6]>,
@@ -317,5 +329,18 @@ impl LightSources for SkyLightSources {
 impl ::std::fmt::Debug for SkyLightSources {
 	fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
 		write!(f, "SkyLightSources {{ heightmap: {:?}, no_light: {:?} }}", &self.heightmap[..], self.no_light)
+	}
+}
+
+impl Clone for SkyLightSources {
+	fn clone(&self) -> Self {
+		let mut other = [0; 128];
+		
+		other.copy_from_slice(&self.heightmap[..]);
+		
+		SkyLightSources {
+			heightmap: other,
+			no_light: self.no_light.clone()
+		}
 	}
 }

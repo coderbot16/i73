@@ -158,32 +158,3 @@ impl<T> SelectZoom<T> for BestCandidate where T: Eq {
 struct FuzzyBlend {
 	rng: NotchRng
 }
-
-
-
-#[cfg(test)]
-mod test {
-	#[test]
-	fn test_best() {
-		println!();
-		
-		use ::image_ops::zoom::SelectZoom;
-		
-		let mut rng = ::rng::JavaRng::new(100);
-		let notch = ::rng::NotchRng::new(1, 1);
-		
-		let select = ::image_ops::zoom::BestCandidate { rng: notch };
-		
-		for _ in 0..100 {
-			let data = (rng.next_i32(5), rng.next_i32(5), rng.next_i32(5), rng.next_i32(5));
-			
-			println!(" > {:?}", data);
-			
-			println!(" < {:?}", select.select((0, 0), data));
-			
-			println!();
-		}
-		
-		panic!("show_log");
-	}
-}

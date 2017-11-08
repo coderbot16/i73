@@ -80,6 +80,9 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 			}
 		}
 		
+		// TODO: FloorY
+		// block.1 > (-0.7) * blob.size.vertical + blob.center.1 - 0.5
+		
 		for z in blob.lower.2..blob.upper.2 {
 			for x in blob.lower.0..blob.upper.0 {
 				for y in blob.lower.1..blob.upper.1 {
@@ -147,10 +150,9 @@ impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target,
 		
 		while let Some(start) = caves.next() {
 			match start {
-				Start::Tunnel(tunnel) => self.carve_tunnel(tunnel, &mut caves, &associations, &mut blocks, &palette, chunk, from, radius),
-				Start::Circular(blob) => if let Some(blob) = blob {
-					self.carve_blob(blob, &associations, &mut blocks, &palette, chunk)
-				}
+				Start::Tunnel(tunnel)       => self.carve_tunnel(tunnel, &mut caves, &associations, &mut blocks, &palette, chunk, from, radius),
+				Start::Circular(Some(blob)) => self.carve_blob(blob, &associations, &mut blocks, &palette, chunk),
+				Start::Circular(None)       => ()
 			};
 		}
 	}

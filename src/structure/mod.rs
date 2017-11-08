@@ -1,4 +1,6 @@
 pub mod caves;
+pub mod organized;
+
 use rng::JavaRng;
 use chunk::grouping::{Column, Result};
 use chunk::storage::Target;

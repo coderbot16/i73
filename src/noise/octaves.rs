@@ -55,6 +55,7 @@ impl Sample for SimplexOctaves {
 // TODO: Split PerlinOctaves into a 2D version and 3D VerticalView that allows Y axis access.
 // The 3D vertical view should also use a flat array for the YTable as well.
 
+#[derive(Debug)]
 pub struct PerlinOctaves(Vec<Perlin>);
 impl PerlinOctaves {
 	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>) -> Self {

@@ -20,7 +20,7 @@ impl<T> MiniRegion<T> where T: Clone {
 		}
 	}
 	
-	pub fn add(&mut self, position: BlockPosition, chunk: T) {
+	pub fn set(&mut self, position: BlockPosition, chunk: T) {
 		self.chunks[position.chunk_yzx() as usize] = Some(chunk);
 		self.present += 1;
 	}
@@ -55,7 +55,7 @@ impl<B> MiniRegion<Chunk<B>> where B: Target {
 		for (index, chunk) in chunks.drain(..).enumerate() {
 			let position = BlockPosition::new(position.x(), index as u8, position.z());
 			
-			self.add(position, chunk);
+			self.set(position, chunk);
 		}
 	}
 }
@@ -71,10 +71,10 @@ impl<T> World<T> where T: Clone {
 		}
 	}
 	
-	pub fn add(&mut self, coords: (i32, u8, i32), chunk: T) {
+	pub fn set(&mut self, coords: (i32, u8, i32), chunk: T) {
 		let (region, inner) = Self::split_coords(coords);
 		
-		self.regions.entry(region).or_insert(MiniRegion::new()).add(inner, chunk);
+		self.regions.entry(region).or_insert(MiniRegion::new()).set(inner, chunk);
 	}
 	
 	pub fn remove(&mut self, coords: (i32, u8, i32)) -> Option<T> {

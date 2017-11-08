@@ -1,6 +1,6 @@
 use rng::JavaRng;
 use noise::octaves::PerlinOctaves;
-use biome::climate::ClimateSource;
+use biome::climate::{ClimateSettings, ClimateSource};
 use biome::source::BiomeSource;
 use biome::{Lookup, Surface};
 use noise_field::height::{HeightSettings, HeightSource};
@@ -22,7 +22,8 @@ pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Ta
 	pub field:        FieldSettings,
 	pub sea_coord:    u8,
 	pub beach:        Option<(u8, u8)>,
-	pub max_bedrock_height: Option<u8>
+	pub max_bedrock_height: Option<u8>,
+	pub climate:      ClimateSettings
 }
 
 impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
@@ -35,7 +36,8 @@ impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
 			field:        FieldSettings::default(),
 			sea_coord:    63,
 			beach:        Some((59, 65)),
-			max_bedrock_height: Some(5)
+			max_bedrock_height: Some(5),
+			climate:      ClimateSettings::default()
 		}
 	}
 }
@@ -55,7 +57,7 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Loo
 	
 	let height  = HeightSource::new(&mut rng, &settings.height);
 	let field   = settings.field;
-	let climate = ClimateSource::new(seed);
+	let climate = ClimateSource::new(seed, settings.climate);
 	
 	(
 		ShapePass { 
@@ -67,7 +69,7 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Loo
 			sea_coord: settings.sea_coord 
 		},
 		PaintPass { 
-			biomes: BiomeSource::new(seed, biome_lookup), 
+			biomes: BiomeSource::new(ClimateSource::new(seed, settings.climate), biome_lookup), 
 			blocks: settings.paint_blocks, 
 			sand, 
 			gravel, 
@@ -80,10 +82,10 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Loo
 }
 
 pub struct ShapeBlocks<B> where B: Target {
-	solid: B,
-	ocean: B,
-	ice:   B,
-	air:   B
+	pub solid: B,
+	pub ocean: B,
+	pub ice:   B,
+	pub air:   B
 }
 
 impl Default for ShapeBlocks<u16> {
@@ -171,15 +173,15 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 }
 
 pub struct PaintBlocks<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	reset:     R,
-	ignore:    I,
-	air:       B,
-	stone:     B,
-	ocean:     B,
-	gravel:    B,
-	sand:      B,
-	sandstone: B,
-	bedrock:   B
+	pub reset:     R,
+	pub ignore:    I,
+	pub air:       B,
+	pub stone:     B,
+	pub ocean:     B,
+	pub gravel:    B,
+	pub sand:      B,
+	pub sandstone: B,
+	pub bedrock:   B
 }
 
 impl Default for PaintBlocks<Is<u16>, IsNot<u16>, u16> {

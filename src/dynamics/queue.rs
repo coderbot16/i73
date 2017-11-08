@@ -154,7 +154,7 @@ impl WorldQueue {
 	}
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct LayerMask([u64; 4]);
 impl LayerMask {
 	pub fn set_or(&mut self, position: LayerPosition, value: bool) {

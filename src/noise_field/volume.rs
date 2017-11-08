@@ -3,7 +3,7 @@ use noise::octaves::PerlinOctavesVertical;
 use nalgebra::Vector3;
 use noise_field::height::Height;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TriNoiseSettings {
 	pub  main_out_scale: f64,
 	pub upper_out_scale: f64,
@@ -64,6 +64,16 @@ pub struct FieldSettings {
 	pub ground_stretch:    f64,
 	pub taper_control:     f64,
 	pub height_stretch:    f64
+}
+
+impl FieldSettings {
+	pub fn with_height_stretch(height_stretch: f64) -> Self {
+		let mut default = Self::default();
+		
+		default.height_stretch = height_stretch;
+		
+		default
+	}
 }
 
 impl Default for FieldSettings {

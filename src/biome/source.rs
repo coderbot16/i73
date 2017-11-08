@@ -12,11 +12,8 @@ pub struct BiomeSource<B> where B: Target {
 }
 
 impl<B> BiomeSource<B> where B: Target {
-	pub fn new(seed: i64, lookup: Lookup<B>) -> Self {
-		BiomeSource {
-			climate: ClimateSource::new(seed),
-			lookup
-		}
+	pub fn new(climate: ClimateSource, lookup: Lookup<B>) -> Self {
+		BiomeSource { climate, lookup }
 	}
 	
 	pub fn layer(&self, chunk: (i32, i32)) -> Layer<Biome<B>> {

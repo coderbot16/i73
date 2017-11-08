@@ -1,0 +1,13 @@
+{
+	"temperature_fq":    0.25,
+	"rainfall_fq":       0.33333333333333331,
+	"mixin_fq":          0.58823529411764708,
+	"temperature_mixin": 0.01,
+	"rainfall_mixin":    0.002,
+	"temperature_mean":  0.7,
+	"temperature_coeff": 0.15,
+	"rainfall_mean":     0.5,
+	"rainfall_coeff":    0.15,
+	"mixin_mean":        0.5,
+	"mixin_coeff":       1.1
+}

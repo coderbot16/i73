@@ -1,6 +1,9 @@
 // TODO: Remove this when i73 becomes a library.
 #![allow(dead_code)]
 
+#[macro_use]
+extern crate nom;
+
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -25,6 +28,7 @@ mod totuple;
 mod segmented;
 mod dynamics;
 mod image_ops;
+mod config;
 
 use std::fs::File;
 use chunk::grouping::Column;
@@ -32,11 +36,13 @@ use generator::Pass;
 use generator::overworld_173::{self, Settings};
 use chunk::anvil::{self, ChunkRoot};
 use chunk::region::RegionWriter;
-use chunk::position::BlockPosition;
-use biome::config::BiomesConfig;
+use chunk::storage::Chunk;
+use chunk::world::World;
+use config::biomes::BiomesConfig;
 use biome::Lookup;
 use trig::TrigLookup;
 use image_ops::Image;
+use std::path::PathBuf;
 
 extern crate nalgebra;
 
@@ -58,6 +64,54 @@ fn display_image(map: &Image<bool>) {
 }
 
 fn main() {
+	use config::settings::customized::{Customized, Parts};
+	use std::cmp::min;
+	
+	let profile_name = match ::std::env::args().skip(1).next() {
+		Some(name) => name,
+		None => {
+			println!("Usage: i73 <profile>");
+			return;
+		}
+	};
+	
+	let mut profile = PathBuf::new();
+	profile.push("profiles");
+	profile.push(&profile_name);
+	
+	println!("Using profile {}: {}", profile_name, profile.to_string_lossy());
+	
+	let customized = serde_json::from_reader::<File, Customized>(File::open(profile.join("customized.json")).unwrap()).unwrap();
+	let parts = Parts::from(customized);
+	
+	println!("  Tri Noise Settings: {:?}", parts.tri);
+	println!("  Height Stretch: {:?}", parts.height_stretch);
+	println!("  Height Settings: {:?}", parts.height);
+	println!("  Biome Settings: {:?}", parts.biome);
+	println!("  Structures: {:?}", parts.structures);
+	println!("  Decorators: {:?}", parts.decorators);
+	
+	let mut settings = Settings::default();
+	
+	settings.tri = parts.tri;
+	settings.height = parts.height.into();
+	settings.field.height_stretch = parts.height_stretch;
+	
+	// TODO: Biome Settings
+	
+	let sea_block = if parts.ocean.top > 0 {
+		settings.sea_coord = min(parts.ocean.top - 1, 255) as u8;
+		
+		if parts.ocean.lava { 11*16 } else { 9*16 }
+	} else {
+		0*16
+	};
+	
+	settings.shape_blocks.ocean = sea_block;
+	settings.paint_blocks.ocean = sea_block;
+	
+	// TODO: Structures and Decorators
+	
 	/*use image_ops::i80::Continents;
 	use image_ops::filter::{Chain, Source, Filter};
 	use image_ops::zoom::{Zoom, BestCandidate, RandomCandidate};
@@ -94,7 +148,7 @@ fn main() {
 	println!("Out:");
 	display_image(&out);*/
 	
-	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open("config/biomes.json").unwrap()).unwrap();
+	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open(profile.join("biomes.json")).unwrap()).unwrap();
 	let grid = biomes_config.to_grid().unwrap();
 	
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
@@ -120,7 +174,7 @@ fn main() {
 		}
 	}*/
 
-	use dynamics::light::{Meta, SkyLightSources, Lighting};
+	use dynamics::light::{Meta, SkyLightSources, Lighting, LightingData};
 	use dynamics::queue::{LayerMask, Queue};
 
 	let mut lighting_info = ::std::collections::HashMap::new();
@@ -128,7 +182,7 @@ fn main() {
 	lighting_info.insert( 8 * 16, Meta::new(2));
 	lighting_info.insert( 9 * 16, Meta::new(2));
 	
-	let (shape, paint) = overworld_173::passes(8399452073110208023, Settings::default(), Lookup::generate(&grid));
+	let (shape, paint) = overworld_173::passes(8399452073110208023, settings, Lookup::generate(&grid));
 	
 	let caves_generator = structure::caves::CavesGenerator { 
 		lookup: TrigLookup::new(), 
@@ -157,9 +211,15 @@ fn main() {
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
+	let mut world = World::<Chunk<u16>>::new();
+	let mut sky_light = World::<LightingData>::new();
+	
+	println!("Generating region (0, 0)");
+	
 	for x in 0..32 {
+		print!("{} | ", x);
 		for z in 0..32 {
-			println!("applying to {}, {}", x, z);
+			print!("{}...", z);
 			
 			let mut column = Column::<u16>::with_bits(4);
 			
@@ -196,7 +256,9 @@ fn main() {
 			
 				let (light_data, sources) = light.decompose();
 				mask = sources.into_mask();
-			
+				
+				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
+				
 				column_light[y] = Some((chunk::anvil::NibbleVec::filled(), light_data.to_anvil()));
 			}
 			
@@ -221,104 +283,13 @@ fn main() {
 				}
 			};
 			
-			println!("Chunk spans {} bytes", writer.chunk(x as u8, (z) as u8, &root).unwrap());
+			writer.chunk(x as u8, z as u8, &root).unwrap();
+			
+			world.set_column((x as i32, z as i32), column);
 		}
+		
+		println!();
 	}
 	
 	writer.finish().unwrap();
-	
-	/*
-	use chunk::matcher;
-	
-	let lake_blocks = LakeBlocks {
-		is_liquid:  matcher::None,
-		is_solid:   matcher::All,
-		replacable: matcher::All,
-		liquid: 8*16,
-		carve: 0,
-		solidify: None
-	};
-	
-	for y in 0..16 {
-		moore.column_mut(0, 0).chunk_mut(y).palette_mut().replace(0, 16);
-	}
-	
-	for y in 1..16 {
-		let mut rng = JavaRng::new(100+(y as i64));
-		let settings = LakeSettings::default();
-		let blobs = LakeBlobs::new(&mut rng, &settings);
-		let mut shape = LakeShape::new(&settings);
-		shape.fill(blobs);
-		
-		lake_blocks.fill_and_carve(&shape, &mut moore, (0, y * 16, 0));
-	}
-	
-	let trig_lookup = trig::TrigLookup::new();
-	let vein_blocks = VeinBlocks {
-		replace: always_true,
-		block:   15*16
-	};
-	
-	let mut rng = JavaRng::new(100);
-	
-	for _ in 0..20 {
-		let (x, y, z) = (rng.next_i32(16), rng.next_i32(64), rng.next_i32(16));
-		let vein = Vein::create(8, (x, y, z), &mut rng, &trig_lookup);
-		
-		vein_blocks.generate(&vein, &mut moore, &mut rng, &trig_lookup).unwrap();
-	}*/
-	
-	/*let file = File::create("out/region/r.0.0.mca").unwrap();
-	let mut writer = RegionWriter::start(file).unwrap();
-	
-	for x in 0..3 {
-		for z in 0..3 {
-			let sections = moore.column((x as i8) - 1, (z as i8) - 1).to_anvil(vec![None; 16]).unwrap();
-		
-			let root = ChunkRoot {
-				version: 0,
-				chunk: anvil::Chunk {
-					x: (x as i32),
-					z: (z as i32),
-					last_update: 0,
-					light_populated: false,
-					terrain_populated: true,
-					v: 0,
-					inhabited_time: 0,
-					biomes: vec![0; 256],
-					heightmap: vec![0; 256],
-					sections,
-					entities: vec![],
-					tile_entities: vec![],
-					tile_ticks: vec![]
-				}
-			};
-			
-			//println!("{:?}", root);
-			
-			println!("Chunk spans {} bytes", writer.chunk(x, z, &root).unwrap());
-			let mut file = File::create(format!("out/alpha/c.{}.{}.nbt", x, z)).unwrap();
-			encode::to_writer(&mut file, &root, None).unwrap();
-		}
-	}
-	
-	writer.finish().unwrap();*/
-	
-	/*for x in 0..400 {
-		let rng = JavaRng::new(100 + x);
-		
-		let caves = structure::caves::Caves::for_chunk(rng, (0, 0), (0, 0));
-		println!("{:?}", caves);
-		
-		for start in caves {
-			println!("{:?}", start);
-			println!("{:?}", start.to_tunnel(8));
-		}
-	}*/
-	
-	/*let table = decorator::dungeon::SimpleLootTable::default();
-	
-	for _ in 0..4096 {
-		println!("{:?}", table.get_item(&mut rng));
-	}*/
 }

@@ -1,7 +1,6 @@
 pub mod climate;
 pub mod storage;
 pub mod source;
-pub mod config;
 
 use biome::climate::Climate;
 use chunk::storage::Target;
