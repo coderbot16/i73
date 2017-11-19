@@ -12,6 +12,10 @@ extern crate nbt_serde;
 extern crate byteorder;
 extern crate deflate;
 extern crate bit_vec;
+extern crate rs25;
+
+use rs25::chunk;
+use rs25::dynamics;
 
 mod noise;
 mod rng;
@@ -23,10 +27,7 @@ mod trig;
 mod structure;
 mod generator;
 mod distribution;
-mod chunk;
-mod totuple;
 mod segmented;
-mod dynamics;
 mod image_ops;
 mod config;
 
@@ -34,7 +35,7 @@ use std::fs::File;
 use chunk::grouping::Column;
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
-use chunk::anvil::{self, ChunkRoot};
+use chunk::anvil::{self, ColumnRoot};
 use chunk::region::RegionWriter;
 use chunk::storage::Chunk;
 use chunk::world::World;
@@ -43,6 +44,7 @@ use biome::Lookup;
 use trig::TrigLookup;
 use image_ops::Image;
 use std::path::PathBuf;
+use chunk::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
 
 extern crate nalgebra;
 
@@ -208,6 +210,9 @@ fn main() {
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 	
+	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
+	let mut manager = Manager::manage(pool);
+	
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
@@ -227,6 +232,7 @@ fn main() {
 			paint.apply(&mut column, (x, z)).unwrap();
 			caves.apply(&mut column, (x, z)).unwrap();
 			
+			let mut snapshot_light = vec![None; 16];
 			let mut column_light = vec![None; 16];
 			
 			let mut mask = LayerMask::default();
@@ -259,29 +265,40 @@ fn main() {
 				
 				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
 				
-				column_light[y] = Some((chunk::anvil::NibbleVec::filled(), light_data.to_anvil()));
+				column_light[y] = Some((chunk::anvil::NibbleVec::filled(), light_data.clone().into_anvil()));
+				snapshot_light[y] = Some((LightingData::new(), light_data));
 			}
 			
 			let sections = column.to_anvil(column_light).unwrap();
 		
-			let root = ChunkRoot {
-				version: 0,
-				chunk: anvil::Chunk {
-					x: (x as i32),
-					z: (z as i32),
-					last_update: 0,
-					light_populated: false,
-					terrain_populated: true,
-					v: 0,
-					inhabited_time: 0,
-					biomes: vec![0; 256],
-					heightmap: vec![0; 256],
-					sections,
-					entities: vec![],
-					tile_entities: vec![],
-					tile_ticks: vec![]
-				}
+			let mut snapshot = ColumnSnapshot {
+				chunks: vec![None; 16],
+				last_update: 0,
+				light_populated: false,
+				terrain_populated: true,
+				inhabited_time: 0,
+				biomes: vec![0; 256],
+				heightmap: vec![0; 256],
+				entities: vec![],
+				tile_entities: vec![],
+				tile_ticks: vec![]
 			};
+			
+			for y in 0..16 {
+				if column.chunk(y).anvil_empty() {
+					continue;
+				}
+				
+				let snapshot_light = snapshot_light[y].take().unwrap_or((LightingData::new(), LightingData::new()));
+				
+				snapshot.chunks[y] = Some(ChunkSnapshot {
+					blocks: column.chunk(y).clone(),
+					block_light: snapshot_light.0,
+					sky_light: snapshot_light.1
+				});
+			};
+			
+			let root = ColumnRoot::from(snapshot.into_column(x as i32, z as i32).unwrap());
 			
 			writer.chunk(x as u8, z as u8, &root).unwrap();
 			
