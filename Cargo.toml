@@ -13,4 +13,4 @@ byteorder = "1.0"
 deflate = "0.7.16"
 bit-vec = "0.4.4"
 nom = "3.2.1"
-rs25 = { path = "../rs25" }
+rs25 = { path = "../../Rust-IntelliJ/rs25" }
