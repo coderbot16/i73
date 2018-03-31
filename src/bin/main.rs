@@ -1,56 +1,28 @@
-// TODO: Remove this when i73 becomes a library.
-#![allow(dead_code)]
-
-#[macro_use]
-extern crate nom;
-
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-extern crate nbt_serde;
-extern crate byteorder;
-extern crate deflate;
-extern crate bit_vec;
 extern crate rs25;
 extern crate vocs;
+extern crate i73;
+extern crate serde_json;
 
-mod noise;
-mod rng;
-mod biome;
-mod sample;
-mod noise_field;
-// TODO: Implement decorators
-// Temporarily disable the decorator module for now.
-// They are not fully implemented, and we do not have a correct mechanism for the 4-chunk square yet.
-// mod decorator;
-mod trig;
-mod structure;
-mod generator;
-mod distribution;
-mod segmented;
-mod image_ops;
-mod config;
-mod matcher;
-
-use std::fs::File;
-use vocs::world::view::ColumnMut;
-use generator::Pass;
-use generator::overworld_173::{self, Settings};
-use config::biomes::BiomesConfig;
-use biome::Lookup;
-use trig::TrigLookup;
-use image_ops::Image;
 use std::path::PathBuf;
+use std::fs::File;
+use std::cmp::min;
+
+use i73::config::settings::customized::{Customized, Parts};
+use i73::generator::Pass;
+use i73::generator::overworld_173::{self, Settings};
+use i73::config::biomes::BiomesConfig;
+use i73::biome::Lookup;
+use i73::trig::TrigLookup;
+use i73::image_ops::Image;
+use i73::structure;
 
 use vocs::world::chunk::Chunk;
 use vocs::world::world::World;
+use vocs::world::view::ColumnMut;
 
 use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
 use rs25::level::anvil::ColumnRoot;
-
-extern crate nalgebra;
 
 fn display_image(map: &Image<bool>) {
 	for z in (0..map.z_size()).rev() {
@@ -70,9 +42,6 @@ fn display_image(map: &Image<bool>) {
 }
 
 fn main() {
-	use config::settings::customized::{Customized, Parts};
-	use std::cmp::min;
-	
 	let profile_name = match ::std::env::args().skip(1).next() {
 		Some(name) => name,
 		None => {
