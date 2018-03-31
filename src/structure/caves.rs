@@ -3,10 +3,10 @@ use trig::TrigLookup;
 use std::cmp::{min, max};
 use distribution::rarity::{Rarity, HalfNormal3, Rare};
 use structure::StructureGenerator;
-use chunk::storage::Target;
-use chunk::grouping::{Column, ColumnBlocks, ColumnPalettes, ColumnAssociation};
-use chunk::position::BlockPosition;
-use chunk::matcher::BlockMatcher;
+use vocs::world::chunk::Target;
+use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
+use vocs::position::ColumnPosition;
+use matcher::BlockMatcher;
 
 const NOTCH_PI: f32 = 3.141593; // TODO: Check
 const PI_DIV_2: f32 = 1.570796;
@@ -59,7 +59,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 						continue;
 					}
 					
-					let block = BlockPosition::new(x, y as u8, z);
+					let block = ColumnPosition::new(x, y as u8, z);
 					
 					if let Ok(candidate) = blocks.get(block, palette).target() {
 						if self.ocean.matches(candidate) {
@@ -86,7 +86,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 		for z in blob.lower.2..blob.upper.2 {
 			for x in blob.lower.0..blob.upper.0 {
 				for y in blob.lower.1..blob.upper.1 {
-					let position = BlockPosition::new(x, y, z);
+					let position = ColumnPosition::new(x, y, z);
 					
 					let block = (x as f64, y as f64, z as f64);
 				
@@ -137,7 +137,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 }
 
 impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
-	fn generate(&self, random: JavaRng, column: &mut Column<B>, chunk: (i32, i32), from: (i32, i32), radius: i32) {
+	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: (i32, i32), from: (i32, i32), radius: i32) {
 		let mut caves = Caves::for_chunk(random, chunk, from, radius, &self.lookup);
 		
 		column.ensure_available(self.carve.clone());

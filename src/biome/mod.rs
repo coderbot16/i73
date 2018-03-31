@@ -3,7 +3,7 @@ pub mod storage;
 pub mod source;
 
 use biome::climate::Climate;
-use chunk::storage::Target;
+use vocs::world::chunk::Target;
 use std::borrow::Cow;
 use segmented::Segmented;
 

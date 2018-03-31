@@ -1,6 +1,6 @@
 use rng::JavaRng;
 use chunk::grouping::{Moore, Result};
-use chunk::storage::Target;
+use vocs::world::chunk::Target;
 use distribution::height::HeightDistribution;
 use distribution::rarity::Rarity;
 use std::marker::PhantomData; 

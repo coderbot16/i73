@@ -2,6 +2,7 @@ use rng::JavaRng;
 use noise::octaves::PerlinOctavesVertical;
 use nalgebra::Vector3;
 use noise_field::height::Height;
+use vocs::position::ColumnPosition;
 
 #[derive(Debug, PartialEq)]
 pub struct TriNoiseSettings {
@@ -128,7 +129,9 @@ pub fn reduce(value: f64, factor: f64, min: f64) -> f64 {
 	value * (1.0 - factor) - min * factor
 }
 
-pub fn trilinear(array: &[[[f64; 5]; 17]; 5], position: ::chunk::position::BlockPosition) -> f64 {
+pub fn trilinear128(array: &[[[f64; 5]; 17]; 5], position: ColumnPosition) -> f64 {
+	debug_assert!(position.y() < 128, "trilinear128 only supports Y values below 128");
+
 	let inner = (
 		((position.x() % 4) as f64) / 4.0,
 		((position.y() % 8) as f64) / 8.0,

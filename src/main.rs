@@ -13,8 +13,9 @@ extern crate byteorder;
 extern crate deflate;
 extern crate bit_vec;
 extern crate rs25;
+extern crate vocs;
 
-use rs25::chunk;
+use vocs::world::chunk;
 use rs25::dynamics;
 
 mod noise;
@@ -22,7 +23,10 @@ mod rng;
 mod biome;
 mod sample;
 mod noise_field;
-mod decorator;
+// TODO: Implement decorators
+// Temporarily disable the decorator module for now.
+// They are not fully implemented, and we do not have a correct mechanism for the 4-chunk square yet.
+// mod decorator;
 mod trig;
 mod structure;
 mod generator;
@@ -30,21 +34,24 @@ mod distribution;
 mod segmented;
 mod image_ops;
 mod config;
+mod matcher;
 
 use std::fs::File;
-use chunk::grouping::Column;
+use vocs::world::view::ColumnMut;
 use generator::Pass;
 use generator::overworld_173::{self, Settings};
-use chunk::anvil::{self, ColumnRoot};
-use chunk::region::RegionWriter;
-use chunk::storage::Chunk;
-use chunk::world::World;
 use config::biomes::BiomesConfig;
 use biome::Lookup;
 use trig::TrigLookup;
 use image_ops::Image;
 use std::path::PathBuf;
-use chunk::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
+
+use vocs::world::chunk::Chunk;
+use vocs::world::world::World;
+
+use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
+use rs25::level::region::RegionWriter;
+use rs25::level::anvil::{self, ColumnRoot};
 
 extern crate nalgebra;
 
@@ -176,9 +183,6 @@ fn main() {
 		}
 	}*/
 
-	use dynamics::light::{Meta, SkyLightSources, Lighting, LightingData};
-	use dynamics::queue::{LayerMask, Queue};
-
 	let mut lighting_info = ::std::collections::HashMap::new();
 	lighting_info.insert( 0 * 16, Meta::new(0));
 	lighting_info.insert( 8 * 16, Meta::new(2));
@@ -209,7 +213,11 @@ fn main() {
 	fake_settings.max_bedrock_height = None;
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
-	
+
+	use vocs::storage::{LayerMask, ChunkNibbles};
+	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting};
+	use rs25::dynamics::queue::Queue;
+
 	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
 	let mut manager = Manager::manage(pool);
 	
@@ -217,7 +225,7 @@ fn main() {
 	let mut writer = RegionWriter::start(file).unwrap();
 	
 	let mut world = World::<Chunk<u16>>::new();
-	let mut sky_light = World::<LightingData>::new();
+	let mut sky_light = World::<ChunkNibbles>::new();
 	
 	println!("Generating region (0, 0)");
 	
@@ -226,19 +234,20 @@ fn main() {
 		for z in 0..32 {
 			print!("{}...", z);
 			
-			let mut column = Column::<u16>::with_bits(4);
-			
-			shape.apply(&mut column, (x, z)).unwrap();
-			paint.apply(&mut column, (x, z)).unwrap();
-			caves.apply(&mut column, (x, z)).unwrap();
+			//let mut column = Column::<u16>::with_bits(4);
+			let mut column: ColumnMut<u16> = unimplemented!();
+
+			shape.apply(&mut column, (x, z));
+			paint.apply(&mut column, (x, z));
+			caves.apply(&mut column, (x, z));
 			
 			let mut snapshot_light = vec![None; 16];
 			let mut column_light = vec![None; 16];
-			
+
 			let mut mask = LayerMask::default();
 			
 			for y in (0..16).rev() {
-				let chunk = column.chunk(y);
+				let chunk = &column.0[y];
 				
 				let mut meta = Vec::with_capacity(chunk.palette().entries().len());
 				
@@ -252,7 +261,7 @@ fn main() {
 				
 				let sources = SkyLightSources::build(chunk, &meta, mask);
 		
-				let mut queue = Queue::new();
+				let mut queue = Queue::default();
 				let mut light = Lighting::new(sources, meta);
 				
 				light.initial(chunk, &mut queue);
@@ -265,8 +274,8 @@ fn main() {
 				
 				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
 				
-				column_light[y] = Some((chunk::anvil::NibbleVec::filled(), light_data.clone().into_anvil()));
-				snapshot_light[y] = Some((LightingData::new(), light_data));
+				column_light[y] = Some((anvil::NibbleVec::filled(), light_data.clone().into_anvil()));
+				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
 			}
 			
 			let sections = column.to_anvil(column_light).unwrap();
@@ -285,20 +294,20 @@ fn main() {
 			};
 			
 			for y in 0..16 {
-				if column.chunk(y).anvil_empty() {
+				if column.0[y].anvil_empty() {
 					continue;
 				}
 				
-				let snapshot_light = snapshot_light[y].take().unwrap_or((LightingData::new(), LightingData::new()));
+				let snapshot_light = snapshot_light[y].take().unwrap_or_else(|| (ChunkNibbles::new(), ChunkNibbles::new()));
 				
 				snapshot.chunks[y] = Some(ChunkSnapshot {
-					blocks: column.chunk(y).clone(),
+					blocks: column.0[y].clone(),
 					block_light: snapshot_light.0,
 					sky_light: snapshot_light.1
 				});
 			};
 			
-			let root = ColumnRoot::from(snapshot.into_column(x as i32, z as i32).unwrap());
+			let root = ColumnRoot::from(snapshot.to_column(x as i32, z as i32).unwrap());
 			
 			writer.chunk(x as u8, z as u8, &root).unwrap();
 			

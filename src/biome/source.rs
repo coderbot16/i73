@@ -1,8 +1,8 @@
 use biome::storage::Layer;
-use chunk::position::LayerPosition;
+use vocs::position::LayerPosition;
 use biome::{Biome, Lookup};
-use biome::climate::ClimateSource;
-use chunk::storage::Target;
+use biome::climate::{Climate, ClimateSource};
+use vocs::world::chunk::Target;
 use nalgebra::Vector2;
 use sample::Sample;
 
@@ -21,8 +21,9 @@ impl<B> BiomeSource<B> where B: Target {
 			(chunk.0 * 16) as f64,
 			(chunk.1 * 16) as f64
 		);
-		
-		let mut layer = Layer::new(2);
+
+		// TODO: Avoid the default lookup and clone.
+		let mut layer = Layer::new(2, *self.lookup.lookup(Climate::new(1.0, 1.0).clone()));
 		
 		for z in 0..16 {
 			for x in 0..16 {

@@ -1,8 +1,8 @@
-use chunk::storage::Target;
-use chunk::position::BlockPosition;
-use chunk::grouping::{Column, Result};
+use vocs::world::chunk::Target;
+use vocs::position::ColumnPosition;
+use vocs::world::view::ColumnMut;
 use generator::Pass;
-use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings, trilinear};
+use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings, trilinear128};
 use nalgebra::{Vector2, Vector3};
 use rng::JavaRng;
 
@@ -57,7 +57,7 @@ pub struct ShapePass<B> where B: Target {
 }
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
-	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
 		let offset = Vector2::new(
 			(chunk.0 as f64) * 4.0,
 			(chunk.1 as f64) * 4.0
@@ -89,10 +89,10 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		let ocean = palette.reverse_lookup(&self.blocks.ocean).unwrap();
 		
 		for i in 0..32768 {
-			let position = BlockPosition::from_yzx(i);
+			let position = ColumnPosition::from_yzx(i);
 			let altitude = position.y();
 			
-			let block = if trilinear(&field, position) > 0.0 {
+			let block = if trilinear128(&field, position) > 0.0 {
 				&solid
 			} else if altitude <= self.sea_coord {
 				&ocean
@@ -102,8 +102,6 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 			
 			blocks.set(position, block);
 		}
-		
-		Ok(())
 	}
 }
 

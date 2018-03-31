@@ -4,12 +4,12 @@ use biome::climate::{ClimateSettings, ClimateSource};
 use biome::source::BiomeSource;
 use biome::{Lookup, Surface};
 use noise_field::height::{HeightSettings, HeightSource};
-use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear};
+use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear128};
 use generator::Pass;
-use chunk::position::{BlockPosition, LayerPosition};
-use chunk::storage::Target;
-use chunk::grouping::{Column, Result, ColumnBlocks, ColumnPalettes, ColumnAssociation};
-use chunk::matcher::{BlockMatcher, Is, IsNot};
+use vocs::position::{ColumnPosition, LayerPosition};
+use vocs::world::chunk::Target;
+use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
+use matcher::{BlockMatcher, Is, IsNot};
 use sample::Sample;
 use nalgebra::{Vector2, Vector3};
 use noise_field::height::lerp_to_layer;
@@ -109,7 +109,7 @@ pub struct ShapePass<B> where B: Target {
 }
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
-	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
 		let offset = Vector2::new(
 			(chunk.0 as f64) * 4.0,
 			(chunk.1 as f64) * 4.0
@@ -152,10 +152,10 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		let ice   = palette.reverse_lookup(&self.blocks.ice).unwrap();
 		
 		for i in 0..32768 {
-			let position = BlockPosition::from_yzx(i);
+			let position = ColumnPosition::from_yzx(i);
 			let altitude = position.y();
 			
-			let block = if trilinear(&field, position) > 0.0 {
+			let block = if trilinear128(&field, position) > 0.0 {
 				&solid
 			} else if altitude == self.sea_coord && climate_chunk.get(position.x() as usize, position.z() as usize).temperature() < 0.5 {
 				&ice
@@ -167,8 +167,6 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 			
 			blocks.set(position, block);
 		}
-		
-		Ok(())
 	}
 }
 
@@ -264,7 +262,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 		let mut current_surface = if thickness <= 0 {basin} else {surface};
 		
 		for y in (0..128).rev() {
-			let position = BlockPosition::new(x, y, z);
+			let position = ColumnPosition::new(x, y, z);
 			
 			if let Some(chance) = self.max_bedrock_height {
 				if (y as i32) <= rng.next_i32(chance as i32) {
@@ -334,7 +332,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 }
 
 impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
 		let block = ((chunk.0 * 16) as f64, (chunk.1 * 16) as f64);
 		let mut rng = JavaRng::new((chunk.0 as i64).wrapping_mul(341873128712).wrapping_add((chunk.1 as i64).wrapping_mul(132897987541)));
 		
@@ -429,7 +427,5 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 				self.paint_stack(&mut rng, &mut blocks, &palette, &associations, x, z, surface, beach, &basin, thickness);
 			}
 		}
-		
-		Ok(())
 	}
 }

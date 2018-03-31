@@ -1,6 +1,6 @@
-use chunk::storage::Target;
-use chunk::position::BlockPosition;
-use chunk::grouping::{Column, Result};
+use vocs::world::chunk::Target;
+use vocs::position::ColumnPosition;
+use vocs::world::view::ColumnMut;
 use generator::Pass;
 use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings};
 use nalgebra::{Vector2, Vector3};
@@ -49,7 +49,7 @@ pub struct ShapePass<B> where B: Target {
 }
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
-	fn apply(&self, target: &mut Column<B>, chunk: (i32, i32)) -> Result<()> {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
 		let offset = Vector2::new(
 			(chunk.0 as f64) * 2.0,
 			(chunk.1 as f64) * 2.0
@@ -79,9 +79,9 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		let solid = palette.reverse_lookup(&self.blocks.solid).unwrap();
 		
 		for i in 0..32768 {
-			let position = BlockPosition::from_yzx(i);
+			let position = ColumnPosition::from_yzx(i);
 			
-			let block = if trilinear(&field, position) > 0.0 {
+			let block = if trilinear128(&field, position) > 0.0 {
 				&solid
 			} else {
 				&air
@@ -89,12 +89,12 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 			
 			blocks.set(position, block);
 		}
-		
-		Ok(())
 	}
 }
 
-pub fn trilinear(array: &[[[f64; 3]; 33]; 3], position: BlockPosition) -> f64 {
+pub fn trilinear128(array: &[[[f64; 3]; 33]; 3], position: ColumnPosition) -> f64 {
+	debug_assert!(position.y() < 128, "trilinear128 only supports Y values below 128");
+
 	let inner = (
 		((position.x() % 8) as f64) / 8.0,
 		((position.y() % 4) as f64) / 4.0,

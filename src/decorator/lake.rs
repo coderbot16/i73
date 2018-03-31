@@ -1,7 +1,7 @@
 use rng::JavaRng;
 use bit_vec::BitVec;
-use chunk::storage::Target;
-use chunk::matcher::BlockMatcher;
+use vocs::world::chunk::Target;
+use matcher::BlockMatcher;
 use chunk::grouping::{Moore, Result};
 
 pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {

@@ -1,5 +1,6 @@
-use chunk::storage::{PackedBlockStorage, Palette, PaletteAssociation, Target};
-use chunk::position::LayerPosition;
+use vocs::world::chunk::{Palette, PaletteAssociation, Target, NullRecorder};
+use vocs::storage::packed::PackedBlockStorage;
+use vocs::position::LayerPosition;
 use std::mem;
 
 #[derive(Debug)]
@@ -9,10 +10,10 @@ pub struct Layer<B> where B: Target {
 }
 
 impl<B> Layer<B> where B: Target {
-	pub fn new(bits_per_entry: usize) -> Self {
+	pub fn new(bits_per_entry: usize, default: B) -> Self {
 		Layer {
 			storage: PackedBlockStorage::new(bits_per_entry),
-			palette: Palette::new(bits_per_entry)
+			palette: Palette::new(bits_per_entry, default)
 		}
 	}
 	
@@ -60,6 +61,6 @@ impl<B> Layer<B> where B: Target {
 		self.ensure_available(target.clone());
 		let association = self.palette.reverse_lookup(&target).unwrap();
 		
-		self.storage.set(position, &association);
+		self.storage.set(position, &association, &mut NullRecorder);
 	}
 }
