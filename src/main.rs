@@ -15,9 +15,6 @@ extern crate bit_vec;
 extern crate rs25;
 extern crate vocs;
 
-use vocs::world::chunk;
-use rs25::dynamics;
-
 mod noise;
 mod rng;
 mod biome;
@@ -51,7 +48,7 @@ use vocs::world::world::World;
 
 use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
-use rs25::level::anvil::{self, ColumnRoot};
+use rs25::level::anvil::ColumnRoot;
 
 extern crate nalgebra;
 
@@ -235,14 +232,32 @@ fn main() {
 			print!("{}...", z);
 			
 			//let mut column = Column::<u16>::with_bits(4);
-			let mut column: ColumnMut<u16> = unimplemented!();
+			let mut column_chunks = [
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0),
+				Chunk::<u16>::new(4, 0)
+			];
+
+			let mut column: ColumnMut<u16> = ColumnMut(&mut column_chunks);
 
 			shape.apply(&mut column, (x, z));
 			paint.apply(&mut column, (x, z));
 			caves.apply(&mut column, (x, z));
 			
 			let mut snapshot_light = vec![None; 16];
-			let mut column_light = vec![None; 16];
 
 			let mut mask = LayerMask::default();
 			
@@ -273,12 +288,9 @@ fn main() {
 				mask = sources.into_mask();
 				
 				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
-				
-				column_light[y] = Some((anvil::NibbleVec::filled(), light_data.clone().into_anvil()));
+
 				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
 			}
-			
-			let sections = column.to_anvil(column_light).unwrap();
 		
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
@@ -311,7 +323,7 @@ fn main() {
 			
 			writer.chunk(x as u8, z as u8, &root).unwrap();
 			
-			world.set_column((x as i32, z as i32), column);
+			// TODO: world.set_column((x as i32, z as i32), column);
 		}
 		
 		println!();

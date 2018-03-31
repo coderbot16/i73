@@ -23,7 +23,7 @@ impl<B> BiomeSource<B> where B: Target {
 		);
 
 		// TODO: Avoid the default lookup and clone.
-		let mut layer = Layer::new(2, *self.lookup.lookup(Climate::new(1.0, 1.0).clone()));
+		let mut layer = Layer::new(2, self.lookup.lookup(Climate::new(1.0, 1.0)).clone());
 		
 		for z in 0..16 {
 			for x in 0..16 {
