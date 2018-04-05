@@ -19,6 +19,7 @@ use i73::structure;
 use vocs::world::chunk::Chunk;
 use vocs::world::world::World;
 use vocs::world::view::ColumnMut;
+use vocs::position::GlobalColumnPosition;
 
 use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
@@ -199,8 +200,9 @@ fn main() {
 		print!("{} | ", x);
 		for z in 0..32 {
 			print!("{}...", z);
-			
-			//let mut column = Column::<u16>::with_bits(4);
+
+			let column_position = GlobalColumnPosition::new(x, z);
+
 			let mut column_chunks = [
 				Chunk::<u16>::new(4, 0),
 				Chunk::<u16>::new(4, 0),
@@ -222,9 +224,9 @@ fn main() {
 
 			let mut column: ColumnMut<u16> = ColumnMut(&mut column_chunks);
 
-			shape.apply(&mut column, (x, z));
-			paint.apply(&mut column, (x, z));
-			caves.apply(&mut column, (x, z));
+			shape.apply(&mut column, column_position);
+			paint.apply(&mut column, column_position);
+			caves.apply(&mut column, column_position);
 			
 			let mut snapshot_light = vec![None; 16];
 

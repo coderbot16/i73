@@ -1,5 +1,5 @@
 use biome::storage::Layer;
-use vocs::position::LayerPosition;
+use vocs::position::{LayerPosition, GlobalColumnPosition};
 use biome::{Biome, Lookup};
 use biome::climate::{Climate, ClimateSource};
 use vocs::world::chunk::Target;
@@ -16,10 +16,10 @@ impl<B> BiomeSource<B> where B: Target {
 		BiomeSource { climate, lookup }
 	}
 	
-	pub fn layer(&self, chunk: (i32, i32)) -> Layer<Biome<B>> {
+	pub fn layer(&self, chunk: GlobalColumnPosition) -> Layer<Biome<B>> {
 		let block = (
-			(chunk.0 * 16) as f64,
-			(chunk.1 * 16) as f64
+			(chunk.x() * 16) as f64,
+			(chunk.z() * 16) as f64
 		);
 
 		// TODO: Avoid the default lookup and clone.

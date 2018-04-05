@@ -1,5 +1,5 @@
 use vocs::world::chunk::Target;
-use vocs::position::ColumnPosition;
+use vocs::position::{ColumnPosition,GlobalColumnPosition};
 use vocs::world::view::ColumnMut;
 use generator::Pass;
 use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings, trilinear128};
@@ -57,10 +57,10 @@ pub struct ShapePass<B> where B: Target {
 }
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
-	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
 		let offset = Vector2::new(
-			(chunk.0 as f64) * 4.0,
-			(chunk.1 as f64) * 4.0
+			(chunk.x() as f64) * 4.0,
+			(chunk.z() as f64) * 4.0
 		);
 		
 		let mut field = [[[0f64; 5]; 17]; 5];

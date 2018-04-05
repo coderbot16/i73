@@ -9,7 +9,6 @@ extern crate nbt_serde;
 extern crate byteorder;
 extern crate deflate;
 extern crate bit_vec;
-extern crate rs25;
 extern crate vocs;
 extern crate nalgebra;
 

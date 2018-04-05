@@ -5,7 +5,7 @@ use distribution::rarity::{Rarity, HalfNormal3, Rare};
 use structure::StructureGenerator;
 use vocs::world::chunk::Target;
 use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
-use vocs::position::ColumnPosition;
+use vocs::position::{ColumnPosition, GlobalColumnPosition};
 use matcher::BlockMatcher;
 
 const NOTCH_PI: f32 = 3.141593; // TODO: Check
@@ -31,8 +31,8 @@ fn floor_capped(t: f64) -> i32 {
 	t.floor().max(-2147483648.0).min(2147483647.0) as i32
 }
 
-struct CavesAssociations<'a, B> where B: 'a + Target {
-	carve: ColumnAssociation<'a, B>
+struct CavesAssociations {
+	carve: ColumnAssociation
 }
 
 pub struct CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
@@ -43,8 +43,8 @@ pub struct CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Block
 }
 
 impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
-	fn carve_blob(&self, blob: Blob, associations: &CavesAssociations<B>, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: (i32, i32)) {
-		let chunk_block = ((chunk.0 * 16) as f64, (chunk.1 * 16) as f64);
+	fn carve_blob(&self, blob: Blob, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition) {
+		let chunk_block = ((chunk.x() * 16) as f64, (chunk.z() * 16) as f64);
 		
 		// Try to make sure that we don't carve into the ocean.
 		// However, this misses chunk boundaries - there is no easy way to fix this.
@@ -61,7 +61,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 					
 					let block = ColumnPosition::new(x, y as u8, z);
 					
-					if let Ok(candidate) = blocks.get(block, palette).target() {
+					if let Some(candidate) = blocks.get(block, palette) {
 						if self.ocean.matches(candidate) {
 							return;
 						}
@@ -100,7 +100,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 					
 					// Test if the block is within the blob region. Additionally, the y > -0.7 check makes the floors flat.
 					if scaled.1 > -0.7 && scaled.0 * scaled.0 + scaled.1 * scaled.1 + scaled.2 * scaled.2 < 1.0 {
-						if let Ok(candidate) = blocks.get(position, palette).target() {
+						if let Some(candidate) = blocks.get(position, palette) {
 							if !self.carvable.matches(candidate) {
 								continue;
 							}
@@ -113,7 +113,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 		}
 	}
 	
-	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations<B>, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: (i32, i32), from: (i32, i32), radius: i32) {
+	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
 		loop {
 			let outcome = tunnel.step(&self.lookup);
 			
@@ -137,7 +137,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 }
 
 impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
-	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: (i32, i32), from: (i32, i32), radius: i32) {
+	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
 		let mut caves = Caves::for_chunk(random, chunk, from, radius, &self.lookup);
 		
 		column.ensure_available(self.carve.clone());
@@ -161,8 +161,8 @@ impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target,
 // TODO: #[derive(Debug)]
 pub struct Caves<'a> {
 	state: JavaRng, 
-	chunk: (i32, i32), 
-	from: (i32, i32),
+	chunk: GlobalColumnPosition,
+	from: GlobalColumnPosition,
 	remaining: i32,
 	max_chunk_radius: i32,
 	trig: &'a TrigLookup,
@@ -170,7 +170,7 @@ pub struct Caves<'a> {
 }
 
 impl<'a> Caves<'a> {
-	pub fn for_chunk(mut state: JavaRng, chunk: (i32, i32), from: (i32, i32), radius: i32, trig: &TrigLookup) -> Caves {
+	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32, trig: &TrigLookup) -> Caves {
 		let remaining = RARITY.get(&mut state);
 		
 		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius, trig }
@@ -203,9 +203,9 @@ impl<'a> Iterator for Caves<'a> {
 		let     z = self.state.next_i32(16);
 		
 		let orgin = (
-			(self.from.0 * 16 + x) as f64, 
-			y                      as f64, 
-			(self.from.1 * 16 + z) as f64
+			(self.from.x() * 16 + x) as f64,
+			y                        as f64,
+			(self.from.z() * 16 + z) as f64
 		);
 		
 		if self.state.next_i32(4) == 0 {
@@ -229,11 +229,11 @@ pub enum Start {
 }
 
 impl Start {
-	fn normal(rng: &mut JavaRng, chunk: (i32, i32), block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
+	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
 		Start::Tunnel(Tunnel::normal(rng, chunk, block, max_chunk_radius))
 	}
 	
-	fn circular(rng: &mut JavaRng, chunk: (i32, i32), block: (f64, f64, f64), max_chunk_radius: i32, trig: &TrigLookup) -> Self {
+	fn circular(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, trig: &TrigLookup) -> Self {
 		let blob_size_factor = 1.0 + rng.next_f32() * 6.0;
 		let mut state = JavaRng::new(rng.next_i64());
 		
@@ -267,7 +267,7 @@ pub struct Tunnel {
 }
 
 impl Tunnel {
-	fn normal(rng: &mut JavaRng, chunk: (i32, i32), block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
+	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
 		let position = Position::with_angles(chunk, block, rng.next_f32() * NOTCH_PI * 2.0, (rng.next_f32() - 0.5) / 4.0);
 		let blob_size_factor = rng.next_f32() * 2.0 + rng.next_f32();
 		
@@ -403,7 +403,7 @@ impl SystemSize {
 #[derive(Debug, Copy, Clone)]
 struct Position {
 	/// Position of the chunk being carved
-	chunk: (i32, i32),
+	chunk: GlobalColumnPosition,
 	/// Block position of the center of the generated chunk.
 	chunk_center: (f64, f64),
 	/// Absolute block position in the world
@@ -419,22 +419,14 @@ struct Position {
 }
 
 impl Position {
-	fn new(chunk: (i32, i32), block: (f64, f64, f64)) -> Self {
-		Position {
-			chunk,
-			chunk_center: ((chunk.0 * 16 + 8) as f64, (chunk.1 * 16 + 8) as f64),
-			block,
-			yaw: 0.0,
-			pitch: 0.0,
-			yaw_velocity: 0.0,
-			pitch_velocity: 0.0
-		}
+	fn new(chunk: GlobalColumnPosition, block: (f64, f64, f64)) -> Self {
+		Position::with_angles(chunk, block, 0.0, 0.0)
 	}
 	
-	fn with_angles(chunk: (i32, i32), block: (f64, f64, f64), yaw: f32, pitch: f32) -> Self {
+	fn with_angles(chunk: GlobalColumnPosition, block: (f64, f64, f64), yaw: f32, pitch: f32) -> Self {
 		Position {
 			chunk,
-			chunk_center: ((chunk.0 * 16 + 8) as f64, (chunk.1 * 16 + 8) as f64),
+			chunk_center: ((chunk.x() * 16 + 8) as f64, (chunk.z() * 16 + 8) as f64),
 			block,
 			yaw,
 			pitch,
@@ -478,15 +470,15 @@ impl Position {
 	
 	fn blob(&self, size: BlobSize) -> Blob {
 		let lower = (
-			floor_capped(self.block.0 - size.horizontal) - self.chunk.0 * 16 - 1,
-			floor_capped(self.block.1 - size.vertical)                       - 1,
-			floor_capped(self.block.2 - size.horizontal) - self.chunk.1 * 16 - 1
+			floor_capped(self.block.0 - size.horizontal) - self.chunk.x() * 16 - 1,
+			floor_capped(self.block.1 - size.vertical)                         - 1,
+			floor_capped(self.block.2 - size.horizontal) - self.chunk.z() * 16 - 1
 		);
 		
 		let upper = (
-			floor_capped(self.block.0 + size.horizontal) - self.chunk.0 * 16 + 1,
-			floor_capped(self.block.1 + size.vertical)                       + 1,
-			floor_capped(self.block.2 + size.horizontal) - self.chunk.1 * 16 + 1
+			floor_capped(self.block.0 + size.horizontal) - self.chunk.x() * 16 + 1,
+			floor_capped(self.block.1 + size.vertical)                         + 1,
+			floor_capped(self.block.2 + size.horizontal) - self.chunk.z() * 16 + 1
 		);
 		
 		Blob {

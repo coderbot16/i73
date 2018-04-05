@@ -4,6 +4,7 @@ pub mod organized;
 use rng::JavaRng;
 use vocs::world::view::ColumnMut;
 use vocs::world::chunk::Target;
+use vocs::position::GlobalColumnPosition;
 use std::marker::PhantomData;
 use generator::Pass;
 
@@ -35,20 +36,21 @@ impl<T, B> StructureGenerateNearby<T, B> where T: StructureGenerator<B>, B: Targ
 }
 
 impl<T, B> Pass<B> for StructureGenerateNearby<T, B> where T: StructureGenerator<B>, B: Target {
-	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
-		for x in     (0..self.diameter).map(|x| chunk.0 + x - self.radius) {
-			for z in (0..self.diameter).map(|z| chunk.1 + z - self.radius) {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
+		for x in     (0..self.diameter).map(|x| chunk.x() + x - self.radius) {
+			for z in (0..self.diameter).map(|z| chunk.z() + z - self.radius) {
 				let x_part = (x as i64).wrapping_mul(self.seed_coefficients.0);
 				let z_part = (z as i64).wrapping_mul(self.seed_coefficients.1);
 				
 				let seed = (x_part.wrapping_add(z_part)) ^ self.world_seed;
-				
-				self.generator.generate(JavaRng::new(seed), target, chunk, (x, z), self.radius);
+				let from = GlobalColumnPosition::new(x, z);
+
+				self.generator.generate(JavaRng::new(seed), target, chunk, from, self.radius);
 			}
 		}
 	}
 }
 
 pub trait StructureGenerator<B> where B: Target {
-	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk_pos: (i32, i32), from: (i32, i32), radius: i32);
+	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk_pos: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32);
 }

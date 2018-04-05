@@ -15,6 +15,14 @@ impl<T, B> BlockMatcher<B> for T where T: Fn(&B) -> bool, B: Target {
 	}
 }
 
+#[derive(Debug, Clone)]
+pub struct HashSetMatcher<B>(pub ::std::collections::HashSet<B>) where B: Target;
+impl<B> BlockMatcher<B> for HashSetMatcher<B> where B: Target {
+	fn matches(&self, block: &B) -> bool {
+		self.0.contains(block)
+	}
+}
+
 #[derive(Debug, Copy, Clone)]
 pub struct All;
 

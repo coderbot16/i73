@@ -6,7 +6,7 @@ use biome::{Lookup, Surface};
 use noise_field::height::{HeightSettings, HeightSource};
 use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear128};
 use generator::Pass;
-use vocs::position::{ColumnPosition, LayerPosition};
+use vocs::position::{ColumnPosition, LayerPosition, GlobalColumnPosition};
 use vocs::world::chunk::Target;
 use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use matcher::{BlockMatcher, Is, IsNot};
@@ -109,15 +109,15 @@ pub struct ShapePass<B> where B: Target {
 }
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
-	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
 		let offset = Vector2::new(
-			(chunk.0 as f64) * 4.0,
-			(chunk.1 as f64) * 4.0
+			(chunk.x() as f64) * 4.0,
+			(chunk.z() as f64) * 4.0
 		);
 		
 		let block_offset = (
-			(chunk.0 as f64) * 16.0,
-			(chunk.1 as f64) * 16.0
+			(chunk.x() as f64) * 16.0,
+			(chunk.z() as f64) * 16.0
 		);
 		
 		let climate_chunk = self.climate.chunk(block_offset);
@@ -198,21 +198,21 @@ impl Default for PaintBlocks<Is<u16>, IsNot<u16>, u16> {
 	}
 }
 
-pub struct PaintAssociations<'a, B> where B: 'a + Target {
-	air:       ColumnAssociation<'a, B>,
-	stone:     ColumnAssociation<'a, B>,
-	ocean:     ColumnAssociation<'a, B>,
-	bedrock:   ColumnAssociation<'a, B>
+pub struct PaintAssociations {
+	air:       ColumnAssociation,
+	stone:     ColumnAssociation,
+	ocean:     ColumnAssociation,
+	bedrock:   ColumnAssociation
 }
 
-struct SurfaceAssociations<'a, B> where B: 'a + Target {
-	pub top:  ColumnAssociation<'a, B>,
-	pub fill: ColumnAssociation<'a, B>,
-	pub chain: Vec<FollowupAssociation<'a, B>>
+struct SurfaceAssociations {
+	pub top:  ColumnAssociation,
+	pub fill: ColumnAssociation,
+	pub chain: Vec<FollowupAssociation>
 }
 
-impl<'a, B> SurfaceAssociations<'a, B> where B: 'a + Target {
-	fn lookup<'b>(surface: &'b Surface<B>, palette: &'a ColumnPalettes<B>) -> Self {
+impl SurfaceAssociations {
+	fn lookup<B>(surface: &Surface<B>, palette: &ColumnPalettes<B>) -> Self where B: Target {
 		let mut chain = Vec::new();
 		
 		for followup in &surface.chain {
@@ -224,7 +224,7 @@ impl<'a, B> SurfaceAssociations<'a, B> where B: 'a + Target {
 			)
 		}
 		
-		SurfaceAssociations::<B> {
+		SurfaceAssociations {
 			top:   palette.reverse_lookup(&surface.top).unwrap(),
 			fill:  palette.reverse_lookup(&surface.fill).unwrap(),
 			chain
@@ -232,8 +232,8 @@ impl<'a, B> SurfaceAssociations<'a, B> where B: 'a + Target {
 	}
 }
 
-struct FollowupAssociation<'a, B> where B: 'a + Target {
-	pub block:     ColumnAssociation<'a, B>,
+struct FollowupAssociation {
+	pub block:     ColumnAssociation,
 	pub max_depth: u32
 }
 
@@ -249,7 +249,7 @@ pub struct PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: T
 }
 
 impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	fn paint_stack(&self, rng: &mut JavaRng, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations<B>, x: u8, z: u8, surface: &SurfaceAssociations<B>, beach: &SurfaceAssociations<B>, basin: &SurfaceAssociations<B>, thickness: i32) {	
+	fn paint_stack(&self, rng: &mut JavaRng, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations, x: u8, z: u8, surface: &SurfaceAssociations, beach: &SurfaceAssociations, basin: &SurfaceAssociations, thickness: i32) {
 		let reset_remaining = match thickness {
 			-1          => None,
 			x if x <= 0 => Some(0),
@@ -272,16 +272,15 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 			}
 			
 			let existing = blocks.get(position, &palette);
-			let target = existing.target();
 			
-			match target {
-				Ok(block) => if self.blocks.reset.matches(block) { 
+			match existing {
+				Some(block) => if self.blocks.reset.matches(block) {
 					remaining = None; 
 					continue 
-				} else       if self.blocks.ignore.matches(block) { 
+				} else        if self.blocks.ignore.matches(block) {
 					continue 
 				},
-				Err(_) => continue
+				None => continue
 			}
 			
 			match remaining {
@@ -317,7 +316,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 			
 					blocks.set(position, if y >= self.sea_coord {&current_surface.top} else {&current_surface.fill});
 				
-					if y <= self.sea_coord && blocks.get(position, palette).target() == Ok(&self.blocks.air) {
+					if y <= self.sea_coord && blocks.get(position, palette) == Some(&self.blocks.air) {
 						blocks.set(position, &associations.ocean);
 					}
 			
@@ -332,9 +331,9 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 }
 
 impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	fn apply(&self, target: &mut ColumnMut<B>, chunk: (i32, i32)) {
-		let block = ((chunk.0 * 16) as f64, (chunk.1 * 16) as f64);
-		let mut rng = JavaRng::new((chunk.0 as i64).wrapping_mul(341873128712).wrapping_add((chunk.1 as i64).wrapping_mul(132897987541)));
+	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
+		let block = ((chunk.x() * 16) as f64, (chunk.z() * 16) as f64);
+		let mut rng = JavaRng::new((chunk.x() as i64).wrapping_mul(341873128712).wrapping_add((chunk.z() as i64).wrapping_mul(132897987541)));
 		
 		let biome_layer = self.biomes.layer(chunk);
 		let (biomes, biome_palette) = biome_layer.freeze_read_only();
