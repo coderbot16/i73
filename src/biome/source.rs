@@ -1,8 +1,7 @@
-use biome::storage::Layer;
 use vocs::position::{LayerPosition, GlobalColumnPosition};
 use biome::{Biome, Lookup};
 use biome::climate::{Climate, ClimateSource};
-use vocs::indexed::Target;
+use vocs::indexed::{LayerIndexed, Target};
 use nalgebra::Vector2;
 use sample::Sample;
 
@@ -16,14 +15,14 @@ impl<B> BiomeSource<B> where B: Target {
 		BiomeSource { climate, lookup }
 	}
 	
-	pub fn layer(&self, chunk: GlobalColumnPosition) -> Layer<Biome<B>> {
+	pub fn layer(&self, chunk: GlobalColumnPosition) -> LayerIndexed<Biome<B>> {
 		let block = (
 			(chunk.x() * 16) as f64,
 			(chunk.z() * 16) as f64
 		);
 
 		// TODO: Avoid the default lookup and clone.
-		let mut layer = Layer::new(2, self.lookup.lookup(Climate::new(1.0, 1.0)).clone());
+		let mut layer = LayerIndexed::new(2, self.lookup.lookup(Climate::new(1.0, 1.0)).clone());
 		
 		for z in 0..16 {
 			for x in 0..16 {

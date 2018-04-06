@@ -336,7 +336,7 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		let mut rng = JavaRng::new((chunk.x() as i64).wrapping_mul(341873128712).wrapping_add((chunk.z() as i64).wrapping_mul(132897987541)));
 		
 		let biome_layer = self.biomes.layer(chunk);
-		let (biomes, biome_palette) = biome_layer.freeze_read_only();
+		let (biomes, biome_palette) = biome_layer.freeze();
 		
 		let      sand_vertical = self.     sand.vertical_ref(block.1, 16);
 		let thickness_vertical = self.thickness.vertical_ref(block.1, 16);
