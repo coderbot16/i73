@@ -3,7 +3,7 @@
 //! Generic types are not configurable and are a band aid.
 //! A component-based solution, in comparison, would be much more configurable.
 
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 
 pub trait BlockMatcher<B> where B: Target {
 	fn matches(&self, block: &B) -> bool;

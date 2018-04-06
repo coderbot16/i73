@@ -16,7 +16,7 @@ use i73::trig::TrigLookup;
 use i73::image_ops::Image;
 use i73::structure;
 
-use vocs::world::chunk::Chunk;
+use vocs::indexed::ChunkIndexed;
 use vocs::world::world::World;
 use vocs::world::view::ColumnMut;
 use vocs::position::GlobalColumnPosition;
@@ -181,7 +181,8 @@ fn main() {
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 
-	use vocs::storage::{LayerMask, ChunkNibbles};
+	use vocs::nibbles::ChunkNibbles;
+	use vocs::mask::LayerMask;
 	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting};
 	use rs25::dynamics::queue::Queue;
 
@@ -191,7 +192,7 @@ fn main() {
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 	
-	let mut world = World::<Chunk<u16>>::new();
+	let mut world = World::<ChunkIndexed<u16>>::new();
 	let mut sky_light = World::<ChunkNibbles>::new();
 	
 	println!("Generating region (0, 0)");
@@ -204,22 +205,22 @@ fn main() {
 			let column_position = GlobalColumnPosition::new(x, z);
 
 			let mut column_chunks = [
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0),
-				Chunk::<u16>::new(4, 0)
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0),
+				ChunkIndexed::<u16>::new(4, 0)
 			];
 
 			let mut column: ColumnMut<u16> = ColumnMut(&mut column_chunks);
@@ -245,13 +246,13 @@ fn main() {
 					}
 				}
 				
-				let sources = SkyLightSources::build(chunk, &meta, mask);
+				let sources = SkyLightSources::build(chunk.freeze().0, &meta, mask);
 		
 				let mut queue = Queue::default();
 				let mut light = Lighting::new(sources, meta);
 				
-				light.initial(chunk, &mut queue);
-				light.finish(chunk, &mut queue);
+				light.initial(chunk.freeze().0, &mut queue);
+				light.finish(chunk.freeze().0, &mut queue);
 				
 				// TODO: Inter chunk lighting interactions.
 			

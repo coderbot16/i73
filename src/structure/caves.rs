@@ -3,7 +3,7 @@ use trig::TrigLookup;
 use std::cmp::{min, max};
 use distribution::rarity::{Rarity, HalfNormal3, Rare};
 use structure::StructureGenerator;
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use vocs::position::{ColumnPosition, GlobalColumnPosition};
 use matcher::BlockMatcher;

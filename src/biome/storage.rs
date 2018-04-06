@@ -1,32 +1,31 @@
-use vocs::world::chunk::{Palette, PaletteAssociation, Target, NullRecorder};
-use vocs::storage::packed::PackedBlockStorage;
+use vocs::indexed::Target;
+use vocs::indexed::palette::Palette;
+use vocs::packed::LayerPacked;
 use vocs::position::LayerPosition;
 use std::mem;
 
 #[derive(Debug)]
 pub struct Layer<B> where B: Target {
-	storage: PackedBlockStorage<LayerPosition>,
+	storage: LayerPacked,
 	palette: Palette<B>
 }
 
 impl<B> Layer<B> where B: Target {
-	pub fn new(bits_per_entry: usize, default: B) -> Self {
+	pub fn new(bits: u8, default: B) -> Self {
 		Layer {
-			storage: PackedBlockStorage::new(bits_per_entry),
-			palette: Palette::new(bits_per_entry, default)
+			storage: LayerPacked::new(bits),
+			palette: Palette::new(bits, default)
 		}
 	}
 	
 	/// Increased the capacity of this chunk's storage by 1 bit, and returns the old storage for reuse purposes.
-	pub fn reserve_bits(&mut self, bits: usize) -> PackedBlockStorage<LayerPosition> {
-		self.palette.reserve_bits(bits);
+	pub fn reserve_bits(&mut self, bits: u8) -> LayerPacked {
+		self.palette.expand(bits);
 		
-		let mut replacement_storage = PackedBlockStorage::new(self.storage.bits_per_entry() + bits);
-		replacement_storage.clone_from(&self.storage, &self.palette);
-		
-		mem::swap(&mut self.storage, &mut replacement_storage);
-		
-		replacement_storage
+		let mut replacement_storage = LayerPacked::new(self.storage.bits() + bits);
+		replacement_storage.clone_from(&self.storage, None, 0);
+
+		mem::replace(&mut self.storage, replacement_storage)
 	}
 	
 	/// Makes sure that a future lookup for the target will succeed, unless the entry has changed since this call.
@@ -37,8 +36,10 @@ impl<B> Layer<B> where B: Target {
 		 }
 	}
 	
-	pub fn get(&self, position: LayerPosition) -> PaletteAssociation<B> {
-		self.storage.get(position, &self.palette)
+	pub fn get(&self, position: LayerPosition) -> Option<&B> {
+		let raw = self.storage.get(position);
+
+		self.palette.entries()[raw as usize].as_ref()
 	}
 	
 	// TODO: Methods to work with the palette: pruning, etc.
@@ -47,11 +48,11 @@ impl<B> Layer<B> where B: Target {
 		&mut self.palette
 	}
 	
-	pub fn freeze_read_only(&self) -> (&PackedBlockStorage<LayerPosition>, &Palette<B>) {
+	pub fn freeze_read_only(&self) -> (&LayerPacked, &Palette<B>) {
 		(&self.storage, &self.palette)
 	}
 	
-	pub fn freeze_palette(&mut self) -> (&mut PackedBlockStorage<LayerPosition>, &Palette<B>) {
+	pub fn freeze_palette(&mut self) -> (&mut LayerPacked, &Palette<B>) {
 		(&mut self.storage, &self.palette)
 	}
 	
@@ -61,6 +62,6 @@ impl<B> Layer<B> where B: Target {
 		self.ensure_available(target.clone());
 		let association = self.palette.reverse_lookup(&target).unwrap();
 		
-		self.storage.set(position, &association, &mut NullRecorder);
+		self.storage.set(position, association);
 	}
 }

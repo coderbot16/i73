@@ -1,6 +1,6 @@
 use rng::JavaRng;
 use bit_vec::BitVec;
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use matcher::BlockMatcher;
 use chunk::grouping::{Moore, Result};
 

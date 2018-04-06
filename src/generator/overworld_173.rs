@@ -7,7 +7,7 @@ use noise_field::height::{HeightSettings, HeightSource};
 use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trilinear128};
 use generator::Pass;
 use vocs::position::{ColumnPosition, LayerPosition, GlobalColumnPosition};
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use matcher::{BlockMatcher, Is, IsNot};
 use sample::Sample;
@@ -412,8 +412,8 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 				let   sand    =       sand_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z as usize) +   sand_variation > 0.0;
 				let gravel    =         self.gravel.sample           (horizontal_offset + Vector2::new(x as f64, z as f64     )            ) + gravel_variation > 3.0;
 				let thickness = (thickness_vertical.generate_override(  vertical_offset + Vector3::new(x as f64, z as f64, 0.0), z as usize) / 3.0 + 3.0 + thickness_variation) as i32;
-				
-				let surface   = surfaces[biomes.get(position, biome_palette).raw_value()].as_ref().unwrap();
+
+				let surface   = surfaces[biomes.get(position) as usize].as_ref().unwrap();
 				
 				let beach = if sand {
 					&sand_beach

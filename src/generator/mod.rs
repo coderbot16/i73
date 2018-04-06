@@ -1,4 +1,4 @@
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use vocs::world::view::ColumnMut;
 use vocs::position::GlobalColumnPosition;
 

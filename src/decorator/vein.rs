@@ -1,4 +1,4 @@
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use matcher::BlockMatcher;
 use chunk::grouping::{Moore, Result};
 use rng::JavaRng;

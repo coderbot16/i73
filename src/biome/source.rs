@@ -2,7 +2,7 @@ use biome::storage::Layer;
 use vocs::position::{LayerPosition, GlobalColumnPosition};
 use biome::{Biome, Lookup};
 use biome::climate::{Climate, ClimateSource};
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use nalgebra::Vector2;
 use sample::Sample;
 

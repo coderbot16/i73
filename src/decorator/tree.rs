@@ -1,5 +1,5 @@
 use matcher::BlockMatcher;
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use chunk::grouping::{Moore, Result};
 use decorator::Decorator;
 use rng::JavaRng;

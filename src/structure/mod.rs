@@ -3,7 +3,7 @@ pub mod organized;
 
 use rng::JavaRng;
 use vocs::world::view::ColumnMut;
-use vocs::world::chunk::Target;
+use vocs::indexed::Target;
 use vocs::position::GlobalColumnPosition;
 use std::marker::PhantomData;
 use generator::Pass;
