@@ -68,7 +68,7 @@ impl JavaRng {
 /// Knuth's optimal 64-bit multiplier (a) for a LCG, used in MMIX and Newlib.
 const KNUTH_A: i64 = 6364136223846793005;
 
-/// Knuth's optimal 64-bit increment (a) for a LCG, used in MMIX.
+/// Knuth's optimal 64-bit increment (c) for a LCG, used in MMIX.
 const KNUTH_C: i64 = 1442695040888963407;
 
 /// Steps a LCG using Knuth's optimal A and C constants, and with a modulus of 2^64.
