@@ -1,5 +1,5 @@
 use rng::JavaRng;
-use trig::TrigLookup;
+use trig;
 use std::cmp::{min, max};
 use distribution::rarity::{Rarity, HalfNormal3, Rare};
 use structure::StructureGenerator;
@@ -36,7 +36,6 @@ struct CavesAssociations {
 }
 
 pub struct CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
-	pub lookup: TrigLookup,
 	pub carve:  B,
 	pub ocean:  O,
 	pub carvable: C
@@ -115,7 +114,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 	
 	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
 		loop {
-			let outcome = tunnel.step(&self.lookup);
+			let outcome = tunnel.step();
 			
 			match outcome {
 				Outcome::Split       => {
@@ -138,7 +137,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 
 impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
 	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
-		let mut caves = Caves::for_chunk(random, chunk, from, radius, &self.lookup);
+		let mut caves = Caves::for_chunk(random, chunk, from, radius);
 		
 		column.ensure_available(self.carve.clone());
 		
@@ -158,26 +157,25 @@ impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target,
 	}
 }
 
-// TODO: #[derive(Debug)]
-pub struct Caves<'a> {
+#[derive(Debug)]
+pub struct Caves {
 	state: JavaRng, 
 	chunk: GlobalColumnPosition,
 	from: GlobalColumnPosition,
 	remaining: i32,
 	max_chunk_radius: i32,
-	trig: &'a TrigLookup,
 	extra: Option<(i32, (f64, f64, f64))>
 }
 
-impl<'a> Caves<'a> {
-	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32, trig: &TrigLookup) -> Caves {
+impl Caves {
+	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) -> Caves {
 		let remaining = RARITY.get(&mut state);
 		
-		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius, trig }
+		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius }
 	}
 }
 
-impl<'a> Iterator for Caves<'a> {
+impl Iterator for Caves {
 	type Item = Start;
 	
 	fn next(&mut self) -> Option<Start> {
@@ -209,7 +207,7 @@ impl<'a> Iterator for Caves<'a> {
 		);
 		
 		if self.state.next_i32(4) == 0 {
-			let circular = Start::circular(&mut self.state, self.chunk, orgin, self.max_chunk_radius, self.trig);
+			let circular = Start::circular(&mut self.state, self.chunk, orgin, self.max_chunk_radius);
 			let extra = 1 + self.state.next_i32(4);
 			
 			self.remaining += extra;
@@ -233,7 +231,7 @@ impl Start {
 		Start::Tunnel(Tunnel::normal(rng, chunk, block, max_chunk_radius))
 	}
 	
-	fn circular(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, trig: &TrigLookup) -> Self {
+	fn circular(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
 		let blob_size_factor = 1.0 + rng.next_f32() * 6.0;
 		let mut state = JavaRng::new(rng.next_i64());
 		
@@ -241,7 +239,7 @@ impl Start {
 		size.current = size.max / 2;
 		
 		let size = BlobSize::from_horizontal(
-			MIN_H_SIZE + (trig.sin(size.current as f32 * NOTCH_PI / size.max as f32) * blob_size_factor) as f64, 
+			MIN_H_SIZE + (trig::sin(size.current as f32 * NOTCH_PI / size.max as f32) * blob_size_factor) as f64,
 			0.5
 		);
 		
@@ -327,16 +325,16 @@ impl Tunnel {
 		self.position.distance_from_chunk_squared() - remaining * remaining > buffer * buffer
 	}
 	
-	fn next_blob_size(&self, trig: &TrigLookup) -> BlobSize {
-		BlobSize::sphere(MIN_H_SIZE + (trig.sin(self.size.current as f32 * NOTCH_PI / self.size.max as f32) * self.blob_size_factor) as f64)
+	fn next_blob_size(&self) -> BlobSize {
+		BlobSize::sphere(MIN_H_SIZE + (trig::sin(self.size.current as f32 * NOTCH_PI / self.size.max as f32) * self.blob_size_factor) as f64)
 	}
 	
-	pub fn step(&mut self, trig: &TrigLookup) -> Outcome {
+	pub fn step(&mut self) -> Outcome {
 		if self.size.done() {
 			return Outcome::Done;
 		}
 		
-		self.position.step(&mut self.state, trig, self.pitch_keep);
+		self.position.step(&mut self.state, self.pitch_keep);
 		
 		if self.size.should_split(self.split) {
 			return Outcome::Split;
@@ -351,7 +349,7 @@ impl Tunnel {
 			return Outcome::Unreachable;
 		}
 		
-		let size = self.next_blob_size(trig);
+		let size = self.next_blob_size();
 		
 		if self.position.out_of_chunk(&size) {
 			self.size.step();
@@ -435,12 +433,12 @@ impl Position {
 		}
 	}
 	
-	fn step(&mut self, rng: &mut JavaRng, trig: &TrigLookup, pitch_keep: f32) {
-		let cos_pitch = trig.cos(self.pitch);
+	fn step(&mut self, rng: &mut JavaRng, pitch_keep: f32) {
+		let cos_pitch = trig::cos(self.pitch);
 		
-		self.block.0 += (trig.cos(self.yaw) * cos_pitch) as f64;
-		self.block.1 +=  trig.sin(self.pitch)            as f64;
-		self.block.2 += (trig.sin(self.yaw) * cos_pitch) as f64;
+		self.block.0 += (trig::cos(self.yaw) * cos_pitch) as f64;
+		self.block.1 +=  trig::sin(self.pitch)            as f64;
+		self.block.2 += (trig::sin(self.yaw) * cos_pitch) as f64;
 		
 		self.pitch *= pitch_keep;
 		self.pitch += self.pitch_velocity * 0.1;

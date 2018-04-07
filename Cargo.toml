@@ -2,6 +2,7 @@
 name = "i73"
 version = "0.1.0"
 authors = ["coderbot <coderbot16@gmail.com>"]
+build = "build.rs"
 
 [dependencies]
 nalgebra = "0.11.0"

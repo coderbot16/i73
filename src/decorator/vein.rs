@@ -2,7 +2,7 @@ use vocs::indexed::Target;
 use matcher::BlockMatcher;
 use chunk::grouping::{Moore, Result};
 use rng::JavaRng;
-use trig::TrigLookup;
+use trig;
 
 // TODO: Is this really 3.141593?
 /// For when you don't have the time to type out all the digits of π or Math.PI.
@@ -19,7 +19,7 @@ pub struct VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 }
 
 impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
-	pub fn generate(&self, vein: &Vein, moore: &mut Moore<B>, rng: &mut JavaRng, trig: &TrigLookup) -> Result<()> {
+	pub fn generate(&self, vein: &Vein, moore: &mut Moore<B>, rng: &mut JavaRng) -> Result<()> {
 		moore.ensure_available(self.block.clone());
 		
 		let (mut blocks, palette) = moore.freeze_palettes();
@@ -27,7 +27,7 @@ impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 		let block = palette.reverse_lookup(&self.block).unwrap();
 		
 		for index in 0..(vein.size+1) {
-			let blob = vein.blob(index, rng, trig);
+			let blob = vein.blob(index, rng);
 			
 			for y in blob.lower.1..(blob.upper.1 + 1) {
 				for z in blob.lower.2..(blob.upper.2 + 1) {
@@ -61,12 +61,12 @@ pub struct Vein {
 }
 
 impl Vein {
-	pub fn create(size: u32, base: (i32, i32, i32), rng: &mut JavaRng, trig: &TrigLookup) -> Self {
+	pub fn create(size: u32, base: (i32, i32, i32), rng: &mut JavaRng) -> Self {
 		let size_f32 = size as f32;
 		
 		let angle = rng.next_f32() * NOTCHIAN_PI;
-		let x_size = trig.sin(angle) * size_f32 / LENGTH_DIVISOR;
-		let z_size = trig.cos(angle) * size_f32 / LENGTH_DIVISOR;
+		let x_size = trig::sin(angle) * size_f32 / LENGTH_DIVISOR;
+		let z_size = trig::cos(angle) * size_f32 / LENGTH_DIVISOR;
 		
 		let from = (
 			(base.0       as f32 + x_size) as f64,
@@ -83,7 +83,7 @@ impl Vein {
 		Vein { size, size_f64: size as f64, size_f32, from, to }
 	}
 	
-	pub fn blob(&self, index: u32, rng: &mut JavaRng, trig: &TrigLookup) -> Blob {
+	pub fn blob(&self, index: u32, rng: &mut JavaRng) -> Blob {
 		let index_f64 = index as f64;
 		let index_f32 = index as f32;
 		
@@ -95,7 +95,7 @@ impl Vein {
 		
 		let radius_multiplier = rng.next_f64() * self.size_f64 / RADIUS_DIVISOR;
 		
-		let diameter = (trig.sin(index_f32 * NOTCHIAN_PI / self.size_f32) + 1.0f32) as f64 * radius_multiplier + 1.0;
+		let diameter = (trig::sin(index_f32 * NOTCHIAN_PI / self.size_f32) + 1.0f32) as f64 * radius_multiplier + 1.0;
 		let radius = diameter / 2.0;
 		
 		// TODO: i32 casts can overflow.

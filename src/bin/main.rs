@@ -12,7 +12,6 @@ use i73::generator::Pass;
 use i73::generator::overworld_173::{self, Settings};
 use i73::config::biomes::BiomesConfig;
 use i73::biome::Lookup;
-use i73::trig::TrigLookup;
 use i73::image_ops::Image;
 use i73::structure;
 
@@ -157,8 +156,7 @@ fn main() {
 	
 	let (shape, paint) = overworld_173::passes(8399452073110208023, settings, Lookup::generate(&grid));
 	
-	let caves_generator = structure::caves::CavesGenerator { 
-		lookup: TrigLookup::new(), 
+	let caves_generator = structure::caves::CavesGenerator {
 		carve: 0*16,
 		ocean: |ty: &u16| -> bool {
 			*ty == 8*16 || *ty == 9*16

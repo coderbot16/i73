@@ -249,7 +249,7 @@ named!(parse_option_v3<&str, (String, String)>,
 
 #[cfg(test)]
 mod test {
-	use config::settings::{FlatV1, LayerV1, FlatV3, LayerV3};
+	use super::{FlatV1, LayerV1, FlatV3, LayerV3};
 	use std::collections::HashMap;
 	
 	#[test]
