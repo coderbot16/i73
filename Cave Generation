@@ -1,0 +1,32 @@
+[Over] 	CGen { carve: air, ocean: { flowing_water, still_water }, carvable: { stone,      dirt, grass } }
+	Rare { HalfNormal3 { max: 39 }, rarity: 15 }
+	DepthPacked { min: 0, linear_start: 8, max: 126 }
+[Hell] 	CGen { carve: air, ocean: { flowing_lava,  still_lava  }, carvable: { netherrack, dirt, grass } }
+	Rare { HalfNormal3 { max: 9 }, rarity: 5 }
+	Linear { min: 0, max: 127 }
+	BlobSizeFactor for Tunnel::normal is 2.0, from 1.0
+	VerticalMultiplier is always 0.5, for circular and normal
+
+Todo: Grass pulldown in Overworld
+Todo: Lower lava in Overworld
+
+[Over] Ocean: { flowing_water, still_water }
+[Hell] Ocean: { flowing_lava, still_lava }
+[Over] HitGrassSurface flag
+[Over] Early distance check (not significant)
+[Over] HitGrass if B=grass
+[Over] Carvable: { stone, dirt, grass }
+[Hell] Carvable: { netherrack, dirt, grass }
+[Over] Carve: if y<10 { 
+		B->flowing_lava 
+	} else {
+		B->air
+		If HitGrass && Below==dirt { Below->grass } 
+	}
+[Hell] Carve: B->air 
+[Over] Rare(15); Count: Ri(Ri(Ri(40) + 1) + 1)
+[Hell] Rare(5); Count: Ri(Ri(Ri(10) + 1) + 1)
+[Over] HeightDist: Linear(8, 128)
+[Hell] HeightDist: Linear(0, 128)
+[Over] BlobSize *= 1.0; VerticalMultiplier=1.0
+[Hell] BlobSize *= 2.0; VerticalMultiplier=0.5
