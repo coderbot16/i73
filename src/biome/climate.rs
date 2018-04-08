@@ -102,7 +102,7 @@ impl Climate {
 		}
 	}
 	
-	fn freezing(&self) -> bool {
+	pub fn freezing(&self) -> bool {
 		self.temperature < 0.5
 	}
 	

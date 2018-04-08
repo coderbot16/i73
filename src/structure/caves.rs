@@ -2,13 +2,14 @@ use rng::JavaRng;
 use trig;
 use std::cmp::{min, max};
 use distribution::rarity::{Rarity, HalfNormal3, Rare};
+use distribution::height::{DEFAULT, Linear, DepthPacked};
 use structure::StructureGenerator;
 use vocs::indexed::Target;
 use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use vocs::position::{ColumnPosition, GlobalColumnPosition};
 use matcher::BlockMatcher;
 
-const NOTCH_PI: f32 = 3.141593; // TODO: Check
+const NOTCH_PI: f32 = 3.141593;
 const PI_DIV_2: f32 = 1.570796;
 const MIN_H_SIZE: f64 = 1.5;
 
@@ -21,10 +22,19 @@ static RARITY: Rare<HalfNormal3> = Rare {
 	rarity: 15
 };
 
+/// Allow caves at high altitudes, but make most of them spawn underground.
+static HEIGHT: DepthPacked = DepthPacked { min: 0, linear_start: 8, max: 126 };
+
+/// More chunks will have cave starts, but they will have less in each one.
+/// Results in less caves overall, since a chunk is 3x more likely to have cave starts,
+/// but will have a maximum that is 4x less.
 static RARITY_NETHER: Rare<HalfNormal3> = Rare {
 	base: HalfNormal3 { max: 9 },
 	rarity: 5
 };
+
+/// Since the Nether has a high amount of solid blocks from bottom to top, caves spawn uniformly.
+static HEIGHT_NETHER: Linear = DEFAULT;
 
 /// Mimics Java rounding rules and avoids UB from float casts.
 fn floor_capped(t: f64) -> i32 {
@@ -32,16 +42,28 @@ fn floor_capped(t: f64) -> i32 {
 }
 
 struct CavesAssociations {
-	carve: ColumnAssociation
+	carve: ColumnAssociation,
+	lower: ColumnAssociation,
+	surface: ColumnAssociation
 }
 
-pub struct CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
+// Overworld: CavesGenerator { carve: air, ocean: [ flowing_water, still_water ], carvable: [ stone, dirt, grass ], blob_size_multiplier: 1.0, vertical_multiplier: 1.0 }
+// Nether: CavesGenerator { carve: air, ocean: [ flowing_lava, still_lava ], carvable: [ netherrack, dirt, grass ], blob_size_multiplier: 2.0, vertical_multiplier: 0.5}
+
+pub struct CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
 	pub carve:  B,
+	pub lower:  B,
+	pub surface_block: B,
 	pub ocean:  O,
-	pub carvable: C
+	pub surface_top: T,
+	pub surface_fill: F,
+	pub carvable: C,
+	pub blob_size_multiplier: f32,
+	pub vertical_multiplier: f64,
+	pub lower_surface: u8
 }
 
-impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
+impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
 	fn carve_blob(&self, blob: Blob, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition) {
 		let chunk_block = ((chunk.x() * 16) as f64, (chunk.z() * 16) as f64);
 		
@@ -84,6 +106,8 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 		
 		for z in blob.lower.2..blob.upper.2 {
 			for x in blob.lower.0..blob.upper.0 {
+				let mut hit_surface_top = false;
+
 				for y in blob.lower.1..blob.upper.1 {
 					let position = ColumnPosition::new(x, y, z);
 					
@@ -95,17 +119,35 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 						(block.2 + chunk_block.1 + 0.5 - blob.center.2) / blob.size.horizontal
 					);
 					
-					// TODO: Pull down grass and other blocks.
-					
+					// TODO: Grass pulldown sometimes is inconsistent?
+
 					// Test if the block is within the blob region. Additionally, the y > -0.7 check makes the floors flat.
 					if scaled.1 > -0.7 && scaled.0 * scaled.0 + scaled.1 * scaled.1 + scaled.2 * scaled.2 < 1.0 {
 						if let Some(candidate) = blocks.get(position, palette) {
+							if self.surface_top.matches(candidate) {
+								hit_surface_top = true;
+							}
+
 							if !self.carvable.matches(candidate) {
 								continue;
 							}
 						}
-						
-						blocks.set(position, &associations.carve);
+
+						if y < self.lower_surface {
+							blocks.set(position, &associations.lower);
+						} else {
+							blocks.set(position, &associations.carve);
+
+							if y > 0 && hit_surface_top {
+								let below = ColumnPosition::new(x, y - 1, z);
+
+								if let Some(candidate) = blocks.get(below, palette) {
+									if self.surface_fill.matches(candidate) {
+										blocks.set(below, &associations.surface);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -114,7 +156,7 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 	
 	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
 		loop {
-			let outcome = tunnel.step();
+			let outcome = tunnel.step(self.vertical_multiplier);
 			
 			match outcome {
 				Outcome::Split       => {
@@ -135,16 +177,20 @@ impl<B, O, C> CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: Bl
 	}
 }
 
-impl<B, O, C> StructureGenerator<B> for CavesGenerator<B, O, C> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B> {
+impl<B, O, C, T, F> StructureGenerator<B> for CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
 	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
-		let mut caves = Caves::for_chunk(random, chunk, from, radius);
+		let mut caves = Caves::for_chunk(random, chunk, from, radius, self.blob_size_multiplier);
 		
 		column.ensure_available(self.carve.clone());
+		column.ensure_available(self.lower.clone());
+		column.ensure_available(self.surface_block.clone());
 		
 		let (mut blocks, palette) = column.freeze_palettes();
 		
 		let associations = CavesAssociations {
-			carve: palette.reverse_lookup(&self.carve).unwrap()
+			carve: palette.reverse_lookup(&self.carve).unwrap(),
+			lower: palette.reverse_lookup(&self.lower).unwrap(),
+			surface: palette.reverse_lookup(&self.surface_block).unwrap()
 		};
 		
 		while let Some(start) = caves.next() {
@@ -164,14 +210,15 @@ pub struct Caves {
 	from: GlobalColumnPosition,
 	remaining: i32,
 	max_chunk_radius: i32,
+	blob_size_multiplier: f32,
 	extra: Option<(i32, (f64, f64, f64))>
 }
 
 impl Caves {
-	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) -> Caves {
+	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32, blob_size_multiplier: f32) -> Caves {
 		let remaining = RARITY.get(&mut state);
 		
-		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius }
+		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius, blob_size_multiplier }
 	}
 }
 
@@ -189,7 +236,7 @@ impl Iterator for Caves {
 			if *extra > 0 {
 				*extra -= 1;
 				
-				return Some(Start::normal(&mut self.state, self.chunk, orgin, self.max_chunk_radius));
+				return Some(Start::normal(&mut self.state, self.chunk, orgin, self.max_chunk_radius, self.blob_size_multiplier));
 			}
 		}
 		
@@ -215,7 +262,7 @@ impl Iterator for Caves {
 			
 			Some(circular)
 		} else {
-			Some(Start::normal(&mut self.state, self.chunk, orgin, self.max_chunk_radius))
+			Some(Start::normal(&mut self.state, self.chunk, orgin, self.max_chunk_radius, self.blob_size_multiplier))
 		}
 	}
 }
@@ -227,8 +274,8 @@ pub enum Start {
 }
 
 impl Start {
-	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
-		Start::Tunnel(Tunnel::normal(rng, chunk, block, max_chunk_radius))
+	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, blob_size_multiplier: f32) -> Self {
+		Start::Tunnel(Tunnel::normal(rng, chunk, block, max_chunk_radius, blob_size_multiplier))
 	}
 	
 	fn circular(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
@@ -265,9 +312,9 @@ pub struct Tunnel {
 }
 
 impl Tunnel {
-	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
+	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, blob_size_multiplier: f32) -> Self {
 		let position = Position::with_angles(chunk, block, rng.next_f32() * NOTCH_PI * 2.0, (rng.next_f32() - 0.5) / 4.0);
-		let blob_size_factor = rng.next_f32() * 2.0 + rng.next_f32();
+		let blob_size_factor = (rng.next_f32() * 2.0 + rng.next_f32()) * blob_size_multiplier;
 		
 		let mut state = JavaRng::new(rng.next_i64());
 		
@@ -325,11 +372,11 @@ impl Tunnel {
 		self.position.distance_from_chunk_squared() - remaining * remaining > buffer * buffer
 	}
 	
-	fn next_blob_size(&self) -> BlobSize {
-		BlobSize::sphere(MIN_H_SIZE + (trig::sin(self.size.current as f32 * NOTCH_PI / self.size.max as f32) * self.blob_size_factor) as f64)
+	fn next_blob_size(&self) -> f64 {
+		MIN_H_SIZE + (trig::sin(self.size.current as f32 * NOTCH_PI / self.size.max as f32) * self.blob_size_factor) as f64
 	}
 	
-	pub fn step(&mut self) -> Outcome {
+	pub fn step(&mut self, vertical_multiplier: f64) -> Outcome {
 		if self.size.done() {
 			return Outcome::Done;
 		}
@@ -348,9 +395,9 @@ impl Tunnel {
 		if self.is_chunk_unreachable() {
 			return Outcome::Unreachable;
 		}
-		
-		let size = self.next_blob_size();
-		
+
+		let size = BlobSize::from_horizontal(self.next_blob_size(), vertical_multiplier);
+
 		if self.position.out_of_chunk(&size) {
 			self.size.step();
 			return Outcome::OutOfChunk;

@@ -158,12 +158,23 @@ fn main() {
 	
 	let caves_generator = structure::caves::CavesGenerator {
 		carve: 0*16,
+		lower: 10*16, // TODO: 10 or 11 for flowing_lava?
+		surface_block: 2*16,
 		ocean: |ty: &u16| -> bool {
 			*ty == 8*16 || *ty == 9*16
 		},
 		carvable: |ty: &u16| -> bool {
 			*ty == 1*16 || *ty == 2*16 || *ty == 3*16
-		}
+		},
+		surface_top: |ty: &u16| -> bool {
+			*ty == 2*16
+		},
+		surface_fill: |ty: &u16| -> bool {
+			*ty == 3*16
+		},
+		blob_size_multiplier: 1.0,
+		vertical_multiplier: 1.0,
+		lower_surface: 10
 	};
 	let caves = structure::StructureGenerateNearby::new(8399452073110208023, 8, caves_generator);
 	

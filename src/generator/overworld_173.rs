@@ -157,7 +157,7 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 			
 			let block = if trilinear128(&field, position) > 0.0 {
 				&solid
-			} else if altitude == self.sea_coord && climate_chunk.get(position.x() as usize, position.z() as usize).temperature() < 0.5 {
+			} else if altitude == self.sea_coord && climate_chunk.get(position.x() as usize, position.z() as usize).freezing() {
 				&ice
 			} else if altitude <= self.sea_coord {
 				&ocean

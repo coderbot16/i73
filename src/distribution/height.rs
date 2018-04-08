@@ -22,15 +22,15 @@ impl HeightDistribution for Centered {
 pub struct DepthPacked {
 	pub min: i32,
 	// TODO: Investigate this.
-	pub start: i32,
+	pub linear_start: i32,
 	pub max: i32
 }
 
 impl HeightDistribution for DepthPacked {
 	fn get(&self, rng: &mut JavaRng) -> i32 {
-		let initial = rng.next_i32(self.max - self.start + 2);
+		let initial = rng.next_i32(self.max - self.linear_start + 2);
 		
-		self.min + rng.next_i32(initial + self.start - self.min)
+		self.min + rng.next_i32(initial + self.linear_start - self.min)
 	}
 }
 

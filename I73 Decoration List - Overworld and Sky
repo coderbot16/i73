@@ -1,0 +1,84 @@
+Rare(X) if rand.nextInt(X) == 0 {}
+Common(X) for(int i = 0; i < X; i++) {}
+Ri(X) rand.nextInt(X)
+Offs(X, Y, Z) (X + 8, Y, Z + 8)
+Uniform -> (Ri(16), Ri(128), Ri(16))
+YRange(Low, High) -> (Ri(16), Ri(High - Low) + Low, Ri(16))
+YCenter(T) -> (Ri(16), Ri(T) + Ri(T), Ri(16))
+::Cond -> Must be true before calling the gen
+
+Rare(4) Lake
+	Position: Offs(Uniform)
+	Block: water
+Rare(8) Lake
+	Position: Offs(Ri(16), Ri(Ri(120) + 8), Ri(16))
+	Block: lava
+	::Cond { if Y < 64 || Ri(10) }
+Common(8) Dungeons
+	Position: Offs(Uniform)
+Common(10) VeinClay
+	Position: Uniform
+	Size: 32
+	Block: clay
+Common(20) Vein
+	Position: Uniform
+	Size: 32
+	Block: dirt
+Common(10) Vein
+	Position: Uniform
+	Size: 32
+	Block: gravel
+Common(20) Vein
+	Position: Uniform
+	Size: 16
+	Block: coal_ore
+Common(20) Vein
+	Position: YRange(0, 64)
+	Size: 8
+	Block: iron_ore
+Common(2) Vein
+	Position: YRange(0, 32)
+	Size: 8
+	Block: gold_ore
+Common(8) Vein
+	Position: YRange(0, 16)
+	Size: 7
+	Block: redstone_ore
+Common(1) Vein
+	Position: YRange(0, 16)
+	Size: 7
+	Block: diamond_ore
+Common(1) Vein
+	Position: YCenter(16)
+	Size: 6
+	Block: lapis_ore
+BiomeItems (TODO)
+	Trees
+	YellowFlowers (Sky: Shown below)
+	TallGrass (Not in sky)
+	DeadBush (Not in sky)
+[SKY] Common(2) Flowers
+[SKY] 	Position: Offs(Uniform)
+[SKY]	Block: yellow_flower
+Rare(2) Flowers
+	Position: Offs(Uniform)
+	Block: red_flower
+Rare(4) Flowers
+	Position: Offs(Uniform)
+	Block: brown_mushroom
+Rare(8) Flowers
+	Position: Offs(Uniform)
+	Block: red_mushroom
+Common(10) Reed
+	Position: Offs(Uniform)
+Rare(32) Pumpkin
+	Position: Offs(Uniform)
+BiomeItems (TODO)
+	Cactus
+Common(50) Liquid
+	Position: Offs(Ri(16), Ri(Ri(120) + 8), Ri(16))
+	Block: water
+Common(20) Liquid
+	Position: Offs(Ri(16), Ri(Ri(Ri(112) + 8) + 8), Ri(16))
+	Block: lava
+Common(1) Snow
