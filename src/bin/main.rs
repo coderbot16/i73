@@ -241,7 +241,7 @@ fn main() {
 			let mut snapshot_light = vec![None; 16];
 
 			let mut mask = LayerMask::default();
-			
+
 			for y in (0..16).rev() {
 				let chunk = &column.0[y];
 				
@@ -262,7 +262,7 @@ fn main() {
 				
 				light.initial(chunk.freeze().0, &mut queue);
 				light.finish(chunk.freeze().0, &mut queue);
-				
+
 				// TODO: Inter chunk lighting interactions.
 			
 				let (light_data, sources) = light.decompose();

@@ -17,7 +17,7 @@ fn sin_index(idx: u32) -> f32 {
 
 	let full_invert = 0u32.wrapping_sub(invert);
 	let sub_from = (invert << 15) + invert;
-	let idx3 = sub_from.wrapping_add(idx2 ^ full_invert).min(16383);
+	let idx3 = ::std::cmp::min(sub_from.wrapping_add(idx2 ^ full_invert), 16383);
 
 	let wierd = (idx == 32768) as u32;
 
