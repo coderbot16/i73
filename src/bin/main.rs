@@ -192,7 +192,7 @@ fn main() {
 
 	use vocs::nibbles::ChunkNibbles;
 	use vocs::mask::LayerMask;
-	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting};
+	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting, HeightMapBuilder};
 	use rs25::dynamics::queue::Queue;
 
 	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
@@ -241,6 +241,7 @@ fn main() {
 			let mut snapshot_light = vec![None; 16];
 
 			let mut mask = LayerMask::default();
+			let mut heightmap = HeightMapBuilder::new();
 
 			for y in (0..16).rev() {
 				let chunk = &column.0[y];
@@ -266,16 +267,12 @@ fn main() {
 				// TODO: Inter chunk lighting interactions.
 			
 				let (light_data, sources) = light.decompose();
-				mask = sources.into_mask();
+				mask = heightmap.add(sources);
 				
 				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
 
 				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
 			}
-
-			// TODO: Generate a valid heightmap.
-			// The bogus heightmap results in both MCEdit not displaying low-detail chunks,
-			// as well as random light updates lighting up random sections of underground.
 
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
@@ -284,7 +281,7 @@ fn main() {
 				terrain_populated: true,
 				inhabited_time: 0,
 				biomes: vec![0; 256],
-				heightmap: vec![0; 256],
+				heightmap: heightmap.build().into_vec(),
 				entities: vec![],
 				tile_entities: vec![],
 				tile_ticks: vec![]
