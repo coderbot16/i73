@@ -158,7 +158,7 @@ fn main() {
 	
 	let caves_generator = structure::caves::CavesGenerator {
 		carve: 0*16,
-		lower: 10*16, // TODO: 10 or 11 for flowing_lava?
+		lower: 10*16,
 		surface_block: 2*16,
 		ocean: |ty: &u16| -> bool {
 			*ty == 8*16 || *ty == 9*16
@@ -272,7 +272,11 @@ fn main() {
 
 				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
 			}
-		
+
+			// TODO: Generate a valid heightmap.
+			// The bogus heightmap results in both MCEdit not displaying low-detail chunks,
+			// as well as random light updates lighting up random sections of underground.
+
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
 				last_update: 0,
