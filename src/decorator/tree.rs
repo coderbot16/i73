@@ -28,7 +28,7 @@ impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: BlockMatcher<B>, 
 		moore.ensure_available(self.blocks.log.clone());
 		moore.ensure_available(self.blocks.foilage.clone());
 		
-		let (mut blocks, palette) = moore.freeze_palettes();
+		let (mut blocks, palette) = moore.freeze_palette();
 		
 		let log = palette.reverse_lookup(&self.blocks.log).unwrap();
 		let foilage = palette.reverse_lookup(&self.blocks.foilage).unwrap();

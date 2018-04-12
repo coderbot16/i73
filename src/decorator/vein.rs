@@ -22,7 +22,7 @@ impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 	pub fn generate(&self, vein: &Vein, moore: &mut Moore<B>, rng: &mut JavaRng) -> Result<()> {
 		moore.ensure_available(self.block.clone());
 		
-		let (mut blocks, palette) = moore.freeze_palettes();
+		let (mut blocks, palette) = moore.freeze_palette();
 		
 		let block = palette.reverse_lookup(&self.block).unwrap();
 		

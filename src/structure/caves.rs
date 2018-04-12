@@ -5,7 +5,7 @@ use distribution::rarity::{Rarity, HalfNormal3, Rare};
 use distribution::height::{DEFAULT, Linear, DepthPacked};
 use structure::StructureGenerator;
 use vocs::indexed::Target;
-use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
+use vocs::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use vocs::position::{ColumnPosition, GlobalColumnPosition};
 use matcher::BlockMatcher;
 
@@ -108,7 +108,8 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 			for x in blob.lower.0..blob.upper.0 {
 				let mut hit_surface_top = false;
 
-				for y in blob.lower.1..blob.upper.1 {
+				// Need to go downwards so that the grass gets pulled down.
+				for y in (blob.lower.1..blob.upper.1).rev() {
 					let position = ColumnPosition::new(x, y, z);
 					
 					let block = (x as f64, y as f64, z as f64);
@@ -185,7 +186,7 @@ impl<B, O, C, T, F> StructureGenerator<B> for CavesGenerator<B, O, C, T, F> wher
 		column.ensure_available(self.lower.clone());
 		column.ensure_available(self.surface_block.clone());
 		
-		let (mut blocks, palette) = column.freeze_palettes();
+		let (mut blocks, palette) = column.freeze_palette();
 		
 		let associations = CavesAssociations {
 			carve: palette.reverse_lookup(&self.carve).unwrap(),

@@ -1,6 +1,6 @@
 use vocs::indexed::Target;
 use vocs::position::{ColumnPosition, GlobalColumnPosition};
-use vocs::world::view::ColumnMut;
+use vocs::view::ColumnMut;
 use generator::Pass;
 use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings};
 use nalgebra::{Vector2, Vector3};
@@ -73,7 +73,7 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		target.ensure_available(self.blocks.air.clone());
 		target.ensure_available(self.blocks.solid.clone());
 		
-		let (mut blocks, palette) = target.freeze_palettes();
+		let (mut blocks, palette) = target.freeze_palette();
 		
 		let air   = palette.reverse_lookup(&self.blocks.air).unwrap();
 		let solid = palette.reverse_lookup(&self.blocks.solid).unwrap();

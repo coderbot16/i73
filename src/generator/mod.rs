@@ -1,5 +1,5 @@
 use vocs::indexed::Target;
-use vocs::world::view::ColumnMut;
+use vocs::view::ColumnMut;
 use vocs::position::GlobalColumnPosition;
 
 pub mod overworld_173;

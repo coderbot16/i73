@@ -8,7 +8,7 @@ use noise_field::volume::{TriNoiseSettings, TriNoiseSource, FieldSettings, trili
 use generator::Pass;
 use vocs::position::{ColumnPosition, LayerPosition, GlobalColumnPosition};
 use vocs::indexed::Target;
-use vocs::world::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
+use vocs::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use matcher::{BlockMatcher, Is, IsNot};
 use sample::Sample;
 use nalgebra::{Vector2, Vector3};
@@ -144,7 +144,7 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 		target.ensure_available(self.blocks.ocean.clone());
 		target.ensure_available(self.blocks.ice.clone());
 		
-		let (mut blocks, palette) = target.freeze_palettes();
+		let (mut blocks, palette) = target.freeze_palette();
 		
 		let air   = palette.reverse_lookup(&self.blocks.air).unwrap();
 		let solid = palette.reverse_lookup(&self.blocks.solid).unwrap();
@@ -361,7 +361,7 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 			}
 		}
 		
-		let (mut blocks, palette) = target.freeze_palettes();
+		let (mut blocks, palette) = target.freeze_palette();
 		
 		let mut surfaces = Vec::new();
 		

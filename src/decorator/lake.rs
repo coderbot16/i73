@@ -48,7 +48,7 @@ impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: 
 		moore.ensure_available(self.liquid.clone());
 		moore.ensure_available(self.carve.clone());
 		
-		let (mut blocks, palette) = moore.freeze_palettes();
+		let (mut blocks, palette) = moore.freeze_palette();
 		
 		let liquid = palette.reverse_lookup(&self.liquid).unwrap();
 		let carve = palette.reverse_lookup(&self.carve).unwrap();

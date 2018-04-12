@@ -2,7 +2,7 @@ pub mod caves;
 pub mod organized;
 
 use rng::JavaRng;
-use vocs::world::view::ColumnMut;
+use vocs::view::ColumnMut;
 use vocs::indexed::Target;
 use vocs::position::GlobalColumnPosition;
 use std::marker::PhantomData;

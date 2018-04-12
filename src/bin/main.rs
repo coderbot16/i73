@@ -17,7 +17,7 @@ use i73::structure;
 
 use vocs::indexed::ChunkIndexed;
 use vocs::world::world::World;
-use vocs::world::view::ColumnMut;
+use vocs::view::ColumnMut;
 use vocs::position::GlobalColumnPosition;
 
 use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
@@ -189,28 +189,14 @@ fn main() {
 	fake_settings.max_bedrock_height = None;
 	
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
-
-	use vocs::nibbles::ChunkNibbles;
-	use vocs::mask::LayerMask;
-	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting, HeightMapBuilder};
-	use rs25::dynamics::queue::Queue;
-
-	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
-	let mut manager = Manager::manage(pool);
-	
-	let file = File::create("out/region/r.0.0.mca").unwrap();
-	let mut writer = RegionWriter::start(file).unwrap();
 	
 	let mut world = World::<ChunkIndexed<u16>>::new();
-	let mut sky_light = World::<ChunkNibbles>::new();
 	
 	println!("Generating region (0, 0)");
-	
-	for x in 0..32 {
-		print!("{} | ", x);
-		for z in 0..32 {
-			print!("{}...", z);
 
+	for x in 0..32 {
+		println!("{}", x);
+		for z in 0..32 {
 			let column_position = GlobalColumnPosition::new(x, z);
 
 			let mut column_chunks = [
@@ -232,12 +218,56 @@ fn main() {
 				ChunkIndexed::<u16>::new(4, 0)
 			];
 
-			let mut column: ColumnMut<u16> = ColumnMut(&mut column_chunks);
+			{
+				let mut column: ColumnMut<u16> = ColumnMut::from_array(&mut column_chunks);
 
-			shape.apply(&mut column, column_position);
-			paint.apply(&mut column, column_position);
-			caves.apply(&mut column, column_position);
-			
+				shape.apply(&mut column, column_position);
+				paint.apply(&mut column, column_position);
+				caves.apply(&mut column, column_position);
+			}
+
+			world.set_column((x as i32, z as i32), column_chunks);
+		}
+	}
+
+	println!("Decorating region (0, 0)");
+
+	for x in 0..31 {
+		println!("{}", x);
+		for z in 0..31 {
+			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
+
+			for y in 0..128 {
+				for z in 15..17 {
+					for x in 15..17 {
+						let position = ::vocs::position::QuadPosition::new(x, y, z);
+
+						quad.set_immediate(position, &(7*16));
+					}
+				}
+			}
+		}
+	}
+
+	use vocs::nibbles::ChunkNibbles;
+	use vocs::mask::LayerMask;
+	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting, HeightMapBuilder};
+	use rs25::dynamics::queue::Queue;
+
+	println!("Writing region (0, 0)");
+
+	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
+	let mut manager = Manager::manage(pool);
+
+	let file = File::create("out/region/r.0.0.mca").unwrap();
+	let mut writer = RegionWriter::start(file).unwrap();
+
+	for x in 0..32 {
+		println!("{}", x);
+		for z in 0..32 {
+
+			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
+
 			let mut snapshot_light = vec![None; 16];
 
 			let mut mask = LayerMask::default();
@@ -245,9 +275,9 @@ fn main() {
 
 			for y in (0..16).rev() {
 				let chunk = &column.0[y];
-				
+
 				let mut meta = Vec::with_capacity(chunk.palette().entries().len());
-				
+
 				for value in chunk.palette().entries() {
 					if let &Some(ref entry) = value {
 						meta.push(lighting_info.get(entry).map(|&meta| meta).unwrap_or(Meta::new(15)))
@@ -255,21 +285,19 @@ fn main() {
 						meta.push(Meta::new(15))
 					}
 				}
-				
+
 				let sources = SkyLightSources::build(chunk.freeze().0, &meta, mask);
-		
+
 				let mut queue = Queue::default();
 				let mut light = Lighting::new(sources, meta);
-				
+
 				light.initial(chunk.freeze().0, &mut queue);
 				light.finish(chunk.freeze().0, &mut queue);
 
 				// TODO: Inter chunk lighting interactions.
-			
+
 				let (light_data, sources) = light.decompose();
 				mask = heightmap.add(sources);
-				
-				sky_light.set((x as i32, y as u8, z as i32), light_data.clone());
 
 				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
 			}
@@ -286,29 +314,25 @@ fn main() {
 				tile_entities: vec![],
 				tile_ticks: vec![]
 			};
-			
+
 			for y in 0..16 {
 				if column.0[y].anvil_empty() {
 					continue;
 				}
-				
+
 				let snapshot_light = snapshot_light[y].take().unwrap_or_else(|| (ChunkNibbles::new(), ChunkNibbles::new()));
-				
+
 				snapshot.chunks[y] = Some(ChunkSnapshot {
 					blocks: column.0[y].clone(),
 					block_light: snapshot_light.0,
 					sky_light: snapshot_light.1
 				});
 			};
-			
+
 			let root = ColumnRoot::from(snapshot.to_column(x as i32, z as i32).unwrap());
-			
+
 			writer.chunk(x as u8, z as u8, &root).unwrap();
-			
-			// TODO: world.set_column((x as i32, z as i32), column);
 		}
-		
-		println!();
 	}
 	
 	writer.finish().unwrap();
