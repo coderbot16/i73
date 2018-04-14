@@ -1,6 +1,8 @@
 use vocs::indexed::Target;
 use matcher::BlockMatcher;
-use chunk::grouping::{Moore, Result};
+use vocs::position::QuadPosition;
+use vocs::view::QuadMut;
+use super::{Decorator, Result};
 use rng::JavaRng;
 use trig;
 
@@ -13,16 +15,28 @@ const RADIUS_DIVISOR: f64 = 16.0;
 /// The length is `size/LENGTH_DIVISOR`
 const LENGTH_DIVISOR: f32 = 8.0;
 
+pub struct VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
+	pub blocks: VeinBlocks<R, B>,
+	pub size: u32
+}
+
+impl<R, B> Decorator<B> for VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+		let vein = Vein::create(self.size, (position.x() as i32, position.y() as i32, position.z() as i32), rng);
+		self.blocks.generate(&vein, quad, rng)
+	}
+}
+
 pub struct VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 	pub replace: R,
 	pub block:   B
 }
 
 impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
-	pub fn generate(&self, vein: &Vein, moore: &mut Moore<B>, rng: &mut JavaRng) -> Result<()> {
-		moore.ensure_available(self.block.clone());
+	pub fn generate(&self, vein: &Vein, quad: &mut QuadMut<B>, rng: &mut JavaRng) -> Result {
+		quad.ensure_available(self.block.clone());
 		
-		let (mut blocks, palette) = moore.freeze_palette();
+		let (mut blocks, palette) = quad.freeze_palette();
 		
 		let block = palette.reverse_lookup(&self.block).unwrap();
 		
@@ -32,10 +46,12 @@ impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 			for y in blob.lower.1..(blob.upper.1 + 1) {
 				for z in blob.lower.2..(blob.upper.2 + 1) {
 					for x in blob.lower.2..(blob.upper.2 + 1) {
-						let at = (x, y, z);
-						
-						if blob.distance_squared(at) < 1.0 && self.replace.matches(blocks.get(at, &palette)?.target()?) {
-							blocks.set(at, &block)?;
+						let at = QuadPosition::new(x as u8, y as u8, z as u8); // TODO
+
+						if let Some(candidate) = blocks.get(at, &palette) {
+							if blob.distance_squared((x, y, z)) < 1.0 && self.replace.matches(candidate) {
+								blocks.set(at, &block);
+							}
 						}
 					}
 				}

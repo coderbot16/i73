@@ -40,4 +40,14 @@ impl<R> Rarity for Rare<R> where R: Rarity {
 	}
 }
 
+pub struct Common {
+	pub max: i32
+}
+
+impl Rarity for Common {
+	fn get(&self, rng: &mut JavaRng) -> i32 {
+		rng.next_i32(self.max + 1)
+	}
+}
+
 // TODO: Flowers, Grass, DeadBush, Cactus

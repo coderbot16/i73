@@ -3,13 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="10a03f97-1988-40ce-bf7b-64ff61d89481" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.rs" afterPath="$PROJECT_DIR$/build.rs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/bin/main.rs" afterPath="$PROJECT_DIR$/src/bin/main.rs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/generator/overworld_173.rs" afterPath="$PROJECT_DIR$/src/generator/overworld_173.rs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/image_ops/zoom.rs" afterPath="$PROJECT_DIR$/src/image_ops/zoom.rs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/noise_field/height.rs" afterPath="$PROJECT_DIR$/src/noise_field/height.rs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/structure/caves.rs" afterPath="$PROJECT_DIR$/src/structure/caves.rs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/structure/mod.rs" afterPath="$PROJECT_DIR$/src/structure/mod.rs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/decorator/mod.rs" afterPath="$PROJECT_DIR$/src/decorator/mod.rs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/decorator/vein.rs" afterPath="$PROJECT_DIR$/src/decorator/vein.rs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/distribution/rarity.rs" afterPath="$PROJECT_DIR$/src/distribution/rarity.rs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib.rs" afterPath="$PROJECT_DIR$/src/lib.rs" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -25,8 +23,44 @@
       <file leaf-file-name="main.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bin/main.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="256" column="38" lean-forward="false" selection-start-line="256" selection-start-column="38" selection-end-line="256" selection-end-column="38" />
+            <state relative-caret-position="519">
+              <caret line="266" column="0" lean-forward="false" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rng.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/rng.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1110">
+              <caret line="80" column="25" lean-forward="false" selection-start-line="80" selection-start-column="25" selection-end-line="80" selection-end-column="25" />
+              <folding>
+                <element signature="e#2462#2463#0" expanded="true" />
+                <element signature="e#2519#2520#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rarity.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/distribution/rarity.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="690">
+              <caret line="48" column="33" lean-forward="false" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
+              <folding>
+                <element signature="e#1047#1048#0" expanded="true" />
+                <element signature="e#1079#1080#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="I73 Decoration List - Overworld and Sky" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/I73 Decoration List - Overworld and Sky">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="525">
+              <caret line="35" column="4" lean-forward="false" selection-start-line="35" selection-start-column="4" selection-end-line="37" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -35,81 +69,48 @@
       <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/decorator/mod.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+            <state relative-caret-position="225">
+              <caret line="15" column="42" lean-forward="false" selection-start-line="15" selection-start-column="42" selection-end-line="15" selection-end-column="42" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lib.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib.rs">
+      <file leaf-file-name="vein.rs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/decorator/vein.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="14" lean-forward="false" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
+            <state relative-caret-position="309">
+              <caret line="24" column="105" lean-forward="false" selection-start-line="24" selection-start-column="105" selection-end-line="24" selection-end-column="105" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.rs">
+      <file leaf-file-name="dungeon.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/decorator/dungeon.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="45" lean-forward="false" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
+            <state relative-caret-position="1470">
+              <caret line="100" column="0" lean-forward="false" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="caves.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/structure/caves.rs">
+      <file leaf-file-name="height.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/distribution/height.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="474">
-              <caret line="36" column="4" lean-forward="false" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="4" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/structure/organized/mod.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
-              <folding>
-                <element signature="e#405#406#0" expanded="true" />
-                <element signature="e#435#436#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/structure/mod.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="26" lean-forward="true" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="height.rs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="height.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/noise_field/height.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="687">
-              <caret line="172" column="3" lean-forward="true" selection-start-line="172" selection-start-column="3" selection-end-line="172" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="overworld_173.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/generator/overworld_173.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="371" column="46" lean-forward="false" selection-start-line="371" selection-start-column="46" selection-end-line="371" selection-end-column="46" />
+            <state relative-caret-position="1767">
+              <caret line="151" column="1" lean-forward="true" selection-start-line="151" selection-start-column="1" selection-end-line="151" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -136,7 +137,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Meta</find>
       <find>use</find>
       <find>rs25</find>
       <find>(i32, i32)</find>
@@ -166,6 +166,7 @@
       <find>freeze_palettes</find>
       <find>air</find>
       <find>basin</find>
+      <find>Decora</find>
     </findStrings>
     <replaceStrings>
       <replace>vocs::world::chunk::</replace>
@@ -210,7 +211,6 @@
         <option value="$PROJECT_DIR$/test_data/JavaSinTable.txt" />
         <option value="$PROJECT_DIR$/src/config/settings/flat.rs" />
         <option value="$PROJECT_DIR$/Cargo.toml" />
-        <option value="$PROJECT_DIR$/src/decorator/vein.rs" />
         <option value="$PROJECT_DIR$/target/debug/build/i73-ae917cc4eabba1c7/out/sin_table.rs" />
         <option value="$PROJECT_DIR$/src/biome/climate.rs" />
         <option value="$PROJECT_DIR$/src/distribution/height.rs" />
@@ -218,22 +218,25 @@
         <option value="$PROJECT_DIR$/src/noise/octaves.rs" />
         <option value="$PROJECT_DIR$/src/decorator/quad.rs" />
         <option value="$PROJECT_DIR$/src/decorator/lake.rs" />
-        <option value="$PROJECT_DIR$/src/lib.rs" />
         <option value="$PROJECT_DIR$/build.rs" />
-        <option value="$PROJECT_DIR$/src/bin/main.rs" />
         <option value="$PROJECT_DIR$/src/structure/mod.rs" />
         <option value="$PROJECT_DIR$/src/structure/caves.rs" />
         <option value="$PROJECT_DIR$/src/generator/overworld_173.rs" />
         <option value="$PROJECT_DIR$/src/image_ops/zoom.rs" />
         <option value="$PROJECT_DIR$/src/noise_field/height.rs" />
+        <option value="$PROJECT_DIR$/src/lib.rs" />
+        <option value="$PROJECT_DIR$/src/decorator/vein.rs" />
+        <option value="$PROJECT_DIR$/src/distribution/rarity.rs" />
+        <option value="$PROJECT_DIR$/src/decorator/mod.rs" />
+        <option value="$PROJECT_DIR$/src/bin/main.rs" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1679" />
-    <option name="y" value="114" />
-    <option name="width" value="1922" />
-    <option name="height" value="1081" />
+    <option name="x" value="2148" />
+    <option name="y" value="85" />
+    <option name="width" value="1680" />
+    <option name="height" value="1025" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -263,6 +266,23 @@
               <item name="i73" type="b2602c69:ProjectViewProjectNode" />
               <item name="i73" type="462c0819:PsiDirectoryNode" />
               <item name=".idea" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="i73" type="b2602c69:ProjectViewProjectNode" />
+              <item name="i73" type="462c0819:PsiDirectoryNode" />
+              <item name="profiles" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="i73" type="b2602c69:ProjectViewProjectNode" />
+              <item name="i73" type="462c0819:PsiDirectoryNode" />
+              <item name="profiles" type="462c0819:PsiDirectoryNode" />
+              <item name="b173" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="i73" type="b2602c69:ProjectViewProjectNode" />
+              <item name="i73" type="462c0819:PsiDirectoryNode" />
+              <item name="profiles" type="462c0819:PsiDirectoryNode" />
+              <item name="b173_debug_biomes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="i73" type="b2602c69:ProjectViewProjectNode" />
@@ -453,7 +473,9 @@
       <option name="nocapture" value="true" />
       <option name="backtrace" value="SHORT" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
+      <envs>
+        <env name="CARGO_INCREMENTAL" value="1" />
+      </envs>
     </configuration>
     <configuration name="test" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="channel" value="DEFAULT" />
@@ -581,7 +603,14 @@
       <option name="project" value="LOCAL" />
       <updated>1523679843193</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Remove all warnings">
+      <created>1523681387659</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1523681387659</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -659,34 +688,14 @@
     <MESSAGE value="Use rs25 heightmap generation" />
     <MESSAGE value="Decoration support&#10;&#10; + Update to latest vocs&#10; * Split up main generation into 3 stages: initial gen, decoration, saving" />
     <MESSAGE value="Remove workspace file - IDE file that should not be in version control" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove workspace file - IDE file that should not be in version control" />
+    <MESSAGE value="Remove all warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove all warnings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/generator/sky_173.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="33" lean-forward="false" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/generator/nether_173.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/structure/caves.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="83" lean-forward="false" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Cargo.toml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -751,24 +760,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/decorator/dungeon.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="16" lean-forward="false" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/segmented.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/matcher.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="16" lean-forward="false" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -794,13 +789,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/rng.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-400">
-          <caret line="80" column="25" lean-forward="false" selection-start-line="80" selection-start-column="25" selection-end-line="80" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/bin/sintest.rs" />
     <entry file="file://$PROJECT_DIR$/test_data/JavaSinTable.txt" />
     <entry file="file://$PROJECT_DIR$/src/config/settings/flat.rs">
@@ -821,13 +809,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="1" lean-forward="false" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/decorator/vein.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1156">
-          <caret line="68" column="66" lean-forward="false" selection-start-line="68" selection-start-column="66" selection-end-line="68" selection-end-column="66" />
         </state>
       </provider>
     </entry>
@@ -867,13 +848,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
           <caret line="253" column="34" lean-forward="false" selection-start-line="253" selection-start-column="34" selection-end-line="253" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/distribution/height.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -883,6 +857,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="36" column="10" lean-forward="true" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -917,22 +892,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/decorator/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="14" lean-forward="false" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/target/debug/build/i73-10cd03b803054850/build_script_build-10cd03b803054850">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -957,21 +916,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bin/main.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="256" column="38" lean-forward="false" selection-start-line="256" selection-start-column="38" selection-end-line="256" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/structure/organized/mod.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
           <folding>
-            <element signature="e#405#406#0" expanded="true" />
-            <element signature="e#435#436#0" expanded="true" />
+            <element signature="e#405#406#0" expanded="false" />
+            <element signature="e#435#436#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1000,6 +951,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/profiles/b173/biomes.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="88" column="39" lean-forward="true" selection-start-line="88" selection-start-column="39" selection-end-line="88" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/matcher.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="17" column="16" lean-forward="false" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/decorator/dungeon.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1470">
+          <caret line="100" column="0" lean-forward="false" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/distribution/height.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/noise_field/height.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1767">
+          <caret line="151" column="1" lean-forward="true" selection-start-line="151" selection-start-column="1" selection-end-line="151" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/image_ops/zoom.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="822">
@@ -1008,10 +1007,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/noise_field/height.rs">
+    <entry file="file://$PROJECT_DIR$/src/distribution/rarity.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="687">
-          <caret line="172" column="3" lean-forward="true" selection-start-line="172" selection-start-column="3" selection-end-line="172" selection-end-column="3" />
+        <state relative-caret-position="690">
+          <caret line="48" column="33" lean-forward="false" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
+          <folding>
+            <element signature="e#1047#1048#0" expanded="true" />
+            <element signature="e#1079#1080#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/rng.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1110">
+          <caret line="80" column="25" lean-forward="false" selection-start-line="80" selection-start-column="25" selection-end-line="80" selection-end-column="25" />
+          <folding>
+            <element signature="e#2462#2463#0" expanded="true" />
+            <element signature="e#2519#2520#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/decorator/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="42" lean-forward="false" selection-start-line="15" selection-start-column="42" selection-end-line="15" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/I73 Decoration List - Overworld and Sky">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="35" column="4" lean-forward="false" selection-start-line="35" selection-start-column="4" selection-end-line="37" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bin/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="519">
+          <caret line="266" column="0" lean-forward="false" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/decorator/vein.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="24" column="105" lean-forward="false" selection-start-line="24" selection-start-column="105" selection-end-line="24" selection-end-column="105" />
           <folding />
         </state>
       </provider>

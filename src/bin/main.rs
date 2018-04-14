@@ -232,20 +232,40 @@ fn main() {
 
 	println!("Decorating region (0, 0)");
 
+	let mut decoration_rng = ::i73::rng::JavaRng::new(8399452073110208023);
+	let coefficients = (
+		(decoration_rng.next_i64() / 2) * 2 + 1,
+		(decoration_rng.next_i64() / 2) * 2 + 1
+	);
+
+	let decorator = ::i73::decorator::Dispatcher {
+		decorator: ::i73::decorator::vein::VeinDecorator {
+			blocks: ::i73::decorator::vein::VeinBlocks {
+				replace: |ty: &u16| -> bool {
+					*ty == 1*16
+				},
+				block: 13*16
+			},
+			size: 32
+		},
+		height_distribution: ::i73::distribution::height::Linear {
+			min: 0,
+			max: 63
+		},
+		rarity: ::i73::distribution::rarity::Common {
+			max: 9
+		},
+		phantom: ::std::marker::PhantomData::<u16>
+	};
+
 	for x in 0..31 {
 		println!("{}", x);
 		for z in 0..31 {
+			decoration_rng.seed = (x as i64) * coefficients.0 + (z as i64) * coefficients.1 ^ 8399452073110208023;
+
 			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
 
-			for y in 0..128 {
-				for z in 15..17 {
-					for x in 15..17 {
-						let position = ::vocs::position::QuadPosition::new(x, y, z);
-
-						quad.set_immediate(position, &(7*16));
-					}
-				}
-			}
+			decorator.generate(&mut quad, &mut decoration_rng).unwrap();
 		}
 	}
 

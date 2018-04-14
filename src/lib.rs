@@ -20,7 +20,7 @@ pub mod noise_field;
 // TODO: Implement decorators
 // Temporarily disable the decorator module for now.
 // They are not fully implemented, and we do not have a correct mechanism for the 4-chunk square yet.
-// pub mod decorator;
+pub mod decorator;
 pub mod trig;
 pub mod structure;
 pub mod generator;

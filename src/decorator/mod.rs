@@ -1,37 +1,45 @@
 use rng::JavaRng;
-use chunk::grouping::{Moore, Result};
+use vocs::view::QuadMut;
+use vocs::position::{ColumnPosition, QuadPosition};
 use vocs::indexed::Target;
 use distribution::height::HeightDistribution;
 use distribution::rarity::Rarity;
-use std::marker::PhantomData; 
 
 pub mod dungeon;
 pub mod vein;
-pub mod large_tree;
-pub mod lake;
-pub mod tree;
+// pub mod large_tree;
+// pub mod lake;
+// pub mod tree;
 
 // TODO: MultiDispatcher
+
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
+pub struct Spilled(pub QuadPosition);
+pub type Result = ::std::result::Result<(), Spilled>;
 
 pub struct Dispatcher<H, D, R, B> where H: HeightDistribution, D: Decorator<B>, R: Rarity, B: Target {
 	pub height_distribution: H,
 	pub rarity: R,
 	pub decorator: D,
-	pub phantom: PhantomData<B>
+	pub phantom: ::std::marker::PhantomData<B>
 }
 
 impl<H, D, R, B> Dispatcher<H, D, R, B> where H: HeightDistribution, D: Decorator<B>, R: Rarity, B: Target {
-	pub fn generate(&self, moore: &mut Moore<B>, rng: &mut JavaRng) -> Result<bool> {
+	pub fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng) -> Result {
 		for _ in 0..self.rarity.get(rng) {
-			let at = (rng.next_i32(16), self.height_distribution.get(rng), rng.next_i32(16));
+			let at = ColumnPosition::new(
+				rng.next_i32(16) as u8,
+				self.height_distribution.get(rng) as u8,
+				rng.next_i32(16) as u8
+			);
 			
-			self.decorator.generate(moore, rng, at)?;
+			self.decorator.generate(quad, rng, QuadPosition::from_centered(at))?;
 		}
 		
-		Ok(true)
+		Ok(())
 	}
 }
 
 pub trait Decorator<B> where B: Target {
-	fn generate(&self, moore: &mut Moore<B>, rng: &mut JavaRng, position: (i32, i32, i32)) -> Result<bool>;
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result;
 }
