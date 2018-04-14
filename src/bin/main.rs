@@ -12,7 +12,6 @@ use i73::generator::Pass;
 use i73::generator::overworld_173::{self, Settings};
 use i73::config::biomes::BiomesConfig;
 use i73::biome::Lookup;
-use i73::image_ops::Image;
 use i73::structure;
 
 use vocs::indexed::ChunkIndexed;
@@ -20,11 +19,12 @@ use vocs::world::world::World;
 use vocs::view::ColumnMut;
 use vocs::position::GlobalColumnPosition;
 
-use rs25::level::manager::{Manager, RegionPool, ColumnSnapshot, ChunkSnapshot};
+use rs25::level::manager::{ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
 use rs25::level::anvil::ColumnRoot;
 
-fn display_image(map: &Image<bool>) {
+// use i73::image_ops::Image;
+/*fn display_image(map: &Image<bool>) {
 	for z in (0..map.z_size()).rev() {
 		for x in 0..map.x_size() {
 			if x == map.x_size() / 2 {
@@ -39,7 +39,7 @@ fn display_image(map: &Image<bool>) {
 			println!("======== ========");
 		}
 	}
-}
+}*/
 
 fn main() {
 	let profile_name = match ::std::env::args().skip(1).next() {
@@ -256,8 +256,9 @@ fn main() {
 
 	println!("Writing region (0, 0)");
 
-	let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
-	let mut manager = Manager::manage(pool);
+	// use rs25::level::manager::{Manager, RegionPool};
+	// let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
+	// let mut manager = Manager::manage(pool);
 
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();

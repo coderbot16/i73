@@ -199,8 +199,6 @@ impl Default for PaintBlocks<Is<u16>, IsNot<u16>, u16> {
 }
 
 pub struct PaintAssociations {
-	air:       ColumnAssociation,
-	stone:     ColumnAssociation,
 	ocean:     ColumnAssociation,
 	bedrock:   ColumnAssociation
 }
@@ -372,8 +370,6 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		}
 		
 		let associations = PaintAssociations {
-			air:        palette.reverse_lookup(&self.blocks.air).unwrap(),
-			stone:      palette.reverse_lookup(&self.blocks.stone).unwrap(),
 			ocean:      palette.reverse_lookup(&self.blocks.ocean).unwrap(),
 			bedrock:    palette.reverse_lookup(&self.blocks.bedrock).unwrap()
 		};

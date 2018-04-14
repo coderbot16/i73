@@ -17,24 +17,24 @@ const MIN_H_SIZE: f64 = 1.5;
 /// Note that caves starting in other chunks can still carve through this chunk.
 /// Offsets the fact that a single cave start can branch many times.
 /// Also make most chunks that do contain caves contain few, but have the potential to contain many.
-static RARITY: Rare<HalfNormal3> = Rare {
+pub static RARITY: Rare<HalfNormal3> = Rare {
 	base: HalfNormal3 { max: 39 },
 	rarity: 15
 };
 
 /// Allow caves at high altitudes, but make most of them spawn underground.
-static HEIGHT: DepthPacked = DepthPacked { min: 0, linear_start: 8, max: 126 };
+pub static HEIGHT: DepthPacked = DepthPacked { min: 0, linear_start: 8, max: 126 };
 
 /// More chunks will have cave starts, but they will have less in each one.
 /// Results in less caves overall, since a chunk is 3x more likely to have cave starts,
 /// but will have a maximum that is 4x less.
-static RARITY_NETHER: Rare<HalfNormal3> = Rare {
+pub static RARITY_NETHER: Rare<HalfNormal3> = Rare {
 	base: HalfNormal3 { max: 9 },
 	rarity: 5
 };
 
 /// Since the Nether has a high amount of solid blocks from bottom to top, caves spawn uniformly.
-static HEIGHT_NETHER: Linear = DEFAULT;
+pub static HEIGHT_NETHER: Linear = DEFAULT;
 
 /// Mimics Java rounding rules and avoids UB from float casts.
 fn floor_capped(t: f64) -> i32 {
@@ -555,7 +555,7 @@ pub enum Outcome {
 }
 
 impl Outcome {
-	fn continues(&self) -> bool {
+	pub fn continues(&self) -> bool {
 		match *self {
 			Outcome::Split       => false,
 			Outcome::Constrict   => true,
@@ -576,13 +576,6 @@ pub struct BlobSize {
 }
 
 impl BlobSize {
-	fn sphere(radius: f64) -> Self {
-		BlobSize {
-			horizontal: radius,
-			vertical: radius
-		}
-	}
-	
 	fn from_horizontal(horizontal: f64, vertical_multiplier: f64) -> Self {
 		BlobSize {
 			horizontal,

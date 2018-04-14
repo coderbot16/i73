@@ -155,6 +155,6 @@ impl<T> SelectZoom<T> for BestCandidate where T: Eq {
 /// Will it blend?
 /// 
 /// Yes, it will.
-struct FuzzyBlend {
-	rng: NotchRng
+pub struct FuzzyBlend {
+	/*rng: NotchRng*/
 }

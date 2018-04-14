@@ -9,6 +9,8 @@ fn main() {
 	let dest_path = Path::new(&out_dir).join("sin_table.rs");
 	let mut f = File::create(&dest_path).unwrap();
 
+	println!("cargo:rerun-if-changed=build.rs");
+
 	write!(f, "pub const SIN_TABLE: [u32; 16384] = [").unwrap();
 
 	for i in 0..16384 {

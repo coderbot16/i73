@@ -129,30 +129,30 @@ impl HeightSource81 {
 	
 	pub fn sample(&self, point: Vector2<f64>, biome_height_center: f64, biome_chaos: f64) -> Height {
 		let mut depth = self.depth.sample(point) / self.out_scale;
-		
+
 		if depth < 0.0 {
 			depth *= 0.3
 		}
-		
+
 		depth = depth.abs().min(1.0) * 3.0 - 2.0;
-		depth /= if depth < 0.0 {1.4} else {2.0};
-		
+		depth /= if depth < 0.0 { 1.4 } else { 2.0 };
+
 		depth = depth * 0.2 + biome_height_center;
-		
-		Height { 
+
+		Height {
 			center: self.base + depth * (self.base / 8.0),
 			chaos: biome_chaos
 		}
 	}
 }
 
-pub struct BiomeDigestor {
+/*pub struct BiomeDigestor {
 	/// Each cell has a weight assigned. The highest weight is at the center, a max of ~22.36
 	weights: [[f32; 5]; 5]
 }
 
 impl BiomeDigestor {
-	fn new() -> Self {
+	pub fn new() -> Self {
 		let mut weights = [[0.0; 5]; 5];
 		
 		for x in 0..5 {
@@ -170,7 +170,7 @@ impl BiomeDigestor {
 		
 		BiomeDigestor { weights }
 	}
-}
+}*/
 
 /// Converts form lerp coords (5x5) to layer coords (16x16).
 /// ```

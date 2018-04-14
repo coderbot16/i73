@@ -1,5 +1,5 @@
 pub mod caves;
-pub mod organized;
+// TODO: Should mineshafts/villages be implemented?: pub mod organized;
 
 use rng::JavaRng;
 use vocs::view::ColumnMut;
