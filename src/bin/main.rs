@@ -306,6 +306,32 @@ fn main() {
 		phantom: ::std::marker::PhantomData::<u16>
 	};
 
+	let tall_grass = ::i73::decorator::Dispatcher {
+		decorator: ::i73::decorator::clump::Clump {
+			iterations: 64,
+			horizontal: 8,
+			vertical: 4,
+			decorator: ::i73::decorator::clump::plant::PlantDecorator {
+				block: 31*16 + 1,
+				base: |ty: &u16| -> bool {
+					*ty == 2*16 || *ty == 3*16 || *ty == 60*16
+				},
+				replace: |ty: &u16| -> bool {
+					*ty == 0*16
+				}
+			},
+			phantom: ::std::marker::PhantomData::<u16>
+		},
+		height_distribution: ::i73::distribution::height::Linear {
+			min: 0,
+			max: 127
+		},
+		rarity: ::i73::distribution::rarity::Common {
+			max: 90
+		},
+		phantom: ::std::marker::PhantomData::<u16>
+	};
+
 	for x in 0..31 {
 		println!("{}", x);
 		for z in 0..31 {
@@ -318,6 +344,7 @@ fn main() {
 			water_lake.generate(&mut quad, &mut decoration_rng).unwrap();
 			clay_vein.generate(&mut quad, &mut decoration_rng).unwrap();
 			gravel_vein.generate(&mut quad, &mut decoration_rng).unwrap();
+			tall_grass.generate(&mut quad, &mut decoration_rng).unwrap();
 		}
 	}
 
