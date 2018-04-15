@@ -1,8 +1,43 @@
 use rng::JavaRng;
-use bit_vec::BitVec;
 use vocs::indexed::Target;
 use matcher::BlockMatcher;
-use chunk::grouping::{Moore, Result};
+use vocs::position::{ChunkPosition, ColumnPosition, QuadPosition};
+use vocs::view::QuadMut;
+use vocs::mask::{Mask, ChunkMask};
+use super::{Decorator, Result};
+
+// Since lakes are always 16x8x16, they will never escape the Quad.
+
+pub struct LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+	pub blocks: LakeBlocks<B, L, S, R>,
+	pub settings: LakeSettings
+}
+
+impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+		let mut lower = position.to_centered().unwrap();
+
+		while lower.y() > 0 && quad.get(QuadPosition::new(lower.x(), lower.y(), lower.z())) == Some(&self.blocks.carve) {
+			lower = ColumnPosition::new(lower.x(), lower.y() - 1, lower.z());
+		}
+
+		// TODO: This may create a negative Y position.
+		lower = ColumnPosition::new(lower.x(), lower.y() - 4, lower.z());
+
+		let mut lake = Lake::new(self.settings.surface);
+		
+		lake.fill(LakeBlobs::new(rng, &self.settings));
+		lake.update_border();
+
+		if !self.blocks.check_border(&lake, quad, lower) {
+			return Ok(());
+		}
+
+		self.blocks.fill_and_carve(&lake, quad, lower);
+
+		Ok(())
+	}
+}
 
 pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
 	pub is_liquid:  L,
@@ -14,76 +49,74 @@ pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockM
 }
 
 impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
-	pub fn check_border(&self, shape: &LakeShape, moore: &mut Moore<B>, lower: (i32, i32, i32)) -> Result<bool> {
+	pub fn check_border(&self, lake: &Lake, quad: &mut QuadMut<B>, lower: ColumnPosition) -> bool {
 		
-		for x in 0..shape.horizontal {
-			for z in 0..shape.horizontal {
-				let (x_i32, z_i32) = (x as i32, z as i32);
-				
-				for y in 0..shape.surface {
-					if shape.get_border(x, y, z) {
-						let association = moore.get((lower.0 + x_i32, lower.1 + y as i32, lower.2 + z_i32))?;
-						let block = association.target()?;
-						
-						if *block != self.liquid && !self.is_solid.matches(block) {
-							return Ok(false)
+		for x in 0..16 {
+			for z in 0..16 {
+				for y in 0..lake.surface {
+					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
+
+					if lake.get(border(x, y, z)) {
+						if let Some(candidate) = quad.get(at) {
+							if *candidate != self.liquid && !self.is_solid.matches(candidate) {
+								return false;
+							}
 						}
 					}
 				}
 				
-				for y in shape.surface..shape.vertical {
-					if shape.get_border(x, y, z) {
-						if self.is_liquid.matches(moore.get((lower.0 + x_i32, lower.1 + y as i32, lower.2 + z_i32))?.target()?) {
-							return Ok(false);
+				for y in lake.surface..8 {
+					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
+
+					if lake.get(border(x, y, z)) {
+						if let Some(candidate) = quad.get(at) {
+							if self.is_liquid.matches(candidate) {
+								return false;
+							}
 						}
 					}
 				}
 			}
 		}
-		
-		Ok(true)
+
+		return true;
 	}
 	
-	pub fn fill_and_carve(&self, shape: &LakeShape, moore: &mut Moore<B>, lower: (i32, i32, i32)) -> Result<()> {
-		moore.ensure_available(self.liquid.clone());
-		moore.ensure_available(self.carve.clone());
+	pub fn fill_and_carve(&self, lake: &Lake, quad: &mut QuadMut<B>, lower: ColumnPosition) {
+		quad.ensure_available(self.liquid.clone());
+		quad.ensure_available(self.carve.clone());
 		
-		let (mut blocks, palette) = moore.freeze_palette();
+		let (mut blocks, palette) = quad.freeze_palette();
 		
 		let liquid = palette.reverse_lookup(&self.liquid).unwrap();
 		let carve = palette.reverse_lookup(&self.carve).unwrap();
-		
-		for x in 0..shape.horizontal {
-			for z in 0..shape.horizontal {
-				for y in 0..shape.surface {
-					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
+
+		for x in 0..16 {
+			for z in 0..16 {
+				for y in 0..lake.surface {
+					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
 					
-					if shape.get(x, y, z) {
-						blocks.set(position, &liquid)?;
+					if lake.get(volume(x, y, z)) {
+						blocks.set(at, &liquid);
 					}
 				}
-				
-				for y in shape.surface..shape.vertical {
-					let position = (lower.0 + x as i32, lower.1 + y as i32, lower.2 + z as i32);
+
+				for y in lake.surface..8 {
+					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
 					
-					if shape.get(x, y, z) {
-						blocks.set(position, &carve)?;
+					if lake.get(volume(x, y, z)) {
+						blocks.set(at, &carve);
 					}
 				}
 			}
 		}
-		
-		Ok(())
 	}
 	
 	// TODO: grow_grass, solidify_border
 }
 
 pub struct LakeSettings {
-	pub horizontal: usize,
-	pub vertical: usize,
-	pub surface: usize,
-	
+	pub surface: u8,
 	pub min_blobs: i32,
 	pub add_blobs: i32
 }
@@ -91,8 +124,6 @@ pub struct LakeSettings {
 impl Default for LakeSettings {
 	fn default() -> Self {
 		LakeSettings {
-			horizontal: 16,
-			vertical:   8,
 			surface:    4,
 			min_blobs:  4,
 			add_blobs:  3
@@ -101,8 +132,6 @@ impl Default for LakeSettings {
 }
 
 pub struct LakeBlobs<'r> {
-	horizontal:      f64,
-	vertical:        f64,
 	remaining_blobs: i32,
 	rng:             &'r mut JavaRng
 }
@@ -111,9 +140,7 @@ impl<'r> LakeBlobs<'r> {
 	pub fn new(rng: &'r mut JavaRng, settings: &LakeSettings) -> Self {
 		let remaining_blobs = settings.min_blobs + rng.next_i32(settings.add_blobs + 1);
 		
-		LakeBlobs { 
-			horizontal: settings.horizontal as f64,
-			vertical: settings.vertical as f64,
+		LakeBlobs {
 			remaining_blobs,
 			rng
 		}
@@ -143,9 +170,9 @@ impl<'r> Iterator for LakeBlobs<'r> {
 		);
 		
 		let center = (
-			self.rng.next_f64() * (self.horizontal - diameter.0 - 2.0) + 1.0 + radius.0, 
-			self.rng.next_f64() * (self.vertical   - diameter.1 - 4.0) + 2.0 + radius.1, 
-			self.rng.next_f64() * (self.horizontal - diameter.2 - 2.0) + 1.0 + radius.2
+			self.rng.next_f64() * (16.0 - diameter.0 - 2.0) + 1.0 + radius.0,
+			self.rng.next_f64() * ( 8.0 - diameter.1 - 4.0) + 2.0 + radius.1,
+			self.rng.next_f64() * (16.0 - diameter.2 - 2.0) + 1.0 + radius.2
 		);
 		
 		Some(Blob { radius, center })
@@ -158,47 +185,44 @@ pub struct Blob {
 	pub radius: (f64, f64, f64)
 }
 
-pub struct LakeShape {
-	/// Horizontal size of the lake.
-	horizontal: usize,
-	/// Vertical size of the lake.
-	vertical: usize,
-	surface: usize,
-	/// Defines the volume of the lake. 
-	liquid: BitVec,
-	/// Defines the blocks bordering the volume of the lake.
-	border: BitVec
+pub fn volume(x: u8, y: u8, z: u8) -> ChunkPosition {
+	ChunkPosition::new(x, y % 8, z)
 }
 
-impl LakeShape {
-	pub fn new(settings: &LakeSettings) -> Self {
-		LakeShape {
-			horizontal: settings.horizontal,
-			vertical: settings.vertical,
-			surface: settings.surface,
-			liquid: BitVec::from_elem(settings.horizontal * settings.horizontal * settings.vertical, false),
-			border: BitVec::from_elem(settings.horizontal * settings.horizontal * settings.vertical, false)
+pub fn border(x: u8, y: u8, z: u8) -> ChunkPosition {
+	ChunkPosition::new(x, (y % 8) + 8, z)
+}
+
+/// Uses a ChunkMask to store both the volume and the border blocks.
+/// Lakes are 16x8x16. A ChunkMask is 16x16x16.
+/// For compactness, these two masks are stacked on top of each other.
+pub struct Lake {
+	shape: ChunkMask,
+	surface: u8
+}
+
+impl Lake {
+	pub fn new(surface: u8) -> Self {
+		Lake {
+			shape: ChunkMask::default(),
+			surface
 		}
 	}
 	
 	pub fn clear(&mut self) {
-		self.liquid.clear()
+		self.shape.clear()
+	}
+
+	pub fn set_or(&mut self, at: ChunkPosition, value: bool) {
+		self.shape.set_or(at, value)
+	}
+
+	pub fn set(&mut self, at: ChunkPosition, value: bool) {
+		self.shape.set(at, value)
 	}
 	
-	pub fn set(&mut self, x: usize, y: usize, z: usize, bit: bool) {
-		self.liquid.set((x * self.horizontal + z) * self.vertical + y, bit);
-	}
-	
-	pub fn get(&self, x: usize, y: usize, z: usize) -> bool {
-		self.liquid.get((x * self.horizontal + z) * self.vertical + y).unwrap()
-	}
-	
-	pub fn set_border(&mut self, x: usize, y: usize, z: usize, bit: bool) {
-		self.border.set((x * self.horizontal + z) * self.vertical + y, bit);
-	}
-	
-	pub fn get_border(&self, x: usize, y: usize, z: usize) -> bool {
-		self.border.get((x * self.horizontal + z) * self.vertical + y).unwrap()
+	pub fn get(&self, at: ChunkPosition) -> bool {
+		self.shape[at]
 	}
 	
 	pub fn fill(&mut self, blobs: LakeBlobs) {
@@ -209,9 +233,9 @@ impl LakeShape {
 	
 	pub fn add_blob(&mut self, blob: Blob) {
 		// TODO: Reduce size of possible bounding box.
-		for x in 1..(self.horizontal - 1) {
-			for y in 1..(self.vertical - 1) {
-				for z in 1..(self.horizontal - 1) {
+		for x in 1..15 {
+			for y in 1..7 {
+				for z in 1..15 {
 					let axis_distances = (
 			 			(x as f64 - blob.center.0) / blob.radius.0,
 			 			(y as f64 - blob.center.1) / blob.radius.1,
@@ -222,71 +246,66 @@ impl LakeShape {
 						axis_distances.0 * axis_distances.0 + 
 						axis_distances.1 * axis_distances.1 + 
 						axis_distances.2 * axis_distances.2;
-					
-					let preexisting = self.get(x, y, z);
-					self.set(x, y, z, preexisting || distance_squared < 1.0);
+
+					self.set_or(volume(x, y, z), distance_squared < 1.0);
 		 		}
 		 	}
 		}
 	}
 	
 	pub fn update_border(&mut self) {
-		self.border.clear();
-		
-		let y_max = self.vertical - 1;
-		let h_max = self.horizontal - 1;
-		
 		// Main volume
-		for x in 1..h_max {
-			for y in 1..y_max {
-				for z in 1..h_max {
-					let is_border = !self.get(x, y, z) && (
-						self.get(x + 1, y,     z    ) ||
-						self.get(x - 1, y,     z    ) ||
-						self.get(x,     y + 1, z    ) ||
-						self.get(x,     y - 1, z    ) ||
-						self.get(x,     y,     z + 1) ||
-						self.get(x,     y,     z - 1)
+		for x in 1..15 {
+			for y in 1..7 {
+				for z in 1..15 {
+					let is_border = !self.get(volume(x, y, z)) && (
+						self.get(volume(x + 1, y,     z    )) ||
+						self.get(volume(x - 1, y,     z    )) ||
+						self.get(volume(x,     y + 1, z    )) ||
+						self.get(volume(x,     y - 1, z    )) ||
+						self.get(volume(x,     y,     z + 1)) ||
+						self.get(volume(x,     y,     z - 1))
 					);
 					
-					self.set_border(x, y, z, is_border);
+					self.set(border(x, y, z), is_border);
 				}
 			}
 		}
 		
 		// Top and bottom face
-		for x in 1..h_max {
-			for z in 1..h_max {
-				let bottom = self.get(x, 1,         z);
-				let top    = self.get(x, y_max - 1, z);
+		for x in 1..15 {
+			for z in 1..15 {
+				let bottom = self.get(volume(x, 1,         z));
+				let top    = self.get(volume(x, 7 - 1, z));
 				
-				self.set_border(x, 0,     z, bottom);
-				self.set_border(x, y_max, z, top   );
+				self.set(border(x, 0,     z), bottom);
+				self.set(border(x, 7, z), top   );
 			}
 		}
 		
 		// Z=0 / Z=Max faces
-		for x in 1..h_max {
-			for y in 1..y_max {
-				let min = self.get(x, y, 1        );
-				let max = self.get(x, y, h_max - 1);
+		for x in 1..15 {
+			for y in 1..7 {
+				let min = self.get(volume(x, y, 1        ));
+				let max = self.get(volume(x, y, 15 - 1));
 				
-				self.set_border(x, y, 0,     min);
-				self.set_border(x, y, h_max, max);
+				self.set(border(x, y, 0),     min);
+				self.set(border(x, y, 15), max);
 			}
 		}
 		
 		// X=0 / X=Max faces
-		for z in 1..h_max {
-			for y in 1..y_max {
-				let min = self.get(1,         y, z);
-				let max = self.get(h_max - 1, y, z);
+		for z in 1..15 {
+			for y in 1..7 {
+				let min = self.get(volume(1,         y, z));
+				let max = self.get(volume(15 - 1, y, z));
 				
-				self.set_border(0,     y, z, min);
-				self.set_border(h_max, y, z, max);
+				self.set(border(0,     y, z), min);
+				self.set(border(15, y, z), max);
 			}
 		}
 		
-		// Skip the edge/corner cases (literally) as they cannot possibly fufill any of the criteria.
+		// Skip the edge/corner cases (literally) as they cannot possibly fulfill any of the criteria.
+		// TODO: Not clearing these may lead to corruption.
 	}
 }

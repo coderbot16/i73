@@ -8,7 +8,7 @@ use distribution::rarity::Rarity;
 pub mod dungeon;
 pub mod vein;
 // pub mod large_tree;
-// pub mod lake;
+pub mod lake;
 // pub mod tree;
 
 // TODO: MultiDispatcher

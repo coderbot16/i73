@@ -234,11 +234,11 @@ fn main() {
 
 	let mut decoration_rng = ::i73::rng::JavaRng::new(8399452073110208023);
 	let coefficients = (
-		(decoration_rng.next_i64() / 2) * 2 + 1,
-		(decoration_rng.next_i64() / 2) * 2 + 1
+		((decoration_rng.next_i64() >> 1) << 1) + 1,
+		((decoration_rng.next_i64() >> 1) << 1) + 1
 	);
 
-	let decorator = ::i73::decorator::Dispatcher {
+	let gravel_vein = ::i73::decorator::Dispatcher {
 		decorator: ::i73::decorator::vein::VeinDecorator {
 			blocks: ::i73::decorator::vein::VeinBlocks {
 				replace: |ty: &u16| -> bool {
@@ -258,14 +258,66 @@ fn main() {
 		phantom: ::std::marker::PhantomData::<u16>
 	};
 
+	let clay_vein = ::i73::decorator::Dispatcher {
+		decorator: ::i73::decorator::vein::SeasideVeinDecorator {
+			vein: ::i73::decorator::vein::VeinDecorator {
+				blocks: ::i73::decorator::vein::VeinBlocks {
+					replace: |ty: &u16| -> bool {
+						*ty == 12*16
+					},
+					block: 82*16
+				},
+				size: 32
+			},
+			ocean: |ty: &u16| -> bool {
+				*ty == 8*16 || *ty == 9*16
+			}
+		},
+		height_distribution: ::i73::distribution::height::Linear {
+			min: 0,
+			max: 63
+		},
+		rarity: ::i73::distribution::rarity::Common {
+			max: 9
+		},
+		phantom: ::std::marker::PhantomData::<u16>
+	};
+
+	let water_lake = ::i73::decorator::Dispatcher {
+		decorator: ::i73::decorator::lake::LakeDecorator {
+			blocks: ::i73::decorator::lake::LakeBlocks {
+				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
+				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
+				replacable: |_: &u16| -> bool { unimplemented!() },
+				liquid:     9*16,
+				carve:      0*16,
+				solidify:   None
+			},
+			settings: ::i73::decorator::lake::LakeSettings::default()
+		},
+		height_distribution: ::i73::distribution::height::Linear {
+			min: 0,
+			max: 127
+		},
+		rarity: ::i73::distribution::rarity::Rare {
+			base: 1,
+			rarity: 4
+		},
+		phantom: ::std::marker::PhantomData::<u16>
+	};
+
 	for x in 0..31 {
 		println!("{}", x);
 		for z in 0..31 {
-			decoration_rng.seed = (x as i64) * coefficients.0 + (z as i64) * coefficients.1 ^ 8399452073110208023;
+			let x_part = (x as i64).wrapping_mul(coefficients.0);
+			let z_part = (z as i64).wrapping_mul(coefficients.1);
+			decoration_rng = ::i73::rng::JavaRng::new((x_part.wrapping_add(z_part)) ^ 8399452073110208023);
 
 			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
 
-			decorator.generate(&mut quad, &mut decoration_rng).unwrap();
+			water_lake.generate(&mut quad, &mut decoration_rng).unwrap();
+			clay_vein.generate(&mut quad, &mut decoration_rng).unwrap();
+			gravel_vein.generate(&mut quad, &mut decoration_rng).unwrap();
 		}
 	}
 
@@ -283,9 +335,9 @@ fn main() {
 	let file = File::create("out/region/r.0.0.mca").unwrap();
 	let mut writer = RegionWriter::start(file).unwrap();
 
-	for x in 0..32 {
-		println!("{}", x);
-		for z in 0..32 {
+	for z in 0..32 {
+		println!("{}", z);
+		for x in 0..32 {
 
 			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
 
@@ -326,7 +378,7 @@ fn main() {
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
 				last_update: 0,
-				light_populated: false,
+				light_populated: true,
 				terrain_populated: true,
 				inhabited_time: 0,
 				biomes: vec![0; 256],

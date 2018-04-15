@@ -15,6 +15,25 @@ const RADIUS_DIVISOR: f64 = 16.0;
 /// The length is `size/LENGTH_DIVISOR`
 const LENGTH_DIVISOR: f32 = 8.0;
 
+pub struct SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
+	pub vein: VeinDecorator<R, B>,
+	pub ocean: O
+}
+
+impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+		if let Some(candidate) = quad.get(position.offset(-8, 0, -8).unwrap()) {
+			if !self.ocean.matches(candidate) {
+				return Ok(());
+			}
+		} else {
+			return Ok(());
+		}
+
+		self.vein.generate(quad, rng, position)
+	}
+}
+
 pub struct VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
 	pub blocks: VeinBlocks<R, B>,
 	pub size: u32
@@ -110,7 +129,8 @@ impl Vein {
 		);
 		
 		let radius_multiplier = rng.next_f64() * self.size_f64 / RADIUS_DIVISOR;
-		
+
+		// The sin function varies the diameter over time, so that larger diameters are closer to the center.
 		let diameter = (trig::sin(index_f32 * NOTCHIAN_PI / self.size_f32) + 1.0f32) as f64 * radius_multiplier + 1.0;
 		let radius = diameter / 2.0;
 		
