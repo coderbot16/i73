@@ -5,6 +5,8 @@ use vocs::position::QuadPosition;
 use decorator::{Decorator, Result};
 use matcher::BlockMatcher;
 
+// Pumpkin: On grass, replacing air or {material:ground_cover}
+
 pub struct PlantDecorator<B, M, R> where B: Target, M: BlockMatcher<B>, R: BlockMatcher<B> {
 	pub block: B,
 	pub base: M,

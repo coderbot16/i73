@@ -12,7 +12,7 @@ impl Rarity for i32 {
 }
 
 
-/// Half of a Normal distribution with 3 iterations of RNG. Average is `(max+1)/8 - 1`, a simplified form of `(max+1)/2³ - 1`.
+/// Half of a Normal distribution with 3 iterations of RNG. Average is around `(max+1)/8 - 1`, a simplified form of `(max+1)/2³ - 1`.
 pub struct HalfNormal3 {
 	pub max: i32
 }
