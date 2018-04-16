@@ -1,8 +1,7 @@
 use rng::JavaRng;
 use trig;
 use std::cmp::{min, max};
-use distribution::rarity::{Rarity, HalfNormal3, Rare};
-use distribution::height::{DEFAULT, Linear, DepthPacked};
+use distribution::{Distribution, Chance, Linear, Packed2, Packed3};
 use structure::StructureGenerator;
 use vocs::indexed::Target;
 use vocs::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
@@ -17,24 +16,29 @@ const MIN_H_SIZE: f64 = 1.5;
 /// Note that caves starting in other chunks can still carve through this chunk.
 /// Offsets the fact that a single cave start can branch many times.
 /// Also make most chunks that do contain caves contain few, but have the potential to contain many.
-pub static RARITY: Rare<HalfNormal3> = Rare {
-	base: HalfNormal3 { max: 39 },
-	rarity: 15
+pub static RARITY: Chance<Packed3> = Chance {
+	base: Packed3 { max: 39 },
+	chance: 15,
+	bailout_after: true
 };
 
 /// Allow caves at high altitudes, but make most of them spawn underground.
-pub static HEIGHT: DepthPacked = DepthPacked { min: 0, linear_start: 8, max: 126 };
+pub static HEIGHT: Packed2 = Packed2 { min: 0, linear_start: 8, max: 126 };
 
 /// More chunks will have cave starts, but they will have less in each one.
 /// Results in less caves overall, since a chunk is 3x more likely to have cave starts,
 /// but will have a maximum that is 4x less.
-pub static RARITY_NETHER: Rare<HalfNormal3> = Rare {
-	base: HalfNormal3 { max: 9 },
-	rarity: 5
+pub static RARITY_NETHER: Chance<Packed3> = Chance {
+	base: Packed3 { max: 9 },
+	chance: 5,
+	bailout_after: true
 };
 
 /// Since the Nether has a high amount of solid blocks from bottom to top, caves spawn uniformly.
-pub static HEIGHT_NETHER: Linear = DEFAULT;
+pub static HEIGHT_NETHER: Linear = Linear {
+	min: 0,
+	max: 127
+};
 
 /// Mimics Java rounding rules and avoids UB from float casts.
 fn floor_capped(t: f64) -> i32 {
@@ -217,7 +221,7 @@ pub struct Caves {
 
 impl Caves {
 	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32, blob_size_multiplier: f32) -> Caves {
-		let remaining = RARITY.get(&mut state);
+		let remaining = RARITY.next(&mut state);
 		
 		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius, blob_size_multiplier }
 	}

@@ -248,11 +248,12 @@ fn main() {
 			},
 			size: 32
 		},
-		height_distribution: ::i73::distribution::height::Linear {
+		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 63
 		},
-		rarity: ::i73::distribution::rarity::Common {
+		rarity: ::i73::distribution::Linear {
+			min: 0,
 			max: 9
 		},
 		phantom: ::std::marker::PhantomData::<u16>
@@ -273,11 +274,12 @@ fn main() {
 				*ty == 8*16 || *ty == 9*16
 			}
 		},
-		height_distribution: ::i73::distribution::height::Linear {
+		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 63
 		},
-		rarity: ::i73::distribution::rarity::Common {
+		rarity: ::i73::distribution::Linear {
+			min: 0,
 			max: 9
 		},
 		phantom: ::std::marker::PhantomData::<u16>
@@ -295,13 +297,14 @@ fn main() {
 			},
 			settings: ::i73::decorator::lake::LakeSettings::default()
 		},
-		height_distribution: ::i73::distribution::height::Linear {
+		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 127
 		},
-		rarity: ::i73::distribution::rarity::Rare {
+		rarity: ::i73::distribution::Chance {
 			base: 1,
-			rarity: 4
+			chance: 4,
+			bailout_after: true
 		},
 		phantom: ::std::marker::PhantomData::<u16>
 	};
@@ -322,11 +325,12 @@ fn main() {
 			},
 			phantom: ::std::marker::PhantomData::<u16>
 		},
-		height_distribution: ::i73::distribution::height::Linear {
+		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 127
 		},
-		rarity: ::i73::distribution::rarity::Common {
+		rarity: ::i73::distribution::Linear {
+			min: 0,
 			max: 90
 		},
 		phantom: ::std::marker::PhantomData::<u16>
