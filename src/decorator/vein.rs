@@ -22,11 +22,7 @@ pub struct SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatch
 
 impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
-		if let Some(candidate) = quad.get(position.offset(-8, 0, -8).unwrap()) {
-			if !self.ocean.matches(candidate) {
-				return Ok(());
-			}
-		} else {
+		if !self.ocean.matches(quad.get(position.offset(-8, 0, -8).unwrap())) {
 			return Ok(());
 		}
 
@@ -67,10 +63,8 @@ impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 					for x in blob.lower.2..(blob.upper.2 + 1) {
 						let at = QuadPosition::new(x as u8, y as u8, z as u8); // TODO
 
-						if let Some(candidate) = blocks.get(at, &palette) {
-							if blob.distance_squared((x, y, z)) < 1.0 && self.replace.matches(candidate) {
-								blocks.set(at, &block);
-							}
+						if blob.distance_squared((x, y, z)) < 1.0 && self.replace.matches(blocks.get(at, &palette)) {
+							blocks.set(at, &block);
 						}
 					}
 				}

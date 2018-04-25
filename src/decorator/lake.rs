@@ -17,7 +17,7 @@ impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: 
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
 		let mut lower = position.to_centered().unwrap();
 
-		while lower.y() > 0 && quad.get(QuadPosition::new(lower.x(), lower.y(), lower.z())) == Some(&self.blocks.carve) {
+		while lower.y() > 0 && quad.get(QuadPosition::new(lower.x(), lower.y(), lower.z())) == &self.blocks.carve {
 			lower = ColumnPosition::new(lower.x(), lower.y() - 1, lower.z());
 		}
 
@@ -55,25 +55,18 @@ impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: 
 			for z in 0..16 {
 				for y in 0..lake.surface {
 					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
+					let block = quad.get(at);
 
-					if lake.get(border(x, y, z)) {
-						if let Some(candidate) = quad.get(at) {
-							if *candidate != self.liquid && !self.is_solid.matches(candidate) {
-								return false;
-							}
-						}
+					if lake.get(border(x, y, z)) && *block != self.liquid && !self.is_solid.matches(block) {
+						return false;
 					}
 				}
 				
 				for y in lake.surface..8 {
 					let at = QuadPosition::new(lower.x() + x, lower.y() + y, lower.z() + z);
 
-					if lake.get(border(x, y, z)) {
-						if let Some(candidate) = quad.get(at) {
-							if self.is_liquid.matches(candidate) {
-								return false;
-							}
-						}
+					if lake.get(border(x, y, z)) && self.is_liquid.matches(quad.get(at)) {
+						return false;
 					}
 				}
 			}

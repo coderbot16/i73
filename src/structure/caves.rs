@@ -85,11 +85,9 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 					}
 					
 					let block = ColumnPosition::new(x, y as u8, z);
-					
-					if let Some(candidate) = blocks.get(block, palette) {
-						if self.ocean.matches(candidate) {
-							return;
-						}
+
+					if self.ocean.matches(blocks.get(block, palette)) {
+						return;
 					}
 					
 					// Optimization: Only check the edges.
@@ -128,14 +126,14 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 
 					// Test if the block is within the blob region. Additionally, the y > -0.7 check makes the floors flat.
 					if scaled.1 > -0.7 && scaled.0 * scaled.0 + scaled.1 * scaled.1 + scaled.2 * scaled.2 < 1.0 {
-						if let Some(candidate) = blocks.get(position, palette) {
-							if self.surface_top.matches(candidate) {
-								hit_surface_top = true;
-							}
+						let block = blocks.get(position, palette);
 
-							if !self.carvable.matches(candidate) {
-								continue;
-							}
+						if self.surface_top.matches(block) {
+							hit_surface_top = true;
+						}
+
+						if !self.carvable.matches(block) {
+							continue;
 						}
 
 						if y < self.lower_surface {
@@ -146,10 +144,8 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 							if y > 0 && hit_surface_top {
 								let below = ColumnPosition::new(x, y - 1, z);
 
-								if let Some(candidate) = blocks.get(below, palette) {
-									if self.surface_fill.matches(candidate) {
-										blocks.set(below, &associations.surface);
-									}
+								if self.surface_fill.matches(blocks.get(below, palette)) {
+									blocks.set(below, &associations.surface);
 								}
 							}
 						}

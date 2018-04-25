@@ -269,16 +269,13 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 				}
 			}
 			
-			let existing = blocks.get(position, &palette);
-			
-			match existing {
-				Some(block) => if self.blocks.reset.matches(block) {
-					remaining = None; 
-					continue 
-				} else        if self.blocks.ignore.matches(block) {
-					continue 
-				},
-				None => continue
+			let existing_block = blocks.get(position, &palette);
+
+			if self.blocks.reset.matches(existing_block) {
+				remaining = None;
+				continue
+			} else if self.blocks.ignore.matches(existing_block) {
+				continue
 			}
 			
 			match remaining {
@@ -314,7 +311,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 			
 					blocks.set(position, if y >= self.sea_coord {&current_surface.top} else {&current_surface.fill});
 				
-					if y <= self.sea_coord && blocks.get(position, palette) == Some(&self.blocks.air) {
+					if y <= self.sea_coord && blocks.get(position, palette) == &self.blocks.air {
 						blocks.set(position, &associations.ocean);
 					}
 			

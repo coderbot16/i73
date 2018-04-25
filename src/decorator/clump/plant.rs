@@ -17,18 +17,13 @@ impl<B, M, R> Decorator<B> for PlantDecorator<B, M, R> where B: Target, M: Block
 	fn generate(&self, quad: &mut QuadMut<B>, _: &mut JavaRng, position: QuadPosition) -> Result {
 		// TODO: Check if the block is above the heightmap (how?)
 
-		if let Some(candidate) = quad.get(position) {
-			if !self.replace.matches(candidate) {
-				return Ok(());
-			}
+		if !self.replace.matches(quad.get(position)) {
+			return Ok(());
 		}
 
 		match position.offset(0, -1, 0) {
-			Some(below) => match quad.get(below) {
-				Some(candidate) => if !self.base.matches(candidate) {
-					return Ok(())
-				},
-				None => return Ok(())
+			Some(below) => if !self.base.matches(quad.get(below)) {
+				return Ok(())
 			},
 			None => return Ok(())
 		}
