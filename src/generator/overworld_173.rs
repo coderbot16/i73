@@ -347,7 +347,7 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		target.ensure_available(self.blocks.sandstone.clone());
 		target.ensure_available(self.blocks.bedrock.clone());
 		
-		for surface in biome_palette.entries().iter().filter_map(Option::as_ref).map(|biome| &biome.surface) {
+		for surface in biome_palette.iter().filter_map(Option::as_ref).map(|biome| &biome.surface) {
 			target.ensure_available(surface.top.clone());
 			target.ensure_available(surface.fill.clone());
 				
@@ -360,7 +360,7 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		
 		let mut surfaces = Vec::new();
 		
-		for entry in biome_palette.entries() {
+		for entry in biome_palette {
 			surfaces.push(
 				entry.as_ref().map(|biome| SurfaceAssociations::lookup(&biome.surface, &palette))
 			);
