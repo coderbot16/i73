@@ -403,7 +403,7 @@ fn main() {
 				let (light_data, sources) = light.decompose();
 				mask = heightmap.add(sources);
 
-				snapshot_light[y] = Some((ChunkNibbles::new(), light_data));
+				snapshot_light[y] = Some((ChunkNibbles::default(), light_data));
 			}
 
 			let mut snapshot = ColumnSnapshot {
@@ -424,7 +424,7 @@ fn main() {
 					continue;
 				}
 
-				let snapshot_light = snapshot_light[y].take().unwrap_or_else(|| (ChunkNibbles::new(), ChunkNibbles::new()));
+				let snapshot_light = snapshot_light[y].take().unwrap_or_else(|| (ChunkNibbles::default(), ChunkNibbles::default()));
 
 				snapshot.chunks[y] = Some(ChunkSnapshot {
 					blocks: column.0[y].clone(),

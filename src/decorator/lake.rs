@@ -3,7 +3,8 @@ use vocs::indexed::Target;
 use matcher::BlockMatcher;
 use vocs::position::{ChunkPosition, ColumnPosition, QuadPosition};
 use vocs::view::QuadMut;
-use vocs::mask::{Mask, ChunkMask};
+use vocs::mask::ChunkMask;
+use vocs::component::*;
 use super::{Decorator, Result};
 
 // Since lakes are always 16x8x16, they will never escape the Quad.
@@ -203,10 +204,11 @@ impl Lake {
 	}
 	
 	pub fn clear(&mut self) {
-		self.shape.clear()
+		self.shape.fill(false)
 	}
 
 	pub fn set_or(&mut self, at: ChunkPosition, value: bool) {
+		use vocs::mask::Mask;
 		self.shape.set_or(at, value)
 	}
 
