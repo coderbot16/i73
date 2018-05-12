@@ -4,6 +4,25 @@
 //! A component-based solution, in comparison, would be much more configurable.
 
 use vocs::indexed::Target;
+use std::collections::HashSet;
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(tag="kind")]
+pub enum BaselineMatcher<B> where B: Target {
+	Whitelist { blocks: HashSet<B> },
+	Blacklist { blocks: HashSet<B> }
+}
+
+impl<B> BlockMatcher<B> for BaselineMatcher<B> where B: Target {
+	fn matches(&self, block: &B) -> bool {
+		match self {
+			&BaselineMatcher::Whitelist { ref blocks } => blocks.contains(block),
+			&BaselineMatcher::Blacklist { ref blocks } => !blocks.contains(block)
+		}
+	}
+}
+
+// --
 
 pub trait BlockMatcher<B> where B: Target {
 	fn matches(&self, block: &B) -> bool;

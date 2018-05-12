@@ -1,10 +1,11 @@
 use vocs::indexed::Target;
-use matcher::BlockMatcher;
+use matcher::{BlockMatcher, BaselineMatcher};
 use vocs::position::QuadPosition;
 use vocs::view::QuadMut;
-use super::{Decorator, Result};
+use super::{Decorator, DecoratorFactory, Result};
 use rng::JavaRng;
 use trig;
+use serde_json;
 
 // TODO: Is this really 3.141593?
 /// For when you don't have the time to type out all the digits of π or Math.PI.
@@ -15,6 +16,23 @@ const RADIUS_DIVISOR: f64 = 16.0;
 /// The length is `size/LENGTH_DIVISOR`
 const LENGTH_DIVISOR: f32 = 8.0;
 
+#[derive(Default)]
+pub struct VeinDecoratorFactory<B>(::std::marker::PhantomData<B>);
+impl<B> DecoratorFactory<B> for VeinDecoratorFactory<B> where B: 'static + Target + ::serde::Deserialize {
+	fn configure(&self, config: serde_json::Value) -> serde_json::Result<Box<Decorator<B>>> {
+		Ok(Box::new(serde_json::from_value::<VeinDecorator<BaselineMatcher<B>, B>>(config)?))
+	}
+}
+
+#[derive(Default)]
+pub struct SeasideVeinDecoratorFactory<B>(::std::marker::PhantomData<B>);
+impl<B> DecoratorFactory<B> for SeasideVeinDecoratorFactory<B> where B: 'static + Target + ::serde::Deserialize {
+	fn configure(&self, config: serde_json::Value) -> serde_json::Result<Box<Decorator<B>>> {
+		Ok(Box::new(serde_json::from_value::<SeasideVeinDecorator<BaselineMatcher<B>, BaselineMatcher<B>, B>>(config)?))
+	}
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
 	pub vein: VeinDecorator<R, B>,
 	pub ocean: O
@@ -30,6 +48,7 @@ impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: BlockMatch
 	}
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
 	pub blocks: VeinBlocks<R, B>,
 	pub size: u32
@@ -42,6 +61,7 @@ impl<R, B> Decorator<B> for VeinDecorator<R, B> where R: BlockMatcher<B>, B: Tar
 	}
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 	pub replace: R,
 	pub block:   B

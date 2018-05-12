@@ -9,6 +9,16 @@ fn default_chance() -> i32 {
 	1
 }
 
+fn default_ordering() -> ChanceOrdering {
+	ChanceOrdering::AlwaysGeneratePayload
+}
+
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, Eq, PartialEq)]
+pub enum ChanceOrdering {
+	AlwaysGeneratePayload,
+	CheckChanceBeforePayload
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Chance<D> where D: Distribution {
 	/// Chance for this distribution to return its value instead of 0.
@@ -16,30 +26,33 @@ pub struct Chance<D> where D: Distribution {
 	/// A chance of "1" does not call the Chance RNG, and acts as if it passed.
 	#[serde(default = "default_chance")]
 	pub chance: i32,
-	/// If true, then the Chance RNG is called after the payload RNG.
-	pub bailout_after: bool,
+	#[serde(default = "default_ordering")]
+	pub ordering: ChanceOrdering,
 	pub base: D
 }
 
 impl<D> Distribution for Chance<D> where D: Distribution {
 	fn next(&self, rng: &mut JavaRng) -> i32 {
-		if self.bailout_after {
-			let payload = self.base.next(rng);
+		match self.ordering {
+			ChanceOrdering::AlwaysGeneratePayload => {
+				let payload = self.base.next(rng);
 
-			if self.chance <= 1 {
-				payload
-			} else if rng.next_i32(self.chance) == 0 {
-				payload
-			} else {
-				0
-			}
-		} else {
-			if self.chance <= 1 {
-				self.base.next(rng)
-			} else if rng.next_i32(self.chance) == 0 {
-				self.base.next(rng)
-			} else {
-				0
+				if self.chance <= 1 {
+					payload
+				} else if rng.next_i32(self.chance) == 0 {
+					payload
+				} else {
+					0
+				}
+			},
+			ChanceOrdering::CheckChanceBeforePayload => {
+				if self.chance <= 1 {
+					self.base.next(rng)
+				} else if rng.next_i32(self.chance) == 0 {
+					self.base.next(rng)
+				} else {
+					0
+				}
 			}
 		}
 	}
@@ -49,7 +62,7 @@ impl<D> Distribution for Chance<D> where D: Distribution {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "kind")]
 pub enum Baseline {
-	Constant(i32),
+	Constant { value: i32 },
 	Linear(Linear),
 	Packed2(Packed2),
 	Packed3(Packed3),
@@ -59,7 +72,7 @@ pub enum Baseline {
 impl Distribution for Baseline {
 	fn next(&self, rng: &mut JavaRng) -> i32 {
 		match *self {
-			Baseline::Constant(x) => x,
+			Baseline::Constant { value } => value,
 			Baseline::Linear(ref linear) => linear.next(rng),
 			Baseline::Packed2(ref packed2) => packed2.next(rng),
 			Baseline::Packed3(ref packed3) => packed3.next(rng),

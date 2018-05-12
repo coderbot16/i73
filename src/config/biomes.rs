@@ -1,7 +1,10 @@
 use biome::{Grid, Biome, Surface, Followup};
+use serde_json;
+use distribution::{Chance, Baseline};
 use std::collections::HashMap;
 use std::num::ParseIntError;
 use std::borrow::Cow;
+use decorator::{Dispatcher, DecoratorFactory};
 
 #[derive(Debug)]
 pub enum Error {
@@ -17,6 +20,8 @@ impl From<ParseIntError> for Error {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BiomesConfig {
+	#[serde(default)]
+	pub decorator_sets: HashMap<String, Vec<DecoratorConfig>>,
 	pub biomes: HashMap<String, BiomeConfig>,
 	pub default: String,
 	pub grid: Vec<RectConfig>
@@ -47,7 +52,9 @@ impl BiomesConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BiomeConfig {
 	pub debug_name: String,
-	pub surface: SurfaceConfig
+	pub surface: SurfaceConfig,
+	#[serde(default)]
+	pub decorators: Vec<String>
 }
 
 impl BiomeConfig {
@@ -87,6 +94,28 @@ impl FollowupConfig {
 		Ok(Followup {
 			block: parse_id(&self.block)?,
 			max_depth: self.max_depth
+		})
+	}
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DecoratorConfig {
+	pub decorator: String,
+	pub settings: serde_json::Value,
+	pub height_distribution: Chance<Baseline>,
+	pub count: Chance<Baseline>
+}
+
+impl DecoratorConfig {
+	pub fn into_dispatcher(self, registry: &HashMap<String, Box<DecoratorFactory<u16>>>) -> Result<Dispatcher<Chance<Baseline>, Chance<Baseline>, u16>, String> {
+		let factory = registry.get(&self.decorator).ok_or_else(|| format!("unknown decorator kind: {}", self.decorator))?;
+
+		let decorator =factory.configure(self.settings).map_err(|e| format!("{}", e))?;
+
+		Ok(Dispatcher {
+			decorator,
+			height_distribution: self.height_distribution,
+			rarity: self.count
 		})
 	}
 }

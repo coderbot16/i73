@@ -1,6 +1,7 @@
 extern crate rs25;
 extern crate vocs;
 extern crate i73;
+#[macro_use]
 extern crate serde_json;
 
 use std::path::PathBuf;
@@ -10,7 +11,7 @@ use std::cmp::min;
 use i73::config::settings::customized::{Customized, Parts};
 use i73::generator::Pass;
 use i73::generator::overworld_173::{self, Settings};
-use i73::config::biomes::BiomesConfig;
+use i73::config::biomes::{BiomesConfig, DecoratorConfig};
 use i73::biome::Lookup;
 use i73::structure;
 
@@ -125,7 +126,138 @@ fn main() {
 	
 	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open(profile.join("biomes.json")).unwrap()).unwrap();
 	let grid = biomes_config.to_grid().unwrap();
-	
+
+	let mut decorator_registry: ::std::collections::HashMap<String, Box<i73::decorator::DecoratorFactory<u16>>> = ::std::collections::HashMap::new();
+	decorator_registry.insert("vein".into(), Box::new(::i73::decorator::vein::VeinDecoratorFactory::default()));
+	decorator_registry.insert("seaside_vein".into(), Box::new(::i73::decorator::vein::SeasideVeinDecoratorFactory::default()));
+
+	let gravel_config = DecoratorConfig {
+		decorator: "vein".into(),
+		settings: json!({
+			"blocks": {
+				"replace": {
+					"kind": "Whitelist",
+					"blocks": [16]
+				},
+				"block": 208
+			},
+			"size": 32
+		}),
+		height_distribution: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 63
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		},
+		count: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 9
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		}
+	};
+
+	let mut decorators: Vec<::i73::decorator::Dispatcher<i73::distribution::Chance<i73::distribution::Baseline>, i73::distribution::Chance<i73::distribution::Baseline>, u16>> = Vec::new();
+	decorators.push (gravel_config.into_dispatcher(&decorator_registry).unwrap());
+
+	decorators.push (::i73::decorator::Dispatcher {
+		decorator: Box::new(::i73::decorator::vein::SeasideVeinDecorator {
+			vein: ::i73::decorator::vein::VeinDecorator {
+				blocks: ::i73::decorator::vein::VeinBlocks {
+					replace: |ty: &u16| -> bool {
+						*ty == 12*16
+					},
+					block: 82*16
+				},
+				size: 32
+			},
+			ocean: |ty: &u16| -> bool {
+				*ty == 8*16 || *ty == 9*16
+			}
+		}),
+		height_distribution: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 63
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		},
+		rarity: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 9
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		}
+	});
+
+	decorators.push (::i73::decorator::Dispatcher {
+		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
+			blocks: ::i73::decorator::lake::LakeBlocks {
+				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
+				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
+				replacable: |_: &u16| -> bool { unimplemented!() },
+				liquid:     9*16,
+				carve:      0*16,
+				solidify:   None
+			},
+			settings: ::i73::decorator::lake::LakeSettings::default()
+		}),
+		height_distribution: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 127
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		},
+		rarity: ::i73::distribution::Chance {
+			base: ::i73::distribution::Baseline::Constant { value: 1 },
+			chance: 4,
+			ordering: ::i73::distribution::ChanceOrdering::AlwaysGeneratePayload
+		}
+	});
+
+	decorators.push (::i73::decorator::Dispatcher {
+		decorator: Box::new(::i73::decorator::clump::Clump {
+			iterations: 64,
+			horizontal: 8,
+			vertical: 4,
+			decorator: ::i73::decorator::clump::plant::PlantDecorator {
+				block: 31*16 + 1,
+				base: |ty: &u16| -> bool {
+					*ty == 2*16 || *ty == 3*16 || *ty == 60*16
+				},
+				replace: |ty: &u16| -> bool {
+					*ty == 0*16
+				}
+			},
+			phantom: ::std::marker::PhantomData::<u16>
+		}),
+		height_distribution: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 127
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		},
+		rarity: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 90
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		}
+	});
+
 	/*use decorator::large_tree::{LargeTreeSettings, LargeTree};
 	let settings = LargeTreeSettings::default();
 	
@@ -148,11 +280,6 @@ fn main() {
 			y -= 1;
 		}
 	}*/
-
-	let mut lighting_info = ::std::collections::HashMap::new();
-	lighting_info.insert( 0 * 16, Meta::new(0));
-	lighting_info.insert( 8 * 16, Meta::new(2));
-	lighting_info.insert( 9 * 16, Meta::new(2));
 	
 	let (shape, paint) = overworld_173::passes(8399452073110208023, settings, Lookup::generate(&grid));
 	
@@ -191,7 +318,7 @@ fn main() {
 	let (_, paint) = overworld_173::passes(-160654125608861039, fake_settings);*/
 	
 	let mut world = World::<ChunkIndexed<u16>>::new();
-	
+
 	println!("Generating region (0, 0)");
 
 	for x in 0..32 {
@@ -238,8 +365,8 @@ fn main() {
 		((decoration_rng.next_i64() >> 1) << 1) + 1
 	);
 
-	let gravel_vein = ::i73::decorator::Dispatcher {
-		decorator: ::i73::decorator::vein::VeinDecorator {
+	/*let gravel_vein = ::i73::decorator::Dispatcher {
+		decorator: Box::new(::i73::decorator::vein::VeinDecorator {
 			blocks: ::i73::decorator::vein::VeinBlocks {
 				replace: |ty: &u16| -> bool {
 					*ty == 1*16
@@ -247,7 +374,7 @@ fn main() {
 				block: 13*16
 			},
 			size: 32
-		},
+		}),
 		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 63
@@ -255,12 +382,11 @@ fn main() {
 		rarity: ::i73::distribution::Linear {
 			min: 0,
 			max: 9
-		},
-		phantom: ::std::marker::PhantomData::<u16>
+		}
 	};
 
 	let clay_vein = ::i73::decorator::Dispatcher {
-		decorator: ::i73::decorator::vein::SeasideVeinDecorator {
+		decorator: Box::new(::i73::decorator::vein::SeasideVeinDecorator {
 			vein: ::i73::decorator::vein::VeinDecorator {
 				blocks: ::i73::decorator::vein::VeinBlocks {
 					replace: |ty: &u16| -> bool {
@@ -273,7 +399,7 @@ fn main() {
 			ocean: |ty: &u16| -> bool {
 				*ty == 8*16 || *ty == 9*16
 			}
-		},
+		}),
 		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 63
@@ -281,12 +407,11 @@ fn main() {
 		rarity: ::i73::distribution::Linear {
 			min: 0,
 			max: 9
-		},
-		phantom: ::std::marker::PhantomData::<u16>
+		}
 	};
 
 	let water_lake = ::i73::decorator::Dispatcher {
-		decorator: ::i73::decorator::lake::LakeDecorator {
+		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
 			blocks: ::i73::decorator::lake::LakeBlocks {
 				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
 				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
@@ -296,7 +421,7 @@ fn main() {
 				solidify:   None
 			},
 			settings: ::i73::decorator::lake::LakeSettings::default()
-		},
+		}),
 		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 127
@@ -304,13 +429,12 @@ fn main() {
 		rarity: ::i73::distribution::Chance {
 			base: 1,
 			chance: 4,
-			bailout_after: true
-		},
-		phantom: ::std::marker::PhantomData::<u16>
+			ordering: ::i73::distribution::ChanceOrdering::AlwaysGeneratePayload
+		}
 	};
 
 	let tall_grass = ::i73::decorator::Dispatcher {
-		decorator: ::i73::decorator::clump::Clump {
+		decorator: Box::new(::i73::decorator::clump::Clump {
 			iterations: 64,
 			horizontal: 8,
 			vertical: 4,
@@ -324,7 +448,7 @@ fn main() {
 				}
 			},
 			phantom: ::std::marker::PhantomData::<u16>
-		},
+		}),
 		height_distribution: ::i73::distribution::Linear {
 			min: 0,
 			max: 127
@@ -332,9 +456,8 @@ fn main() {
 		rarity: ::i73::distribution::Linear {
 			min: 0,
 			max: 90
-		},
-		phantom: ::std::marker::PhantomData::<u16>
-	};
+		}
+	};*/
 
 	for x in 0..31 {
 		println!("{}", x);
@@ -345,17 +468,26 @@ fn main() {
 
 			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
 
-			water_lake.generate(&mut quad, &mut decoration_rng).unwrap();
+			/*water_lake.generate(&mut quad, &mut decoration_rng).unwrap();
 			clay_vein.generate(&mut quad, &mut decoration_rng).unwrap();
 			gravel_vein.generate(&mut quad, &mut decoration_rng).unwrap();
-			tall_grass.generate(&mut quad, &mut decoration_rng).unwrap();
+			tall_grass.generate(&mut quad, &mut decoration_rng).unwrap();*/
+			for dispatcher in &decorators {
+				dispatcher.generate(&mut quad, &mut decoration_rng).unwrap();
+			}
 		}
 	}
 
-	use vocs::nibbles::ChunkNibbles;
+	use vocs::nibbles::{u4, ChunkNibbles, BulkNibbles};
+	use vocs::sparse::SparseStorage;
 	use vocs::mask::LayerMask;
-	use rs25::dynamics::light::{Meta, SkyLightSources, Lighting, HeightMapBuilder};
+	use rs25::dynamics::light::{SkyLightSources, Lighting, HeightMapBuilder};
 	use rs25::dynamics::queue::Queue;
+
+	let mut lighting_info = SparseStorage::<u4>::with_default(u4::new(15));
+	lighting_info.set( 0 * 16, u4::new(0));
+	lighting_info.set( 8 * 16, u4::new(2));
+	lighting_info.set( 9 * 16, u4::new(2));
 
 	println!("Writing region (0, 0)");
 
@@ -380,20 +512,22 @@ fn main() {
 			for y in (0..16).rev() {
 				let chunk = &column.0[y];
 
-				let mut meta = Vec::with_capacity(chunk.palette().entries().len());
+				let mut opacity = BulkNibbles::new(chunk.palette().entries().len());
 
-				for value in chunk.palette().entries() {
-					if let &Some(ref entry) = value {
-						meta.push(lighting_info.get(entry).map(|&meta| meta).unwrap_or(Meta::new(15)))
-					} else {
-						meta.push(Meta::new(15))
-					}
+				for (index, value) in chunk.palette().entries().iter().enumerate() {
+					opacity.set(index, value.map(|entry| lighting_info.get(entry as usize)).unwrap_or(lighting_info.default_value()));
+
+					//println!("opacity set to: {:?} (from block id: {:?})", opacity.get(index), value);
+					// TODO
+					//opacity.set(index, u4::new(15));
 				}
 
-				let sources = SkyLightSources::build(chunk.freeze().0, &meta, mask);
+				//println!("{:?}", opacity);
+
+				let sources = SkyLightSources::build(chunk.freeze().0, &opacity, mask);
 
 				let mut queue = Queue::default();
-				let mut light = Lighting::new(sources, meta);
+				let mut light = Lighting::new(sources, opacity);
 
 				light.initial(chunk.freeze().0, &mut queue);
 				light.finish(chunk.freeze().0, &mut queue);

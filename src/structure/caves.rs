@@ -1,7 +1,7 @@
 use rng::JavaRng;
 use trig;
 use std::cmp::{min, max};
-use distribution::{Distribution, Chance, Linear, Packed2, Packed3};
+use distribution::{Distribution, Chance, Linear, Packed2, Packed3, ChanceOrdering};
 use structure::StructureGenerator;
 use vocs::indexed::Target;
 use vocs::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
@@ -19,7 +19,7 @@ const MIN_H_SIZE: f64 = 1.5;
 pub static RARITY: Chance<Packed3> = Chance {
 	base: Packed3 { max: 39 },
 	chance: 15,
-	bailout_after: true
+	ordering: ChanceOrdering::AlwaysGeneratePayload
 };
 
 /// Allow caves at high altitudes, but make most of them spawn underground.
@@ -31,7 +31,7 @@ pub static HEIGHT: Packed2 = Packed2 { min: 0, linear_start: 8, max: 126 };
 pub static RARITY_NETHER: Chance<Packed3> = Chance {
 	base: Packed3 { max: 9 },
 	chance: 5,
-	bailout_after: true
+	ordering: ChanceOrdering::AlwaysGeneratePayload
 };
 
 /// Since the Nether has a high amount of solid blocks from bottom to top, caves spawn uniformly.

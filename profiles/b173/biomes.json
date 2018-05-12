@@ -116,5 +116,44 @@
 		{ "temperature": [0.97, 1.00], "rainfall": [0.20, 0.45], "biome": "plains"          },
 		{ "temperature": [0.97, 1.00], "rainfall": [0.45, 0.90], "biome": "seasonal_forest" },
 		{ "temperature": [0.97, 1.00], "rainfall": [0.90, 1.00], "biome": "rainforest"      }
-	]
+	],
+	"decorator_sets": {
+		"lakes": [
+			{
+				"decorator": "lake",
+				"settings": {
+					"blocks": {
+						"liquid": "9:0",
+						"carve": "0:0",
+						"is_liquid": {
+							"kind": "whitelist",
+							"blocks": ["8:0", "9:0", "10:0", "11:0"]
+						},
+						"is_solid": {
+							"kind": "blacklist",
+							"blocks": ["0:0", "8:0", "9:0", "10:0", "11:0"]
+						},
+						"replaceable": {
+							"kind": "whitelist",
+							"blocks": []
+						}
+					}
+				},
+				"height_distribution": {
+					"base": {
+						"kind": "Linear",
+						"min": 0,
+						"max": 127
+					}
+				},
+				"count": {
+					"base": {
+						"kind": "Constant",
+						"value": 1
+					},
+					"chance": 4
+				}
+			}
+		]
+	}
 }
