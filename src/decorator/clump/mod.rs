@@ -1,7 +1,7 @@
 use rng::JavaRng;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
-use vocs::position::QuadPosition;
+use vocs::position::{QuadPosition, Offset};
 use super::{Decorator, Result};
 
 // pub mod cactus;
@@ -31,11 +31,11 @@ impl<D, B> Decorator<B> for Clump<D, B> where D: Decorator<B>, B: Target {
 				continue;
 			}
 
-			let at = match position.offset (
+			let at = match position.offset ((
 				offset.0 as i8,
 				offset.1 as i8,
 				offset.2 as i8
-			) {
+			)) {
 				Some(at) => at,
 				None => {
 					panic!("out of bounds offsetting {:?} by {:?}", position, offset);
@@ -65,11 +65,11 @@ impl<D, B> Decorator<B> for FlatClump<D, B> where D: Decorator<B>, B: Target {
 				rng.next_i32(self.horizontal as i32) - rng.next_i32(self.horizontal as i32)
 			);
 
-			let at = position.offset (
+			let at = position.offset ((
 				offset.0 as i8,
 				0,
 				offset.1 as i8
-			).unwrap();
+			)).unwrap();
 
 			self.decorator.generate(quad, rng, at)?;
 		}

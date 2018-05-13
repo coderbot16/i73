@@ -1,7 +1,7 @@
 use rng::JavaRng;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
-use vocs::position::QuadPosition;
+use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
 use matcher::BlockMatcher;
 
@@ -21,7 +21,7 @@ impl<B, M, R> Decorator<B> for PlantDecorator<B, M, R> where B: Target, M: Block
 			return Ok(());
 		}
 
-		match position.offset(0, -1, 0) {
+		match position.offset(dir::Down) {
 			Some(below) => if !self.base.matches(quad.get(below)) {
 				return Ok(())
 			},

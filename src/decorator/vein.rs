@@ -1,6 +1,6 @@
 use vocs::indexed::Target;
 use matcher::{BlockMatcher, BaselineMatcher};
-use vocs::position::QuadPosition;
+use vocs::position::{QuadPosition, Offset};
 use vocs::view::QuadMut;
 use super::{Decorator, DecoratorFactory, Result};
 use rng::JavaRng;
@@ -40,7 +40,7 @@ pub struct SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatch
 
 impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
-		if !self.ocean.matches(quad.get(position.offset(-8, 0, -8).unwrap())) {
+		if !self.ocean.matches(quad.get(position.offset((-8, 0, -8)).unwrap())) {
 			return Ok(());
 		}
 
