@@ -4,7 +4,7 @@ use vocs::view::ColumnMut;
 use generator::Pass;
 use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings, trilinear128};
 use nalgebra::{Vector2, Vector3};
-use rng::JavaRng;
+use java_rand::Random;
 
 const NOTCH_PI_F64: f64 = 3.1415926535897931;
 
@@ -20,8 +20,8 @@ pub fn default_tri_settings() -> TriNoiseSettings {
 	}
 }
 
-pub fn passes<B>(seed: i64, tri_settings: &TriNoiseSettings, blocks: ShapeBlocks<B>, sea_coord: u8) -> ShapePass<B> where B: Target {
-	let mut rng = JavaRng::new(seed);
+pub fn passes<B>(seed: u64, tri_settings: &TriNoiseSettings, blocks: ShapeBlocks<B>, sea_coord: u8) -> ShapePass<B> where B: Target {
+	let mut rng = Random::new(seed);
 	
 	let tri = TriNoiseSource::new(&mut rng, tri_settings);
 	

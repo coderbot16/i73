@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use vocs::indexed::Target;
 use matcher::BlockMatcher;
 use vocs::position::{ChunkPosition, ColumnPosition, QuadPosition};
@@ -15,7 +15,7 @@ pub struct LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: Blo
 }
 
 impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let mut lower = position.to_centered().unwrap();
 
 		while lower.y() > 0 && quad.get(QuadPosition::new(lower.x(), lower.y(), lower.z())) == &self.blocks.carve {
@@ -111,8 +111,8 @@ impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: 
 
 pub struct LakeSettings {
 	pub surface: u8,
-	pub min_blobs: i32,
-	pub add_blobs: i32
+	pub min_blobs: u32,
+	pub add_blobs: u32
 }
 
 impl Default for LakeSettings {
@@ -126,13 +126,13 @@ impl Default for LakeSettings {
 }
 
 pub struct LakeBlobs<'r> {
-	remaining_blobs: i32,
-	rng:             &'r mut JavaRng
+	remaining_blobs: u32,
+	rng:             &'r mut Random
 }
 
 impl<'r> LakeBlobs<'r> {
-	pub fn new(rng: &'r mut JavaRng, settings: &LakeSettings) -> Self {
-		let remaining_blobs = settings.min_blobs + rng.next_i32(settings.add_blobs + 1);
+	pub fn new(rng: &'r mut Random, settings: &LakeSettings) -> Self {
+		let remaining_blobs = settings.min_blobs + rng.next_u32_bound(settings.add_blobs + 1);
 		
 		LakeBlobs {
 			remaining_blobs,

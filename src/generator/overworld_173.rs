@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use noise::octaves::PerlinOctaves;
 use biome::climate::{ClimateSettings, ClimateSource};
 use biome::source::BiomeSource;
@@ -42,8 +42,8 @@ impl Default for Settings<Is<u16>, IsNot<u16>, u16> {
 	}
 }
 
-pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Lookup<B>) -> (ShapePass<B>, PaintPass<R, I, B>) where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	let mut rng = JavaRng::new(seed);
+pub fn passes<R, I, B>(seed: u64, settings: Settings<R, I, B>, biome_lookup: Lookup<B>) -> (ShapePass<B>, PaintPass<R, I, B>) where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
+	let mut rng = Random::new(seed);
 	
 	let tri = TriNoiseSource::new(&mut rng, &settings.tri);
 	
@@ -51,7 +51,7 @@ pub fn passes<R, I, B>(seed: i64, settings: Settings<R, I, B>, biome_lookup: Loo
 	// Oddly, this "feature" is what causes the sharp walls in beach/biome surfaces.
 	// It is a mystery why the feature exists in the first place.
 	
-	let sand      = PerlinOctaves::new(&mut JavaRng { seed: rng.seed }, 4, Vector3::new(1.0 / 32.0, 1.0 / 32.0,        1.0)); // Vertical,   Z =   0.0
+	let sand      = PerlinOctaves::new(&mut rng.clone(), 4, Vector3::new(1.0 / 32.0, 1.0 / 32.0,        1.0)); // Vertical,   Z =   0.0
 	let gravel    = PerlinOctaves::new(&mut rng,                        4, Vector3::new(1.0 / 32.0,        1.0, 1.0 / 32.0)); // Horizontal
 	let thickness = PerlinOctaves::new(&mut rng,                        4, Vector3::new(1.0 / 16.0, 1.0 / 16.0, 1.0 / 16.0)); // Vertical,   Z =   0.0
 	
@@ -247,7 +247,7 @@ pub struct PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: T
 }
 
 impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
-	fn paint_stack(&self, rng: &mut JavaRng, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations, x: u8, z: u8, surface: &SurfaceAssociations, beach: &SurfaceAssociations, basin: &SurfaceAssociations, thickness: i32) {
+	fn paint_stack(&self, rng: &mut Random, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, associations: &PaintAssociations, x: u8, z: u8, surface: &SurfaceAssociations, beach: &SurfaceAssociations, basin: &SurfaceAssociations, thickness: i32) {
 		let reset_remaining = match thickness {
 			-1          => None,
 			x if x <= 0 => Some(0),
@@ -263,7 +263,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 			let position = ColumnPosition::new(x, y, z);
 			
 			if let Some(chance) = self.max_bedrock_height {
-				if (y as i32) <= rng.next_i32(chance as i32) {
+				if (y as u32) <= rng.next_u32_bound(chance as u32) {
 					blocks.set(position, &associations.bedrock);
 					continue;
 				}
@@ -294,7 +294,7 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 						let new_index = followup_index.map(|index| index + 1).unwrap_or(0);
 						
 						if new_index < current_surface.chain.len() {
-							*remaining = rng.next_i32((current_surface.chain[new_index].max_depth as i32) + 1) as u32
+							*remaining = rng.next_u32_bound(current_surface.chain[new_index].max_depth + 1)
 						}
 						
 						followup_index = Some(new_index);
@@ -328,7 +328,8 @@ impl<R, I, B> PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B
 impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {
 	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
 		let block = ((chunk.x() * 16) as f64, (chunk.z() * 16) as f64);
-		let mut rng = JavaRng::new((chunk.x() as i64).wrapping_mul(341873128712).wrapping_add((chunk.z() as i64).wrapping_mul(132897987541)));
+		let seed = (chunk.x() as i64).wrapping_mul(341873128712).wrapping_add((chunk.z() as i64).wrapping_mul(132897987541));
+		let mut rng = Random::new(seed as u64);
 		
 		let biome_layer = self.biomes.layer(chunk);
 		let (biomes, biome_palette) = biome_layer.freeze();

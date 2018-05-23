@@ -1,9 +1,9 @@
 struct Cactus {
 	/// Base, minimum height of a cactus
-	base_height: i32,
+	base_height: u32,
 	/// Maximum height of a cactus when added to the base height.
 	/// For example, with base=1 and add=2, the height of a cactus can be 1-3 blocks tall.
-	add_height: i32
+	add_height: u32
 }
 
 impl Cactus {
@@ -26,12 +26,12 @@ impl Cactus {
 }
 
 impl Decorator for Cactus {
-	fn generate(&self, moore: &mut Moore, rng: &mut JavaRng, position: (i32, i32, i32)) {
+	fn generate(&self, moore: &mut Moore, rng: &mut Random, position: (i32, i32, i32)) {
 		if moore.get(position) != Block::Air {
 			return;
 		}
 
-		let height = self.base_height + rng.next_i32(rng.next_i32(self.add_height + 1) + 1);
+		let height = self.base_height + rng.next_u32_bound(rng.next_u32_bound(self.add_height + 1) + 1);
 
 		for y in 0..height {
 			let pos = (position.0, position.1 + y, position.2);

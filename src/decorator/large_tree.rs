@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use std::cmp::min;
 
 const TAU: f64 = 2.0 * 3.14159;
@@ -51,7 +51,7 @@ impl Default for LargeTreeSettings {
 }
 
 impl LargeTreeSettings {
-	pub fn tree(&self, orgin: (i32, i32, i32), rng: &mut JavaRng, preset_height: Option<i32>, max_height: i32) -> LargeTree {
+	pub fn tree(&self, orgin: (i32, i32, i32), rng: &mut Random, preset_height: Option<i32>, max_height: i32) -> LargeTree {
 		let height = min(preset_height.unwrap_or_else(|| self.min_height + rng.next_i32(self.add_height + 1)), max_height);
 		let height_f32 = height as f32;
 		let height_f64 = height as f64;
@@ -120,7 +120,7 @@ impl LargeTree {
 	
 	// TODO: Replace this with an iterator implementation?
 	/// Gets the foilage at a given Y level. The caller is responsible for ordering the calls, managing the Y value, and creating the random number generator.
-	pub fn foilage(&self, y: i32, spread: f64, rng: &mut JavaRng) -> Foilage {
+	pub fn foilage(&self, y: i32, spread: f64, rng: &mut Random) -> Foilage {
 		let branch_factor = self.branch_scale * spread * (rng.next_f32() as f64 + 0.328);
 		let angle = (rng.next_f32() as f64) * TAU;
 		

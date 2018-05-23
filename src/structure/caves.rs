@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use trig;
 use std::cmp::{min, max};
 use distribution::{Distribution, Chance, Linear, Packed2, Packed3, ChanceOrdering};
@@ -155,7 +155,7 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 		}
 	}
 	
-	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
+	fn carve_tunnel(&self, mut tunnel: Tunnel, caves: &mut Caves, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: u32) {
 		loop {
 			let outcome = tunnel.step(self.vertical_multiplier);
 			
@@ -179,7 +179,7 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 }
 
 impl<B, O, C, T, F> StructureGenerator<B> for CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
-	fn generate(&self, random: JavaRng, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32) {
+	fn generate(&self, random: Random, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: u32) {
 		let mut caves = Caves::for_chunk(random, chunk, from, radius, self.blob_size_multiplier);
 		
 		column.ensure_available(self.carve.clone());
@@ -206,17 +206,17 @@ impl<B, O, C, T, F> StructureGenerator<B> for CavesGenerator<B, O, C, T, F> wher
 
 #[derive(Debug)]
 pub struct Caves {
-	state: JavaRng, 
+	state: Random,
 	chunk: GlobalColumnPosition,
 	from: GlobalColumnPosition,
-	remaining: i32,
-	max_chunk_radius: i32,
+	remaining: u32,
+	max_chunk_radius: u32,
 	blob_size_multiplier: f32,
-	extra: Option<(i32, (f64, f64, f64))>
+	extra: Option<(u32, (f64, f64, f64))>
 }
 
 impl Caves {
-	pub fn for_chunk(mut state: JavaRng, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: i32, blob_size_multiplier: f32) -> Caves {
+	pub fn for_chunk(mut state: Random, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: u32, blob_size_multiplier: f32) -> Caves {
 		let remaining = RARITY.next(&mut state);
 		
 		Caves { state, chunk, from, remaining, extra: None, max_chunk_radius: radius, blob_size_multiplier }
@@ -243,10 +243,10 @@ impl Iterator for Caves {
 		
 		self.extra = None;
 		
-		let     x = self.state.next_i32(16);
-		let mut y = self.state.next_i32(120);
-		        y = self.state.next_i32(y + 8);
-		let     z = self.state.next_i32(16);
+		let     x = self.state.next_i32_bound(16);
+		let mut y = self.state.next_u32_bound(120);
+		        y = self.state.next_u32_bound(y + 8);
+		let     z = self.state.next_i32_bound(16);
 		
 		let orgin = (
 			(self.from.x() * 16 + x) as f64,
@@ -254,9 +254,9 @@ impl Iterator for Caves {
 			(self.from.z() * 16 + z) as f64
 		);
 		
-		if self.state.next_i32(4) == 0 {
+		if self.state.next_u32_bound(4) == 0 {
 			let circular = Start::circular(&mut self.state, self.chunk, orgin, self.max_chunk_radius);
-			let extra = 1 + self.state.next_i32(4);
+			let extra = 1 + self.state.next_u32_bound(4);
 			
 			self.remaining += extra;
 			self.extra = Some((extra, orgin));
@@ -275,13 +275,13 @@ pub enum Start {
 }
 
 impl Start {
-	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, blob_size_multiplier: f32) -> Self {
+	fn normal(rng: &mut Random, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: u32, blob_size_multiplier: f32) -> Self {
 		Start::Tunnel(Tunnel::normal(rng, chunk, block, max_chunk_radius, blob_size_multiplier))
 	}
 	
-	fn circular(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32) -> Self {
+	fn circular(rng: &mut Random, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: u32) -> Self {
 		let blob_size_factor = 1.0 + rng.next_f32() * 6.0;
-		let mut state = JavaRng::new(rng.next_i64());
+		let mut state = Random::new(rng.next_u64());
 		
 		let mut size = SystemSize::new(&mut state, 0, max_chunk_radius);
 		size.current = size.max / 2;
@@ -303,21 +303,21 @@ impl Start {
 
 #[derive(Debug)]
 pub struct Tunnel {
-	state: JavaRng,
+	state: Random,
 	position: Position,
 	size: SystemSize,
-	split: Option<i32>,
+	split: Option<u32>,
 	/// 0.92 = Steep, 0.7 = Normal
 	pitch_keep: f32,
 	blob_size_factor: f32
 }
 
 impl Tunnel {
-	fn normal(rng: &mut JavaRng, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: i32, blob_size_multiplier: f32) -> Self {
+	fn normal(rng: &mut Random, chunk: GlobalColumnPosition, block: (f64, f64, f64), max_chunk_radius: u32, blob_size_multiplier: f32) -> Self {
 		let position = Position::with_angles(chunk, block, rng.next_f32() * NOTCH_PI * 2.0, (rng.next_f32() - 0.5) / 4.0);
 		let blob_size_factor = (rng.next_f32() * 2.0 + rng.next_f32()) * blob_size_multiplier;
 		
-		let mut state = JavaRng::new(rng.next_i64());
+		let mut state = Random::new(rng.next_u64());
 		
 		let size = SystemSize::new(&mut state, 0, max_chunk_radius);
 		
@@ -325,17 +325,17 @@ impl Tunnel {
 			position, 
 			size,
 			split:      size.split(&mut state, blob_size_factor), 
-			pitch_keep: if state.next_i32(6) == 0 { 0.92 } else { 0.7 }, 
+			pitch_keep: if state.next_u32_bound(6) == 0 { 0.92 } else { 0.7 },
 			blob_size_factor,
 			state
 		}
 	}
 	
-	fn split_off(&mut self, rng: &mut JavaRng, yaw_offset: f32) -> Tunnel {
+	fn split_off(&mut self, rng: &mut Random, yaw_offset: f32) -> Tunnel {
 		let position = Position::with_angles(self.position.chunk, self.position.block, self.position.yaw + yaw_offset, self.position.pitch / 3.0);
 		let blob_size_factor = self.state.next_f32() * 0.5 + 0.5;
 		
-		let mut state = JavaRng::new(rng.next_i64());
+		let mut state = Random::new(rng.next_u64());
 		
 		let size = self.size;
 		
@@ -343,7 +343,7 @@ impl Tunnel {
 			position, 
 			size,
 			split:      size.split(&mut state, blob_size_factor), 
-			pitch_keep: if state.next_i32(6) == 0 { 0.92 } else { 0.7 }, 
+			pitch_keep: if state.next_u32_bound(6) == 0 { 0.92 } else { 0.7 },
 			blob_size_factor,
 			state
 		}
@@ -388,7 +388,7 @@ impl Tunnel {
 			return Outcome::Split;
 		}
 		
-		if self.state.next_i32(4) == 0 {
+		if self.state.next_u32_bound(4) == 0 {
 			self.size.step();
 			return Outcome::Constrict;
 		}
@@ -414,14 +414,14 @@ impl Tunnel {
 
 #[derive(Debug, Copy, Clone)]
 struct SystemSize {
-	current: i32,
-	max:     i32
+	current: u32,
+	max:     u32
 }
 
 impl SystemSize {
-	fn new(rng: &mut JavaRng, current: i32, max_chunk_radius: i32) -> Self {
+	fn new(rng: &mut Random, current: u32, max_chunk_radius: u32) -> Self {
 		let max_block_radius = max_chunk_radius * 16 - 16;
-		let max = max_block_radius - rng.next_i32(max_block_radius / 4);
+		let max = max_block_radius - rng.next_u32_bound(max_block_radius / 4);
 		
 		SystemSize { current, max }
 	}
@@ -434,13 +434,13 @@ impl SystemSize {
 		self.current >= self.max
 	}
 	
-	pub fn should_split(&self, split_threshold: Option<i32>) -> bool {
+	pub fn should_split(&self, split_threshold: Option<u32>) -> bool {
 		Some(self.current) == split_threshold
 	}
 	
 	/// Returns the point where the tunnel will split into 2. Returns None if it won't split.
-	fn split(&self, rng: &mut JavaRng, blob_size_factor: f32) -> Option<i32> {
-		let split = rng.next_i32(self.max / 2) + self.max / 4;
+	fn split(&self, rng: &mut Random, blob_size_factor: f32) -> Option<u32> {
+		let split = rng.next_u32_bound(self.max / 2) + self.max / 4;
 		
 		if blob_size_factor > 1.0 {Some(split)} else {None}
 	}
@@ -481,7 +481,7 @@ impl Position {
 		}
 	}
 	
-	fn step(&mut self, rng: &mut JavaRng, pitch_keep: f32) {
+	fn step(&mut self, rng: &mut Random, pitch_keep: f32) {
 		let cos_pitch = trig::cos(self.pitch);
 		
 		self.block.0 += (trig::cos(self.yaw) * cos_pitch) as f64;

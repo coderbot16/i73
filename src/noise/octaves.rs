@@ -5,12 +5,12 @@ use nalgebra::{Vector2, Vector3};
 use sample::{Sample, Layer};
 use noise::simplex::Simplex;
 use noise::perlin::Perlin;
-use rng::JavaRng;
+use java_rand::Random;
 
 #[derive(Debug)]
 pub struct SimplexOctaves(Vec<Simplex>);
 impl SimplexOctaves {
-	pub fn new(rng: &mut JavaRng, octaves: usize, fq: f64, persistence: f64, scale: (f64, f64)) -> Self {
+	pub fn new(rng: &mut Random, octaves: usize, fq: f64, persistence: f64, scale: (f64, f64)) -> Self {
 		let mut octaves = Vec::with_capacity(octaves);
 		
 		let scale = (scale.0 / 1.5, scale.1 / 1.5);
@@ -55,7 +55,7 @@ impl Sample for SimplexOctaves {
 #[derive(Debug)]
 pub struct PerlinOctaves(Vec<Perlin>);
 impl PerlinOctaves {
-	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>) -> Self {
+	pub fn new(rng: &mut Random, octaves: usize, scale: Vector3<f64>) -> Self {
 		let mut octaves = Vec::with_capacity(octaves);
 		
 		let mut frequency = 1.0;
@@ -136,7 +136,7 @@ pub struct PerlinOctavesVertical {
 }
 
 impl PerlinOctavesVertical {
-	pub fn new(rng: &mut JavaRng, octaves: usize, scale: Vector3<f64>, y_start: f64, y_count: usize) -> Self {
+	pub fn new(rng: &mut Random, octaves: usize, scale: Vector3<f64>, y_start: f64, y_count: usize) -> Self {
 		PerlinOctaves::new(rng, octaves, scale).into_vertical(y_start, y_count)
 	}
 	

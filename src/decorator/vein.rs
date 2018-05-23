@@ -3,7 +3,7 @@ use matcher::{BlockMatcher, BaselineMatcher};
 use vocs::position::{QuadPosition, Offset};
 use vocs::view::QuadMut;
 use super::{Decorator, DecoratorFactory, Result};
-use rng::JavaRng;
+use java_rand::Random;
 use trig;
 use serde_json;
 
@@ -39,7 +39,7 @@ pub struct SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatch
 }
 
 impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: BlockMatcher<B>, O: BlockMatcher<B>, B: Target {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		if !self.ocean.matches(quad.get(position.offset((-8, 0, -8)).unwrap())) {
 			return Ok(());
 		}
@@ -55,7 +55,7 @@ pub struct VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
 }
 
 impl<R, B> Decorator<B> for VeinDecorator<R, B> where R: BlockMatcher<B>, B: Target {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let vein = Vein::create(self.size, (position.x() as i32, position.y() as i32, position.z() as i32), rng);
 		self.blocks.generate(&vein, quad, rng)
 	}
@@ -68,7 +68,7 @@ pub struct VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
 }
 
 impl<R, B> VeinBlocks<R, B> where R: BlockMatcher<B>, B: Target {
-	pub fn generate(&self, vein: &Vein, quad: &mut QuadMut<B>, rng: &mut JavaRng) -> Result {
+	pub fn generate(&self, vein: &Vein, quad: &mut QuadMut<B>, rng: &mut Random) -> Result {
 		quad.ensure_available(self.block.clone());
 		
 		let (mut blocks, palette) = quad.freeze_palette();
@@ -110,7 +110,7 @@ pub struct Vein {
 }
 
 impl Vein {
-	pub fn create(size: u32, base: (i32, i32, i32), rng: &mut JavaRng) -> Self {
+	pub fn create(size: u32, base: (i32, i32, i32), rng: &mut Random) -> Self {
 		let size_f32 = size as f32;
 		
 		let angle = rng.next_f32() * NOTCHIAN_PI;
@@ -119,20 +119,20 @@ impl Vein {
 		
 		let from = (
 			(base.0       as f32 + x_size) as f64,
-			(base.1 + 2 + rng.next_i32(3)) as f64,
+			(base.1 + 2 + rng.next_i32_bound(3)) as f64,
 			(base.2       as f32 + z_size) as f64
 		);
 		
 		let to = (
 			(base.0       as f32 - x_size) as f64,
-			(base.1 + 2 + rng.next_i32(3)) as f64,
+			(base.1 + 2 + rng.next_i32_bound(3)) as f64,
 			(base.2       as f32 - z_size) as f64
 		);
 		
 		Vein { size, size_f64: size as f64, size_f32, from, to }
 	}
 	
-	pub fn blob(&self, index: u32, rng: &mut JavaRng) -> Blob {
+	pub fn blob(&self, index: u32, rng: &mut Random) -> Blob {
 		let index_f64 = index as f64;
 		let index_f32 = index as f32;
 		

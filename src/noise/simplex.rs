@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use nalgebra::Vector2;
 use noise::Permutations;
 use sample::Sample;
@@ -41,7 +41,7 @@ impl Simplex {
 		Simplex { p, scale, amplitude }
 	}
 	
-	pub fn from_rng(rng: &mut JavaRng, scale: Vector2<f64>, amplitude: f64) -> Self {
+	pub fn from_rng(rng: &mut Random, scale: Vector2<f64>, amplitude: f64) -> Self {
 		Simplex { p: Permutations::new(rng), scale, amplitude }
 	}
 	

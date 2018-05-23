@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset};
@@ -19,12 +19,12 @@ pub struct Clump<D, B> where D: Decorator<B>, B: Target {
 }
 
 impl<D, B> Decorator<B> for Clump<D, B> where D: Decorator<B>, B: Target {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		for _ in 0..self.iterations {
 			let offset = (
-				rng.next_i32(self.horizontal as i32) - rng.next_i32(self.horizontal as i32),
-				rng.next_i32(self.vertical   as i32) - rng.next_i32(self.vertical   as i32),
-				rng.next_i32(self.horizontal as i32) - rng.next_i32(self.horizontal as i32)
+				rng.next_i32_bound(self.horizontal as i32) - rng.next_i32_bound(self.horizontal as i32),
+				rng.next_i32_bound(self.vertical   as i32) - rng.next_i32_bound(self.vertical   as i32),
+				rng.next_i32_bound(self.horizontal as i32) - rng.next_i32_bound(self.horizontal as i32)
 			);
 
 			if (position.y() as i32) + offset.1 < 0 {
@@ -58,11 +58,11 @@ pub struct FlatClump<D, B> where D: Decorator<B>, B: Target {
 }
 
 impl<D, B> Decorator<B> for FlatClump<D, B> where D: Decorator<B>, B: Target {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		for _ in 0..self.iterations {
 			let offset = (
-				rng.next_i32(self.horizontal as i32) - rng.next_i32(self.horizontal as i32),
-				rng.next_i32(self.horizontal as i32) - rng.next_i32(self.horizontal as i32)
+				rng.next_i32_bound(self.horizontal as i32) - rng.next_i32_bound(self.horizontal as i32),
+				rng.next_i32_bound(self.horizontal as i32) - rng.next_i32_bound(self.horizontal as i32)
 			);
 
 			let at = position.offset ((

@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use nalgebra::{Vector2, Vector3};
 use noise::Permutations;
 use sample::Sample;
@@ -69,7 +69,7 @@ impl Perlin {
 		Perlin { p, scale, amplitude }
 	}
 	
-	pub fn from_rng(rng: &mut JavaRng, scale: Vector3<f64>, amplitude: f64) -> Self {
+	pub fn from_rng(rng: &mut Random, scale: Vector3<f64>, amplitude: f64) -> Self {
 		Perlin { p: Permutations::new(rng), scale, amplitude }
 	}
 	

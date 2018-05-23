@@ -1,6 +1,6 @@
 use nalgebra::Vector2;
 use noise::octaves::SimplexOctaves;
-use rng::JavaRng;
+use java_rand::Random;
 use sample::Sample;
 
 #[derive(Serialize, Deserialize, Copy, Clone, Debug)]
@@ -55,9 +55,9 @@ impl ClimateSource {
 		let scale = (1 << 4) as f64;
 		
 		ClimateSource {
-			temperature: SimplexOctaves::new(&mut JavaRng::new(seed.wrapping_mul(TEMP_COEFF)),  4, settings.temperature_fq, 0.5, (0.4 / scale, 0.4 / scale)),
-			rainfall:    SimplexOctaves::new(&mut JavaRng::new(seed.wrapping_mul(RAIN_COEFF)),  4, settings.rainfall_fq,    0.5, (0.8 / scale, 0.8 / scale)),
-			mixin:       SimplexOctaves::new(&mut JavaRng::new(seed.wrapping_mul(MIXIN_COEFF)), 2, settings.mixin_fq,       0.5, (4.0 / scale, 4.0 / scale)),
+			temperature: SimplexOctaves::new(&mut Random::new(seed.wrapping_mul(TEMP_COEFF) as u64),  4, settings.temperature_fq, 0.5, (0.4 / scale, 0.4 / scale)),
+			rainfall:    SimplexOctaves::new(&mut Random::new(seed.wrapping_mul(RAIN_COEFF) as u64),  4, settings.rainfall_fq,    0.5, (0.8 / scale, 0.8 / scale)),
+			mixin:       SimplexOctaves::new(&mut Random::new(seed.wrapping_mul(MIXIN_COEFF) as u64), 2, settings.mixin_fq,       0.5, (4.0 / scale, 4.0 / scale)),
 			settings,
 			temp_keep:   1.0 - settings.temperature_mixin,
 			rain_keep:   1.0 - settings.rainfall_mixin

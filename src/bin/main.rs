@@ -1,6 +1,7 @@
 extern crate rs25;
 extern crate vocs;
 extern crate i73;
+extern crate java_rand;
 #[macro_use]
 extern crate serde_json;
 
@@ -262,7 +263,7 @@ fn main() {
 	let settings = LargeTreeSettings::default();
 	
 	for i in 0..1 {
-		let mut rng = JavaRng::new(100 + i);
+		let mut rng = Random::new(100 + i);
 		let shape = settings.tree((0, 0, 0), &mut rng, None, 20);
 		
 		println!("{:?}", shape);
@@ -359,7 +360,7 @@ fn main() {
 
 	println!("Decorating region (0, 0)");
 
-	let mut decoration_rng = ::i73::rng::JavaRng::new(8399452073110208023);
+	let mut decoration_rng = ::java_rand::Random::new(8399452073110208023);
 	let coefficients = (
 		((decoration_rng.next_i64() >> 1) << 1) + 1,
 		((decoration_rng.next_i64() >> 1) << 1) + 1
@@ -462,9 +463,9 @@ fn main() {
 	for x in 0..31 {
 		println!("{}", x);
 		for z in 0..31 {
-			let x_part = (x as i64).wrapping_mul(coefficients.0);
-			let z_part = (z as i64).wrapping_mul(coefficients.1);
-			decoration_rng = ::i73::rng::JavaRng::new((x_part.wrapping_add(z_part)) ^ 8399452073110208023);
+			let x_part = (x as i64).wrapping_mul(coefficients.0) as u64;
+			let z_part = (z as i64).wrapping_mul(coefficients.1) as u64;
+			decoration_rng = ::java_rand::Random::new((x_part.wrapping_add(z_part)) ^ 8399452073110208023);
 
 			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
 

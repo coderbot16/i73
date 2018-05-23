@@ -1,6 +1,6 @@
 use noise::octaves::PerlinOctaves;
 use nalgebra::{Vector2, Vector3};
-use rng::JavaRng;
+use java_rand::Random;
 use biome::climate::Climate;
 use sample::Sample;
 
@@ -52,7 +52,7 @@ pub struct HeightSource {
 }
 
 impl HeightSource {
-	pub fn new(rng: &mut JavaRng, settings: &HeightSettings) -> Self {
+	pub fn new(rng: &mut Random, settings: &HeightSettings) -> Self {
 		HeightSource {
 			biome_influence:       PerlinOctaves::new(rng, 10, settings.biome_influence_coord_scale),
 			depth:                 PerlinOctaves::new(rng, 16, settings.depth_coord_scale),
@@ -119,7 +119,7 @@ pub struct HeightSource81 {
 }
 
 impl HeightSource81 {
-	pub fn new(rng: &mut JavaRng, settings: &HeightSettings81) -> Self {
+	pub fn new(rng: &mut Random, settings: &HeightSettings81) -> Self {
 		HeightSource81 {
 			depth:     PerlinOctaves::new(rng, 16, settings.coord_scale),
 			out_scale: settings.out_scale,

@@ -2,7 +2,7 @@ pub mod perlin;
 pub mod simplex;
 pub mod octaves;
 
-use rng::JavaRng;
+use java_rand::Random;
 use nalgebra::Vector3;
 
 pub struct Permutations {
@@ -11,7 +11,7 @@ pub struct Permutations {
 }
 
 impl Permutations {
-	pub fn new(rng: &mut JavaRng) -> Self {
+	pub fn new(rng: &mut Random) -> Self {
 		let mut p = Permutations {
 			offset: Vector3::new(rng.next_f64() * 256.0, rng.next_f64() * 256.0, rng.next_f64() * 256.0),
 			permutations: [0; 256]
@@ -23,7 +23,7 @@ impl Permutations {
 		};
 		
 		for i in 0..256 {
-			let rand = rng.next_i32(256 - i) + i;
+			let rand = rng.next_u32_bound(256 - i) + i;
 			p.permutations.swap(i as usize, rand as usize);
 		};
 		

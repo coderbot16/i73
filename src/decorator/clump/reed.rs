@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::QuadPosition;
@@ -15,7 +15,7 @@ pub struct ReedDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: Blo
 }
 
 impl<B, M, L, R> Decorator<B> for PlantDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: BlockMatcher<B>, R: BlockMatcher<B> {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		if let Some(candidate) = quad.get(position) {
 			if !self.replace.matches(candidate) {
 				return Ok(());

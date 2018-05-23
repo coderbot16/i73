@@ -2,7 +2,7 @@ use matcher::BlockMatcher;
 use vocs::indexed::Target;
 use chunk::grouping::{Moore, Result};
 use decorator::Decorator;
-use rng::JavaRng;
+use java_rand::Random;
 
 pub struct TreeDecorator<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, B: Target {
 	blocks: TreeBlocks<S, M, B>,
@@ -10,7 +10,7 @@ pub struct TreeDecorator<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, 
 }
 
 impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, B: Target {
-	fn generate(&self, moore: &mut Moore<B>, rng: &mut JavaRng, position: (i32, i32, i32)) -> Result<bool> {
+	fn generate(&self, moore: &mut Moore<B>, rng: &mut Random, position: (i32, i32, i32)) -> Result<bool> {
 		let tree = self.settings.tree(rng, position);
 		
 		if position.1 < 1 || tree.leaves_max_y > 128 {
@@ -107,7 +107,7 @@ struct TreeSettings {
 }
 
 impl TreeSettings {
-	fn tree(&self, rng: &mut JavaRng, orgin: (i32, i32, i32)) -> Tree {
+	fn tree(&self, rng: &mut Random, orgin: (i32, i32, i32)) -> Tree {
 		let trunk_height = self.min_trunk_height + rng.next_i32(self.add_trunk_height + 1);
 		let trunk_top = orgin.1 + trunk_height;
 		

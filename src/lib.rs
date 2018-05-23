@@ -11,9 +11,9 @@ extern crate deflate;
 extern crate bit_vec;
 extern crate vocs;
 extern crate nalgebra;
+extern crate java_rand;
 
 pub mod noise;
-pub mod rng;
 pub mod biome;
 pub mod sample;
 pub mod noise_field;

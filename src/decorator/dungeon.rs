@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 
 // TODO
 #[derive(Debug, Copy, Clone)]
@@ -20,7 +20,7 @@ pub enum Item {
 #[derive(Debug)]
 pub struct Stack {
 	item: Item,
-	size: i32
+	size: u32
 }
 
 pub struct SimpleLootTable {
@@ -28,9 +28,9 @@ pub struct SimpleLootTable {
 }
 
 impl SimpleLootTable {
-	pub fn get_item(&self, rng: &mut JavaRng) -> Option<Stack> {
+	pub fn get_item(&self, rng: &mut Random) -> Option<Stack> {
 		if self.pools.len() != 0 {
-			self.pools[rng.next_i32(self.pools.len() as i32) as usize].get_item(rng)
+			self.pools[rng.next_u32_bound(self.pools.len() as u32) as usize].get_item(rng)
 		} else {
 			None
 		}
@@ -68,8 +68,8 @@ fn records() -> SimpleLootTable {
 
 enum Pool {
 	/// Creates an item with a stack size of base + rng(add + 1)
-	Common { item: Item, base_size: i32, add_size: Option<i32> },
-	Decide { item: Box<Pool>, other: Option<Box<Pool>>, chance: i32 },
+	Common { item: Item, base_size: u32, add_size: Option<u32> },
+	Decide { item: Box<Pool>, other: Option<Box<Pool>>, chance: u32 },
 	Table  (SimpleLootTable)
 }
 
@@ -78,17 +78,17 @@ impl Pool {
 		Pool::Common { item, base_size: 1, add_size: None }
 	}
 	
-	fn rare(item: Pool, chance: i32) -> Self {
+	fn rare(item: Pool, chance: u32) -> Self {
 		Pool::Decide { item: Box::new(item), other: None, chance }
 	}
 	
-	fn get_item(&self, rng: &mut JavaRng) -> Option<Stack> {
+	fn get_item(&self, rng: &mut Random) -> Option<Stack> {
 		match *self {
 			Pool::Common { ref item, base_size, add_size } => Some(Stack { 
 				item: *item, 
-				size: base_size + add_size.map(|i| rng.next_i32(i + 1)).unwrap_or(0) 
+				size: base_size + add_size.map(|i| rng.next_u32_bound(i + 1)).unwrap_or(0)
 			}),
-			Pool::Decide { ref item, ref other, chance   } => if rng.next_i32(chance) == 0 {
+			Pool::Decide { ref item, ref other, chance   } => if rng.next_u32_bound(chance) == 0 {
 				item.get_item(rng)
 			} else {
 				other.as_ref().and_then(|o| o.get_item(rng))
@@ -105,8 +105,8 @@ enum SpawnerMob {
 }
 
 impl SpawnerMob {
-	fn select(rng: &mut JavaRng) -> Self {
-		match rng.next_i32(4) {
+	fn select(rng: &mut Random) -> Self {
+		match rng.next_u32_bound(4) {
 			0     => SpawnerMob::Skeleton,
 			1 | 2 => SpawnerMob::Zombie,
 			3     => SpawnerMob::Spider,

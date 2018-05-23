@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use noise::octaves::PerlinOctavesVertical;
 use nalgebra::Vector3;
 use noise_field::height::Height;
@@ -39,7 +39,7 @@ pub struct TriNoiseSource {
 }
 
 impl TriNoiseSource {
-	pub fn new(rng: &mut JavaRng, settings: &TriNoiseSettings) -> Self { 
+	pub fn new(rng: &mut Random, settings: &TriNoiseSettings) -> Self {
 		TriNoiseSource {
 			lower: PerlinOctavesVertical::new(rng, 16, settings.lower_scale, 0.0, settings.y_size),
 			upper: PerlinOctavesVertical::new(rng, 16, settings.upper_scale, 0.0, settings.y_size),

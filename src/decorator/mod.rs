@@ -1,4 +1,4 @@
-use rng::JavaRng;
+use java_rand::Random;
 use vocs::view::QuadMut;
 use vocs::position::{ColumnPosition, QuadPosition};
 use vocs::indexed::Target;
@@ -25,12 +25,12 @@ pub struct Dispatcher<H, R, B> where H: Distribution, R: Distribution, B: Target
 }
 
 impl<H, R, B> Dispatcher<H, R, B> where H: Distribution, R: Distribution, B: Target {
-	pub fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng) -> Result {
+	pub fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random) -> Result {
 		for _ in 0..self.rarity.next(rng) {
 			let at = ColumnPosition::new(
-				rng.next_i32(16) as u8,
+				rng.next_u32_bound(16) as u8,
 				self.height_distribution.next(rng) as u8,
-				rng.next_i32(16) as u8
+				rng.next_u32_bound(16) as u8
 			);
 			
 			self.decorator.generate(quad, rng, QuadPosition::from_centered(at))?;
@@ -41,7 +41,7 @@ impl<H, R, B> Dispatcher<H, R, B> where H: Distribution, R: Distribution, B: Tar
 }
 
 pub trait Decorator<B> where B: Target {
-	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut JavaRng, position: QuadPosition) -> Result;
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result;
 }
 
 pub trait DecoratorFactory<B> where B: Target {
