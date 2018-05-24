@@ -7,7 +7,6 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate nbt_serde;
 extern crate byteorder;
-extern crate deflate;
 extern crate bit_vec;
 extern crate vocs;
 extern crate nalgebra;
