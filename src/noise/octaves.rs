@@ -1,7 +1,7 @@
 // Note: The values returned by these functions may be off by up to ±0.00000000000001 units compared to Notchian implementations due to moving around FP operations.
 // The simplex implementation may also suffer from some inaccuracy due to it doing the *70 and *amplitude multiplications seperately.
 
-use nalgebra::{Vector2, Vector3};
+use cgmath::{Point2, Vector2, Vector3};
 use sample::{Sample, Layer};
 use noise::simplex::Simplex;
 use noise::perlin::Perlin;
@@ -31,7 +31,7 @@ impl SimplexOctaves {
 impl Sample for SimplexOctaves {
 	type Output = f64;
 	
-	fn sample(&self, point: Vector2<f64>) -> Self::Output {
+	fn sample(&self, point: Point2<f64>) -> Self::Output {
 		let mut result = 0.0;
 		
 		for octave in &self.0 {
@@ -101,7 +101,7 @@ impl PerlinOctaves {
 impl Sample for PerlinOctaves {
 	type Output = f64;
 	
-	fn sample(&self, point: Vector2<f64>) -> Self::Output {
+	fn sample(&self, point: Point2<f64>) -> Self::Output {
 		self.0.iter().fold(0.0, |result, perlin| result + perlin.sample(point))
 	}
 	

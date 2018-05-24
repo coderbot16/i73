@@ -1,6 +1,6 @@
 use noise_field::volume::TriNoiseSettings;
 use noise_field::height::HeightSettings81;
-use nalgebra::Vector3;
+use cgmath::Vector3;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Customized {

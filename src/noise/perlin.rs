@@ -1,5 +1,5 @@
 use java_rand::Random;
-use nalgebra::{Vector2, Vector3};
+use cgmath::{Point2, Vector2, Vector3};
 use noise::Permutations;
 use sample::Sample;
 
@@ -204,7 +204,7 @@ impl Perlin {
 impl Sample for Perlin {
 	type Output = f64;
 	
-	fn sample(&self, loc: Vector2<f64>) -> f64 {
+	fn sample(&self, loc: Point2<f64>) -> f64 {
 		let loc = Vector2::new(loc.x * self.scale.x, loc.y * self.scale.z) + Vector2::new(self.p.offset.x, self.p.offset.z);
 		
 		// TODO: This is broken for negative coords?

@@ -11,7 +11,7 @@ use vocs::indexed::Target;
 use vocs::view::{ColumnMut, ColumnBlocks, ColumnPalettes, ColumnAssociation};
 use matcher::{BlockMatcher, Is, IsNot};
 use sample::Sample;
-use nalgebra::{Vector2, Vector3};
+use cgmath::{Point2, Vector2, Vector3};
 use noise_field::height::lerp_to_layer;
 
 pub struct Settings<R, I, B> where R: BlockMatcher<B>, I: BlockMatcher<B>, B: Target {  
@@ -110,7 +110,7 @@ pub struct ShapePass<B> where B: Target {
 
 impl<B> Pass<B> for ShapePass<B> where B: Target {
 	fn apply(&self, target: &mut ColumnMut<B>, chunk: GlobalColumnPosition) {
-		let offset = Vector2::new(
+		let offset = Point2::new(
 			(chunk.x() as f64) * 4.0,
 			(chunk.z() as f64) * 4.0
 		);
@@ -338,7 +338,7 @@ impl<R, I, B> Pass<B> for PaintPass<R, I, B> where R: BlockMatcher<B>, I: BlockM
 		let thickness_vertical = self.thickness.vertical_ref(block.1, 16);
 		
 		let   vertical_offset = Vector3::new(block.0 as f64, block.1 as f64, 0.0);
-		let horizontal_offset = Vector2::new(block.0 as f64, block.1 as f64);
+		let horizontal_offset = Point2::new(block.0 as f64, block.1 as f64);
 		
 		target.ensure_available(self.blocks.air.clone());
 		target.ensure_available(self.blocks.stone.clone());

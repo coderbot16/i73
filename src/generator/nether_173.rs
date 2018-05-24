@@ -3,7 +3,7 @@ use vocs::position::{ColumnPosition,GlobalColumnPosition};
 use vocs::view::ColumnMut;
 use generator::Pass;
 use noise_field::volume::{self, TriNoiseSource, TriNoiseSettings, trilinear128};
-use nalgebra::{Vector2, Vector3};
+use cgmath::{Vector2, Vector3};
 use java_rand::Random;
 
 const NOTCH_PI_F64: f64 = 3.1415926535897931;

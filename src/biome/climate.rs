@@ -1,4 +1,4 @@
-use nalgebra::Vector2;
+use cgmath::Point2;
 use noise::octaves::SimplexOctaves;
 use java_rand::Random;
 use sample::Sample;
@@ -69,7 +69,7 @@ impl ClimateSource {
 impl Sample for ClimateSource {
 	type Output = Climate;
 	
-	fn sample(&self, point: Vector2<f64>) -> Self::Output {
+	fn sample(&self, point: Point2<f64>) -> Self::Output {
 		let mixin = self.mixin.sample(point) * self.settings.mixin_coeff + self.settings.mixin_mean;
 		
 		let temp = (self.temperature.sample(point) * self.settings.temperature_coeff + self.settings.temperature_mean) * self.temp_keep + mixin * self.settings.temperature_mixin;

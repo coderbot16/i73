@@ -1,5 +1,5 @@
 use java_rand::Random;
-use nalgebra::Vector2;
+use cgmath::{Point2, Vector2};
 use noise::Permutations;
 use sample::Sample;
 
@@ -53,16 +53,16 @@ impl Simplex {
 impl Sample for Simplex {
 	type Output = f64;
 	
-	fn sample(&self, point: Vector2<f64>) -> f64 {
-		let (x, y) = (point.x * self.scale.x + self.p.offset.x, point.y * self.scale.y + self.p.offset.y);
+	fn sample(&self, point: Point2<f64>) -> f64 {
+		let point = Point2::new(point.x * self.scale.x, point.y * self.scale.y) + Vector2::new(self.p.offset.x, self.p.offset.y);
 		
-		let s = (x + y) * F2;
-		let fx = (x + s).floor();
-		let fy = (y + s).floor();
+		let s = (point.x + point.y) * F2;
+		let fx = (point.x + s).floor();
+		let fy = (point.y + s).floor();
 		let t = (fx + fy) * G2;
 		
-		let x0 = x - (fx - t);
-		let y0 = y - (fy - t);
+		let x0 = point.x - (fx - t);
+		let y0 = point.y - (fy - t);
 		
 		let bias = if x0 > y0 {Vector2::new(1, 0)} else {Vector2::new(0, 1)};
 		

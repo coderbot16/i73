@@ -1,5 +1,5 @@
 use std::ops::{Add, AddAssign};
-use nalgebra::Vector2;
+use cgmath::Point2;
 
 pub struct Layer<T>(pub [T; 256]) where T: Copy;
 impl<T> Layer<T> where T: Copy {
@@ -42,7 +42,7 @@ pub trait Sample {
 	type Output: Default + Copy;
 	
 	/// Coordinates are in block space
-	fn sample(&self, point: Vector2<f64>) -> Self::Output;
+	fn sample(&self, point: Point2<f64>) -> Self::Output;
 	
 	/// An optimized version of this function is usually provided by the implementor.
 	fn chunk(&self, chunk: (f64, f64)) -> Layer<Self::Output> {
@@ -54,7 +54,7 @@ pub trait Sample {
 			for z in 0..16 {
 				let cz = chunk.1 + (z as f64);
 				
-				out.set(x, z, self.sample(Vector2::new(cx, cz)));
+				out.set(x, z, self.sample(Point2::new(cx, cz)));
 			}
 		}
 		

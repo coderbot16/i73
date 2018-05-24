@@ -1,6 +1,6 @@
 use java_rand::Random;
 use noise::octaves::PerlinOctavesVertical;
-use nalgebra::Vector3;
+use cgmath::Vector3;
 use noise_field::height::Height;
 use vocs::position::ColumnPosition;
 

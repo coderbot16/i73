@@ -1,5 +1,5 @@
 use noise::octaves::PerlinOctaves;
-use nalgebra::{Vector2, Vector3};
+use cgmath::{Point2, Vector2, Vector3};
 use java_rand::Random;
 use biome::climate::Climate;
 use sample::Sample;
@@ -62,7 +62,7 @@ impl HeightSource {
 		}
 	}
 	
-	pub fn sample(&self, point: Vector2<f64>, climate: Climate) -> Height {
+	pub fn sample(&self, point: Point2<f64>, climate: Climate) -> Height {
 		let scaled_noise = self.biome_influence.sample(point) / self.biome_influence_scale;
 		
 		let chaos = (climate.influence_factor() * (scaled_noise + 0.5)).max(0.0).min(1.0) + 0.5;
@@ -127,7 +127,7 @@ impl HeightSource81 {
 		}
 	}
 	
-	pub fn sample(&self, point: Vector2<f64>, biome_height_center: f64, biome_chaos: f64) -> Height {
+	pub fn sample(&self, point: Point2<f64>, biome_height_center: f64, biome_chaos: f64) -> Height {
 		let mut depth = self.depth.sample(point) / self.out_scale;
 
 		if depth < 0.0 {

@@ -3,7 +3,7 @@ pub mod simplex;
 pub mod octaves;
 
 use java_rand::Random;
-use nalgebra::Vector3;
+use cgmath::Vector3;
 
 pub struct Permutations {
 	offset: Vector3<f64>,

@@ -9,7 +9,7 @@ extern crate nbt_serde;
 extern crate byteorder;
 extern crate bit_vec;
 extern crate vocs;
-extern crate nalgebra;
+extern crate cgmath;
 extern crate java_rand;
 
 pub mod noise;

@@ -2,7 +2,7 @@ use vocs::position::{LayerPosition, GlobalColumnPosition};
 use biome::{Biome, Lookup};
 use biome::climate::{Climate, ClimateSource};
 use vocs::indexed::{LayerIndexed, Target};
-use nalgebra::Vector2;
+use cgmath::{Point2, Vector2};
 use sample::Sample;
 
 pub struct BiomeSource<B> where B: Target {
@@ -16,7 +16,7 @@ impl<B> BiomeSource<B> where B: Target {
 	}
 	
 	pub fn layer(&self, chunk: GlobalColumnPosition) -> LayerIndexed<Biome<B>> {
-		let block = (
+		let block = Point2::new (
 			(chunk.x() * 16) as f64,
 			(chunk.z() * 16) as f64
 		);
@@ -28,7 +28,7 @@ impl<B> BiomeSource<B> where B: Target {
 			for x in 0..16 {
 				let position = LayerPosition::new(x, z);
 				
-				let climate = self.climate.sample(Vector2::new(block.0 + x as f64, block.1 + z as f64));
+				let climate = self.climate.sample(block + Vector2::new(x as f64, z as f64));
 				let biome = self.lookup.lookup(climate);
 				
 				layer.set_immediate(position, biome);
