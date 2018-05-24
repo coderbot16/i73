@@ -25,24 +25,6 @@ use rs25::level::manager::{ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
 use rs25::level::anvil::ColumnRoot;
 
-// use i73::image_ops::Image;
-/*fn display_image(map: &Image<bool>) {
-	for z in (0..map.z_size()).rev() {
-		for x in 0..map.x_size() {
-			if x == map.x_size() / 2 {
-				print!("|");
-			}
-			
-			print!("{}", if *map.get(x, z) {'#'} else {'.'});
-		}
-		println!();
-		
-		if z == map.z_size() / 2 {
-			println!("======== ========");
-		}
-	}
-}*/
-
 fn main() {
 	let profile_name = match ::std::env::args().skip(1).next() {
 		Some(name) => name,
@@ -86,44 +68,8 @@ fn main() {
 	
 	settings.shape_blocks.ocean = sea_block;
 	settings.paint_blocks.ocean = sea_block;
-	
+
 	// TODO: Structures and Decorators
-	
-	/*use image_ops::i80::Continents;
-	use image_ops::filter::{Chain, Source, Filter};
-	use image_ops::zoom::{Zoom, BestCandidate, RandomCandidate};
-	use image_ops::blur::{Blur, XSpill, BoolMix};
-	
-	use rng::NotchRng;
-	
-	let continents = Continents {
-		chance: 10,
-		rng: NotchRng::new(1, 100)
-	};
-	
-	let mut chain = Chain::new();
-	chain.0.push(Box::new(Zoom::new(NotchRng::new(2000, 100), RandomCandidate)));
-	chain.0.push(Box::new(Blur::new(NotchRng::new(   1, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
-	chain.0.push(Box::new(Zoom::new(NotchRng::new(2001, 100), BestCandidate)));
-	chain.0.push(Box::new(Blur::new(NotchRng::new(   2, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
-	chain.0.push(Box::new(Zoom::new(NotchRng::new(2002, 100), BestCandidate)));
-	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
-	chain.0.push(Box::new(Zoom::new(NotchRng::new(2003, 100), BestCandidate)));
-	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
-	chain.0.push(Box::new(Zoom::new(NotchRng::new(2004, 100), BestCandidate)));
-	chain.0.push(Box::new(Blur::new(NotchRng::new(   3, 100), XSpill::new(BoolMix { true_chance: 4, false_chance: 2 }))));
-	
-	println!("{:?} {:?}", chain.input_position((-8, -8)), chain.input_size((16, 16)));
-	
-	let sample = chain.input_size((16, 16));
-	let mut continents_data = Image::new(false, sample.0, sample.1);
-	continents.fill(chain.input_position((-8, -8)), &mut continents_data);
-	
-	let mut out = Image::new(false, 16, 16);
-	chain.filter((-8, -8), &continents_data, &mut out);
-	
-	println!("Out:");
-	display_image(&out);*/
 	
 	let biomes_config = serde_json::from_reader::<File, BiomesConfig>(File::open(profile.join("biomes.json")).unwrap()).unwrap();
 	let grid = biomes_config.to_grid().unwrap();
@@ -367,100 +313,6 @@ fn main() {
 		((decoration_rng.next_i64() >> 1) << 1) + 1
 	);
 
-	/*let gravel_vein = ::i73::decorator::Dispatcher {
-		decorator: Box::new(::i73::decorator::vein::VeinDecorator {
-			blocks: ::i73::decorator::vein::VeinBlocks {
-				replace: |ty: &u16| -> bool {
-					*ty == 1*16
-				},
-				block: 13*16
-			},
-			size: 32
-		}),
-		height_distribution: ::i73::distribution::Linear {
-			min: 0,
-			max: 63
-		},
-		rarity: ::i73::distribution::Linear {
-			min: 0,
-			max: 9
-		}
-	};
-
-	let clay_vein = ::i73::decorator::Dispatcher {
-		decorator: Box::new(::i73::decorator::vein::SeasideVeinDecorator {
-			vein: ::i73::decorator::vein::VeinDecorator {
-				blocks: ::i73::decorator::vein::VeinBlocks {
-					replace: |ty: &u16| -> bool {
-						*ty == 12*16
-					},
-					block: 82*16
-				},
-				size: 32
-			},
-			ocean: |ty: &u16| -> bool {
-				*ty == 8*16 || *ty == 9*16
-			}
-		}),
-		height_distribution: ::i73::distribution::Linear {
-			min: 0,
-			max: 63
-		},
-		rarity: ::i73::distribution::Linear {
-			min: 0,
-			max: 9
-		}
-	};
-
-	let water_lake = ::i73::decorator::Dispatcher {
-		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
-			blocks: ::i73::decorator::lake::LakeBlocks {
-				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
-				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
-				replacable: |_: &u16| -> bool { unimplemented!() },
-				liquid:     9*16,
-				carve:      0*16,
-				solidify:   None
-			},
-			settings: ::i73::decorator::lake::LakeSettings::default()
-		}),
-		height_distribution: ::i73::distribution::Linear {
-			min: 0,
-			max: 127
-		},
-		rarity: ::i73::distribution::Chance {
-			base: 1,
-			chance: 4,
-			ordering: ::i73::distribution::ChanceOrdering::AlwaysGeneratePayload
-		}
-	};
-
-	let tall_grass = ::i73::decorator::Dispatcher {
-		decorator: Box::new(::i73::decorator::clump::Clump {
-			iterations: 64,
-			horizontal: 8,
-			vertical: 4,
-			decorator: ::i73::decorator::clump::plant::PlantDecorator {
-				block: 31*16 + 1,
-				base: |ty: &u16| -> bool {
-					*ty == 2*16 || *ty == 3*16 || *ty == 60*16
-				},
-				replace: |ty: &u16| -> bool {
-					*ty == 0*16
-				}
-			},
-			phantom: ::std::marker::PhantomData::<u16>
-		}),
-		height_distribution: ::i73::distribution::Linear {
-			min: 0,
-			max: 127
-		},
-		rarity: ::i73::distribution::Linear {
-			min: 0,
-			max: 90
-		}
-	};*/
-
 	for x in 0..31 {
 		println!("{}", x);
 		for z in 0..31 {
@@ -470,10 +322,6 @@ fn main() {
 
 			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
 
-			/*water_lake.generate(&mut quad, &mut decoration_rng).unwrap();
-			clay_vein.generate(&mut quad, &mut decoration_rng).unwrap();
-			gravel_vein.generate(&mut quad, &mut decoration_rng).unwrap();
-			tall_grass.generate(&mut quad, &mut decoration_rng).unwrap();*/
 			for dispatcher in &decorators {
 				dispatcher.generate(&mut quad, &mut decoration_rng).unwrap();
 			}
@@ -518,13 +366,7 @@ fn main() {
 
 				for (index, value) in chunk.palette().entries().iter().enumerate() {
 					opacity.set(index, value.map(|entry| lighting_info.get(entry as usize)).unwrap_or(lighting_info.default_value()));
-
-					//println!("opacity set to: {:?} (from block id: {:?})", opacity.get(index), value);
-					// TODO
-					//opacity.set(index, u4::new(15));
 				}
-
-				//println!("{:?}", opacity);
 
 				let sources = SkyLightSources::build(chunk.freeze().0, &opacity, mask);
 
