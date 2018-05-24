@@ -1,7 +1,7 @@
 use java_rand::Random;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
-use vocs::position::QuadPosition;
+use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
 use matcher::BlockMatcher;
 
@@ -10,70 +10,69 @@ pub struct ReedDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: Blo
 	pub base: M,
 	pub liquid: L,
 	pub replace: R,
-	pub base_height: u8,
-	pub add_height: u8
+	pub base_height: u32,
+	pub add_height: u32
 }
 
-impl<B, M, L, R> Decorator<B> for PlantDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: BlockMatcher<B>, R: BlockMatcher<B> {
+impl<B, M, L, R> Decorator<B> for ReedDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: BlockMatcher<B>, R: BlockMatcher<B> {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
-		if let Some(candidate) = quad.get(position) {
-			if !self.replace.matches(candidate) {
-				return Ok(());
-			}
-		}
-
-		let mut adjacent = 0;
-
-		if let Some(candidate) = quad.offset(-1, -1, 0).and_then(|at| quad.get(at)) {
-			if self.liquid.matches(candidate) {
-				adjacent += 1;
-			}
-		}
-
-		if let Some(candidate) = quad.offset(1, -1, 0).and_then(|at| quad.get(at)) {
-			if self.liquid.matches(candidate) {
-				adjacent += 1;
-			}
-		}
-
-		if let Some(candidate) = quad.offset(0, -1, -1).and_then(|at| quad.get(at)) {
-			if self.liquid.matches(candidate) {
-				adjacent += 1;
-			}
-		}
-
-		if let Some(candidate) = quad.offset(0, -1, 1).and_then(|at| quad.get(at)) {
-			if self.liquid.matches(candidate) {
-				adjacent += 1;
-			}
-		}
-
-		if adjacent == 0 {
+		if !self.replace.matches(quad.get(position)) {
 			return Ok(());
 		}
 
-		let height = rng.next_i32(self.add_height as i32 + 1);
-		let height = (self.base_height as i32 + rng.next_i32(height + 1)) as i8;
-
-		match position.offset(0, -1, 0) {
-			Some(below) => match quad.get(below) {
-				Some(candidate) => if !self.base.matches(candidate) {
-					return Ok(())
-				},
-				None => return Ok(())
-			},
+		let below = match position.offset(dir::Down) {
+			Some(below) => below,
 			None => return Ok(())
+		};
+
+		let mut valid = false;
+
+		if let Some(minus_x) = below.offset(dir::MinusX) {
+			if self.liquid.matches(quad.get(minus_x)) {
+				valid = true;
+			}
 		}
 
-		for y in 0..height {
-			if let Some(at) = position.offset(0, 1, 0) {
-				if let Some(candidate) = quad.get(at) {
-					if !self.replace.matches(candidate) {
-						return Ok(());
-					}
+		if let Some(plus_x) = below.offset(dir::PlusX) {
+			if self.liquid.matches(quad.get(plus_x)) {
+				valid = true;
+			}
+		}
+
+		if let Some(minus_z) = below.offset(dir::MinusZ) {
+			if self.liquid.matches(quad.get(minus_z)) {
+				valid = true;
+			}
+		}
+
+		if let Some(plus_z) = below.offset(dir::PlusZ) {
+			if self.liquid.matches(quad.get(plus_z)) {
+				valid = true;
+			}
+		}
+
+		if !valid {
+			return Ok(());
+		}
+
+		let height = rng.next_u32_bound(self.add_height + 1);
+		let height = (self.base_height + rng.next_u32_bound(height + 1)) as i8;
+
+		if !self.base.matches(quad.get(below)) {
+			return Ok(())
+		}
+
+		let mut position = position;
+
+		for _ in 0..height {
+			if let Some(at) = position.offset(dir::Up) {
+				if !self.replace.matches(quad.get(at)) {
+					return Ok(());
 				}
 
 				quad.set_immediate(at, &self.block);
+
+				position = at;
 			}
 		}
 

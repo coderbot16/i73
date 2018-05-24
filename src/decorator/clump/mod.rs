@@ -6,6 +6,7 @@ use super::{Decorator, Result};
 
 // pub mod cactus;
 pub mod plant;
+pub mod reed;
 
 /// Clumped generation. Places a number of objects with a varying distance from the center.
 pub struct Clump<D, B> where D: Decorator<B>, B: Target {
