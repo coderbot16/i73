@@ -51,7 +51,8 @@ pub struct ClimateSource {
 }
 
 impl ClimateSource {
-	pub fn new(seed: i64, settings: ClimateSettings) -> Self {
+	pub fn new(seed: u64, settings: ClimateSettings) -> Self {
+		let seed = seed as i64;
 		let scale = (1 << 4) as f64;
 		
 		ClimateSource {
