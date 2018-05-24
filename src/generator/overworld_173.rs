@@ -126,9 +126,9 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 	
 		for x in 0..5 {
 			for z in 0..5 {
-				let layer = lerp_to_layer(Vector2::new(x, z));
+				let layer = lerp_to_layer(Vector2::new(x as u8, z as u8));
 				
-				let climate = climate_chunk.get(layer.x, layer.y);
+				let climate = climate_chunk.get(layer);
 				let height = self.height.sample(offset + Vector2::new(x as f64, z as f64), climate);
 				
 				for y in 0..17 {
@@ -157,7 +157,7 @@ impl<B> Pass<B> for ShapePass<B> where B: Target {
 			
 			let block = if trilinear128(&field, position) > 0.0 {
 				&solid
-			} else if altitude == self.sea_coord && climate_chunk.get(position.x() as usize, position.z() as usize).freezing() {
+			} else if altitude == self.sea_coord && climate_chunk.get(position.layer()).freezing() {
 				&ice
 			} else if altitude <= self.sea_coord {
 				&ocean

@@ -1,18 +1,19 @@
 use std::ops::{Add, AddAssign};
-use cgmath::Point2;
+use cgmath::{Point2, Vector2};
+use vocs::position::LayerPosition;
 
-pub struct Layer<T>(pub [T; 256]) where T: Copy;
+pub struct Layer<T>([T; 256]) where T: Copy;
 impl<T> Layer<T> where T: Copy {
 	pub fn fill(fill: T) -> Self {
 		Layer([fill; 256])
 	}
 	
-	pub fn get(&self, x: usize, z: usize) -> T {
-		self.0[x*16 + z]
+	pub fn get(&self, position: LayerPosition) -> T {
+		self.0[position.zx() as usize]
 	}
 	
-	fn set(&mut self, x: usize, z: usize, value: T) {
-		self.0[x*16 + z] = value;
+	fn set(&mut self, position: LayerPosition, value: T) {
+		self.0[position.zx() as usize] = value;
 	}
 }
 
@@ -47,15 +48,13 @@ pub trait Sample {
 	/// An optimized version of this function is usually provided by the implementor.
 	fn chunk(&self, chunk: (f64, f64)) -> Layer<Self::Output> {
 		let mut out = Layer::fill(Self::Output::default());
-		
-		for x in 0..16 {
-			let cx = chunk.0 + (x as f64);
-			
-			for z in 0..16 {
-				let cz = chunk.1 + (z as f64);
-				
-				out.set(x, z, self.sample(Point2::new(cx, cz)));
-			}
+		let chunk = Point2::new(chunk.0, chunk.1);
+
+		for index in 0..256u32 {
+			let position = LayerPosition::from_zx(index as u8);
+			let point = chunk + Vector2::new(position.x() as f64, position.z() as f64);
+
+			out.set(position, self.sample(point));
 		}
 		
 		out

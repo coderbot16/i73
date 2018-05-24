@@ -98,14 +98,14 @@ impl Pool {
 	}
 }
 
-enum SpawnerMob {
+pub enum SpawnerMob {
 	Skeleton,
 	Zombie,
 	Spider
 }
 
 impl SpawnerMob {
-	fn select(rng: &mut Random) -> Self {
+	pub fn select(rng: &mut Random) -> Self {
 		match rng.next_u32_bound(4) {
 			0     => SpawnerMob::Skeleton,
 			1 | 2 => SpawnerMob::Zombie,

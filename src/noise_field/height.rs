@@ -3,6 +3,7 @@ use cgmath::{Point2, Vector2, Vector3};
 use java_rand::Random;
 use biome::climate::Climate;
 use sample::Sample;
+use vocs::position::LayerPosition;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Height {
@@ -180,6 +181,9 @@ impl BiomeDigestor {
 /// 3 => 10
 /// 4 => 13
 /// ```
-pub fn lerp_to_layer(lerp: Vector2<usize>) -> Vector2<usize> {
-	lerp.map(|x| x*3 + 1)
+pub fn lerp_to_layer(lerp: Vector2<u8>) -> LayerPosition {
+	LayerPosition::new(
+		lerp.x*3 + 1,
+		lerp.y*3 + 1
+	)
 }
