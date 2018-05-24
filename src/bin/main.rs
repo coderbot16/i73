@@ -163,7 +163,33 @@ fn main() {
 	};
 
 	let mut decorators: Vec<::i73::decorator::Dispatcher<i73::distribution::Chance<i73::distribution::Baseline>, i73::distribution::Chance<i73::distribution::Baseline>, u16>> = Vec::new();
-	decorators.push (gravel_config.into_dispatcher(&decorator_registry).unwrap());
+
+	decorators.push (::i73::decorator::Dispatcher {
+		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
+			blocks: ::i73::decorator::lake::LakeBlocks {
+				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
+				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
+				replacable: |_: &u16| -> bool { unimplemented!() },
+				liquid:     9*16,
+				carve:      0*16,
+				solidify:   None
+			},
+			settings: ::i73::decorator::lake::LakeSettings::default()
+		}),
+		height_distribution: ::i73::distribution::Chance {
+			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
+				min: 0,
+				max: 127
+			}),
+			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
+			chance: 1
+		},
+		rarity: ::i73::distribution::Chance {
+			base: ::i73::distribution::Baseline::Constant { value: 1 },
+			chance: 4,
+			ordering: ::i73::distribution::ChanceOrdering::AlwaysGeneratePayload
+		}
+	});
 
 	decorators.push (::i73::decorator::Dispatcher {
 		decorator: Box::new(::i73::decorator::vein::SeasideVeinDecorator {
@@ -198,32 +224,7 @@ fn main() {
 		}
 	});
 
-	decorators.push (::i73::decorator::Dispatcher {
-		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
-			blocks: ::i73::decorator::lake::LakeBlocks {
-				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
-				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
-				replacable: |_: &u16| -> bool { unimplemented!() },
-				liquid:     9*16,
-				carve:      0*16,
-				solidify:   None
-			},
-			settings: ::i73::decorator::lake::LakeSettings::default()
-		}),
-		height_distribution: ::i73::distribution::Chance {
-			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
-				min: 0,
-				max: 127
-			}),
-			ordering: i73::distribution::ChanceOrdering::AlwaysGeneratePayload,
-			chance: 1
-		},
-		rarity: ::i73::distribution::Chance {
-			base: ::i73::distribution::Baseline::Constant { value: 1 },
-			chance: 4,
-			ordering: ::i73::distribution::ChanceOrdering::AlwaysGeneratePayload
-		}
-	});
+	decorators.push (gravel_config.into_dispatcher(&decorator_registry).unwrap());
 
 	decorators.push (::i73::decorator::Dispatcher {
 		decorator: Box::new(::i73::decorator::clump::Clump {
