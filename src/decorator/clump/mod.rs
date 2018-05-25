@@ -4,7 +4,7 @@ use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset};
 use super::{Decorator, Result};
 
-// pub mod cactus;
+pub mod cactus;
 pub mod plant;
 pub mod reed;
 

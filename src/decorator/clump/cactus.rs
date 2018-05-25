@@ -1,56 +1,105 @@
-struct Cactus {
-	/// Base, minimum height of a cactus
-	base_height: u32,
-	/// Maximum height of a cactus when added to the base height.
-	/// For example, with base=1 and add=2, the height of a cactus can be 1-3 blocks tall.
-	add_height: u32
+use vocs::position::{QuadPosition, Offset, dir};
+use vocs::view::QuadMut;
+use vocs::indexed::Target;
+use matcher::BlockMatcher;
+use decorator::{Decorator, Result};
+use java_rand::Random;
+
+pub struct CactusDecorator<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+	pub blocks: CactusBlocks<B, R, M, S>,
+	pub settings: CactusSettings
 }
 
-impl Cactus {
-	fn check(&self, moore: &mut Moore, position: (i32, i32, i32)) -> boolean {
-		if moore.get(position) != Block::Air {
-			false
-		} else if moore.get((position.0 - 1, position.1, position.2)).is_solid() {
-			false
-		} else if moore.get((position.0 + 1, position.1, position.2)).is_solid() {
-			false
-		} else if moore.get((position.0, position.1, position.2 - 1)).is_solid() {
-			false
-		} else if moore.get((position.0, position.1, position.2 + 1)).is_solid() {
-			false
-		} else {
-			let block =  moore.get((position.0, position.1 - 1, position.2));
-			block == Block::Sand || block == Block::Cactus
-		}
-	}
-}
-
-impl Decorator for Cactus {
-	fn generate(&self, moore: &mut Moore, rng: &mut Random, position: (i32, i32, i32)) {
-		if moore.get(position) != Block::Air {
-			return;
+impl<B, R, M, S> Decorator<B> for CactusDecorator<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
+		if !self.blocks.replace.matches(quad.get(position)) {
+			return Ok(());
 		}
 
-		let height = self.base_height + rng.next_u32_bound(rng.next_u32_bound(self.add_height + 1) + 1);
+		let height = rng.next_u32_bound(self.settings.add_height + 1);
+		let height = self.settings.base_height + rng.next_u32_bound(height + 1);
 
-		for y in 0..height {
-			let pos = (position.0, position.1 + y, position.2);
+		let mut position = position;
 
-			if self.check(moore, pos) {
-				moore.set(pos, Block::Cactus);
+		for _ in 0..height {
+			position = match position.offset(dir::Up) {
+				Some(position) => position,
+				None => return Ok(())
+			};
+
+			if self.blocks.check(quad, position) {
+				quad.set_immediate(position, &self.blocks.block);
 			}
 		}
+
+		Ok(())
 	}
 }
 
-fn cactus() -> Scattering<Cactus> {
-	Scattering {
-		iterations: 10,
-		horizontal: 8,
-		vertical: 4,
-		decorator: Cactus {
+pub struct CactusBlocks<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+	pub replace: R, // Air
+	pub base: M, // Cactus / Sand
+	pub solid: S, // any solid block
+	pub block: B // Cactus
+}
+
+impl<B, R, M, S> CactusBlocks<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+	pub fn check(&self, quad: &mut QuadMut<B>, position: QuadPosition) -> bool {
+		if !self.replace.matches(quad.get(position)) {
+			return false
+		}
+
+		if let Some(minus_x) = position.offset(dir::MinusX) {
+			if self.solid.matches(quad.get(minus_x)) {
+				return false;
+			}
+		}
+
+		if let Some(plus_x) = position.offset(dir::PlusX) {
+			if self.solid.matches(quad.get(plus_x)) {
+				return false;
+			}
+		}
+
+		if let Some(minus_z) = position.offset(dir::MinusZ) {
+			if self.solid.matches(quad.get(minus_z)) {
+				return false;
+			}
+		}
+
+		if let Some(plus_z) = position.offset(dir::PlusZ) {
+			if self.solid.matches(quad.get(plus_z)) {
+				return false;
+			}
+		}
+
+		let below = match position.offset(dir::Down) {
+			Some(below) => below,
+			None => return false
+		};
+
+		self.base.matches(quad.get(below))
+	}
+}
+
+pub struct CactusSettings {
+	/// Base, minimum height of a cactus
+	pub base_height: u32,
+	/// Maximum height of a cactus when added to the base height.
+	/// For example, with base=1 and add=2, the height of a cactus can be 1-3 blocks tall.
+	pub add_height: u32
+}
+
+impl Default for CactusSettings {
+	fn default() -> Self {
+		CactusSettings {
 			base_height: 1,
 			add_height: 2
 		}
 	}
 }
+
+// Clump settings:
+// iterations = 10
+// horizontal_variation = 8
+// vertical_variation = 4
