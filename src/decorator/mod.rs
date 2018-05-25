@@ -11,6 +11,7 @@ pub mod clump;
 pub mod large_tree;
 pub mod lake;
 pub mod tree;
+pub mod liquid_pocket;
 
 // TODO: MultiDispatcher
 
