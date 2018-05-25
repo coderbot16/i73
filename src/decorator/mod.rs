@@ -8,7 +8,7 @@ use serde_json;
 pub mod dungeon;
 pub mod vein;
 pub mod clump;
-// pub mod large_tree;
+pub mod large_tree;
 pub mod lake;
 pub mod tree;
 
