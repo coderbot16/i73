@@ -215,14 +215,14 @@ fn main() {
 		
 		println!("{:?}", shape);
 		
-		let mut y = shape.foilage_max_y - 1;
-		while y >= shape.foilage_min_y {
+		let mut y = shape.foliage_max_y - 1;
+		while y >= shape.foliage_min_y {
 			let spread = shape.spread(y);
 			
 			println!("y: {}, spread: {}", y, spread);
 			
-			for _ in 0..shape.foilage_per_y {
-				println!("{:?}", shape.foilage(y, spread, &mut rng));
+			for _ in 0..shape.foliage_per_y {
+				println!("{:?}", shape.foliage(y, spread, &mut rng));
 			}
 			
 			y -= 1;
