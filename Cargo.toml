@@ -15,4 +15,4 @@ bit-vec = "0.4.4"
 nom = "3.2.1"
 rs25 = { path = "../rs25" }
 vocs = { path = "../vocs" }
-java-rand = { path = "../java-rand" }
+java-rand = "0.1"

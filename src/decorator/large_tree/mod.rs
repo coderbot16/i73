@@ -1,6 +1,8 @@
 use java_rand::Random;
 use std::cmp::min;
 
+mod line;
+
 const TAU: f64 = 2.0 * 3.14159;
 
 /// A foliage cluster. "Balloon" oaks in Minecraft are simply a large tree generating a single foliage cluster at the top of the very short trunk.
