@@ -2,6 +2,8 @@ use vocs::position::{QuadPosition, Dir, Axis};
 use vocs::view::{QuadBlocks, QuadAssociation};
 use std::cmp;
 
+// TODO: This should be close enough, but is unverified.
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Line {
 	pub from: QuadPosition,
