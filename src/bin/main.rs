@@ -334,10 +334,61 @@ fn main() {
 	use rs25::dynamics::light::{SkyLightSources, Lighting, HeightMapBuilder};
 	use rs25::dynamics::queue::Queue;
 
+	let mut sky_light = World::<ChunkNibbles>::new();
+	let mut heightmaps = ::std::collections::HashMap::<(i32, i32), Vec<u32>>::new(); // TODO: Better vocs integration.
+
 	let mut lighting_info = SparseStorage::<u4>::with_default(u4::new(15));
 	lighting_info.set( 0 * 16, u4::new(0));
 	lighting_info.set( 8 * 16, u4::new(2));
 	lighting_info.set( 9 * 16, u4::new(2));
+
+	println!("Performing sky lighting for region (0, 0)");
+	let lighting_start = ::std::time::Instant::now();
+
+	for x in 0..32 {
+		println!("{}", x);
+		for z in 0..32 {
+			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
+
+			let mut mask = LayerMask::default();
+			let mut heightmap = HeightMapBuilder::new();
+
+			for y in (0..16).rev() {
+				let (blocks, palette) = column.0[y].freeze();
+
+				let mut opacity = BulkNibbles::new(palette.len());
+
+				for (index, value) in palette.iter().enumerate() {
+					opacity.set(index, value.map(|entry| lighting_info.get(entry as usize)).unwrap_or(lighting_info.default_value()));
+				}
+
+				let sources = SkyLightSources::build(blocks, &opacity, mask);
+
+				let mut queue = Queue::default();
+				let mut light = Lighting::new(sources, opacity);
+
+				light.initial(blocks, &mut queue);
+				light.finish(blocks, &mut queue);
+
+				// TODO: Inter chunk lighting interactions.
+
+				let (light_data, sources) = light.decompose();
+				mask = heightmap.add(sources);
+
+				sky_light.set((x, y as u8, z), light_data);
+			}
+
+			heightmaps.insert((x, z), heightmap.build().into_vec());
+		}
+	}
+
+	let lighting_end = ::std::time::Instant::now();
+	let lighting_time = lighting_end.duration_since(lighting_start);
+
+	let lighting_secs = lighting_time.as_secs();
+	let lighting_us = (lighting_secs * 1000000) + ((lighting_time.subsec_nanos() / 1000) as u64);
+
+	println!("Lighting done in {}us ({}us per column)", lighting_us, lighting_us / 1024);
 
 	println!("Writing region (0, 0)");
 
@@ -351,38 +402,8 @@ fn main() {
 	for z in 0..32 {
 		println!("{}", z);
 		for x in 0..32 {
-
+			let heightmap = heightmaps.remove(&(x, z)).unwrap();
 			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
-
-			let mut snapshot_light = vec![None; 16];
-
-			let mut mask = LayerMask::default();
-			let mut heightmap = HeightMapBuilder::new();
-
-			for y in (0..16).rev() {
-				let chunk = &column.0[y];
-
-				let mut opacity = BulkNibbles::new(chunk.palette().entries().len());
-
-				for (index, value) in chunk.palette().entries().iter().enumerate() {
-					opacity.set(index, value.map(|entry| lighting_info.get(entry as usize)).unwrap_or(lighting_info.default_value()));
-				}
-
-				let sources = SkyLightSources::build(chunk.freeze().0, &opacity, mask);
-
-				let mut queue = Queue::default();
-				let mut light = Lighting::new(sources, opacity);
-
-				light.initial(chunk.freeze().0, &mut queue);
-				light.finish(chunk.freeze().0, &mut queue);
-
-				// TODO: Inter chunk lighting interactions.
-
-				let (light_data, sources) = light.decompose();
-				mask = heightmap.add(sources);
-
-				snapshot_light[y] = Some((ChunkNibbles::default(), light_data));
-			}
 
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
@@ -391,7 +412,7 @@ fn main() {
 				terrain_populated: true,
 				inhabited_time: 0,
 				biomes: vec![0; 256],
-				heightmap: heightmap.build().into_vec(),
+				heightmap,
 				entities: vec![],
 				tile_entities: vec![],
 				tile_ticks: vec![]
@@ -402,12 +423,12 @@ fn main() {
 					continue;
 				}
 
-				let snapshot_light = snapshot_light[y].take().unwrap_or_else(|| (ChunkNibbles::default(), ChunkNibbles::default()));
+				let sky_light = sky_light.remove((x, y as u8, z)).unwrap()/*_or_else(ChunkNibbles::default)*/;
 
 				snapshot.chunks[y] = Some(ChunkSnapshot {
 					blocks: column.0[y].clone(),
-					block_light: snapshot_light.0,
-					sky_light: snapshot_light.1
+					block_light: ChunkNibbles::default(),
+					sky_light
 				});
 			};
 
