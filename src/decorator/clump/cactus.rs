@@ -1,16 +1,16 @@
 use vocs::position::{QuadPosition, Offset, dir};
 use vocs::view::QuadMut;
 use vocs::indexed::Target;
-use matcher::BlockMatcher;
+use matcher::DeprecatedBlockMatcher;
 use decorator::{Decorator, Result};
 use java_rand::Random;
 
-pub struct CactusDecorator<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+pub struct CactusDecorator<B, R, M, S> where B: Target, R: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B> {
 	pub blocks: CactusBlocks<B, R, M, S>,
 	pub settings: CactusSettings
 }
 
-impl<B, R, M, S> Decorator<B> for CactusDecorator<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+impl<B, R, M, S> Decorator<B> for CactusDecorator<B, R, M, S> where B: Target, R: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B> {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		if !self.blocks.replace.matches(quad.get(position)) {
 			return Ok(());
@@ -36,14 +36,14 @@ impl<B, R, M, S> Decorator<B> for CactusDecorator<B, R, M, S> where B: Target, R
 	}
 }
 
-pub struct CactusBlocks<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+pub struct CactusBlocks<B, R, M, S> where B: Target, R: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B> {
 	pub replace: R, // Air
 	pub base: M, // Cactus / Sand
 	pub solid: S, // any solid block
 	pub block: B // Cactus
 }
 
-impl<B, R, M, S> CactusBlocks<B, R, M, S> where B: Target, R: BlockMatcher<B>, M: BlockMatcher<B>, S: BlockMatcher<B> {
+impl<B, R, M, S> CactusBlocks<B, R, M, S> where B: Target, R: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B> {
 	pub fn check(&self, quad: &mut QuadMut<B>, position: QuadPosition) -> bool {
 		if !self.replace.matches(quad.get(position)) {
 			return false

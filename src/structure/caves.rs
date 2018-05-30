@@ -54,20 +54,20 @@ struct CavesAssociations {
 // Overworld: CavesGenerator { carve: air, ocean: [ flowing_water, still_water ], carvable: [ stone, dirt, grass ], blob_size_multiplier: 1.0, vertical_multiplier: 1.0 }
 // Nether: CavesGenerator { carve: air, ocean: [ flowing_lava, still_lava ], carvable: [ netherrack, dirt, grass ], blob_size_multiplier: 2.0, vertical_multiplier: 0.5}
 
-pub struct CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
+pub struct CavesGenerator<B> where B: Target {
 	pub carve:  B,
 	pub lower:  B,
 	pub surface_block: B,
-	pub ocean:  O,
-	pub surface_top: T,
-	pub surface_fill: F,
-	pub carvable: C,
+	pub ocean:  BlockMatcher<B>,
+	pub surface_top: BlockMatcher<B>,
+	pub surface_fill: BlockMatcher<B>,
+	pub carvable: BlockMatcher<B>,
 	pub blob_size_multiplier: f32,
 	pub vertical_multiplier: f64,
 	pub lower_surface: u8
 }
 
-impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
+impl<B> CavesGenerator<B> where B: Target {
 	fn carve_blob(&self, blob: Blob, associations: &CavesAssociations, blocks: &mut ColumnBlocks, palette: &ColumnPalettes<B>, chunk: GlobalColumnPosition) {
 		let chunk_block = ((chunk.x() * 16) as f64, (chunk.z() * 16) as f64);
 		
@@ -178,7 +178,7 @@ impl<B, O, C, T, F> CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatch
 	}
 }
 
-impl<B, O, C, T, F> StructureGenerator<B> for CavesGenerator<B, O, C, T, F> where B: Target, O: BlockMatcher<B>, C: BlockMatcher<B>, T: BlockMatcher<B>, F: BlockMatcher<B> {
+impl<B> StructureGenerator<B> for CavesGenerator<B> where B: Target {
 	fn generate(&self, random: Random, column: &mut ColumnMut<B>, chunk: GlobalColumnPosition, from: GlobalColumnPosition, radius: u32) {
 		let mut caves = Caves::for_chunk(random, chunk, from, radius, self.blob_size_multiplier);
 		

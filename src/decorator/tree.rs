@@ -1,16 +1,16 @@
-use matcher::BlockMatcher;
+use matcher::DeprecatedBlockMatcher;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
 use java_rand::Random;
 
-pub struct TreeDecorator<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, B: Target {
+pub struct TreeDecorator<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
 	blocks: TreeBlocks<S, M, B>,
 	settings: TreeSettings
 }
 
-impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, B: Target {
+impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let tree = self.settings.tree(rng, position);
 		
@@ -80,7 +80,7 @@ impl Default for TreeDecorator<fn(&u16) -> bool, fn(&u16) -> bool, u16> {
 	}
 }
 
-struct TreeBlocks<S, M, B> where S: BlockMatcher<B>, M: BlockMatcher<B>, B: Target {
+struct TreeBlocks<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
 	log:      B,
 	foliage:  B,
 	replace:  M,

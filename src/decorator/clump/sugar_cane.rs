@@ -3,9 +3,9 @@ use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
-use matcher::BlockMatcher;
+use matcher::DeprecatedBlockMatcher;
 
-pub struct SugarCaneDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: BlockMatcher<B>, R: BlockMatcher<B> {
+pub struct SugarCaneDecorator<B, M, L, R> where B: Target, M: DeprecatedBlockMatcher<B>, L: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	pub block: B,
 	pub base: M,
 	pub liquid: L,
@@ -14,7 +14,7 @@ pub struct SugarCaneDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L
 	pub add_height: u32
 }
 
-impl<B, M, L, R> Decorator<B> for SugarCaneDecorator<B, M, L, R> where B: Target, M: BlockMatcher<B>, L: BlockMatcher<B>, R: BlockMatcher<B> {
+impl<B, M, L, R> Decorator<B> for SugarCaneDecorator<B, M, L, R> where B: Target, M: DeprecatedBlockMatcher<B>, L: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		if !self.replace.matches(quad.get(position)) {
 			return Ok(());

@@ -5,75 +5,72 @@
 
 use vocs::indexed::Target;
 use std::collections::HashSet;
+use std::iter::{IntoIterator, FromIterator, Iterator};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-#[serde(tag="kind")]
-pub enum BaselineMatcher<B> where B: Target {
-	Whitelist { blocks: HashSet<B> },
-	Blacklist { blocks: HashSet<B> }
+pub struct BlockMatcher<B> where B: Target {
+	pub blocks: HashSet<B>,
+	pub blacklist: bool
 }
 
-impl<B> BlockMatcher<B> for BaselineMatcher<B> where B: Target {
-	fn matches(&self, block: &B) -> bool {
-		match self {
-			&BaselineMatcher::Whitelist { ref blocks } => blocks.contains(block),
-			&BaselineMatcher::Blacklist { ref blocks } => !blocks.contains(block)
+impl<B> BlockMatcher<B> where B: Target {
+	pub fn is(block: B) -> Self {
+		let mut blocks = HashSet::with_capacity(1);
+		blocks.insert(block);
+
+		BlockMatcher {
+			blocks,
+			blacklist: false
 		}
+	}
+
+	pub fn is_not(block: B) -> Self {
+		let mut blocks = HashSet::with_capacity(1);
+		blocks.insert(block);
+
+		BlockMatcher {
+			blocks,
+			blacklist: true
+		}
+	}
+
+	pub fn include<'a, I>(blocks: I) -> Self where I: IntoIterator<Item=&'a B>, B: 'a {
+		BlockMatcher {
+			blocks: HashSet::from_iter(blocks.into_iter().map(|x| x.clone())),
+			blacklist: false
+		}
+	}
+
+	pub fn exclude<'a, I>(blocks: I) -> Self where I: IntoIterator<Item=&'a B>, B: 'a{
+		BlockMatcher {
+			blocks: HashSet::from_iter(blocks.into_iter().map(|x| x.clone())),
+			blacklist: true
+		}
+	}
+
+	pub fn matches(&self, block: &B) -> bool {
+		// NotPresent, Whitelist => 0 ^ 0 => 0
+		// NotPresent, Blacklist => 0 ^ 1 => 1
+		// Contains, Whitelist => 1 ^ 0 => 1
+		// Contains, Blacklist => 1 ^ 1 => 0
+		self.blocks.contains(block) ^ self.blacklist
+	}
+}
+
+impl<B> DeprecatedBlockMatcher<B> for BlockMatcher<B> where B: Target {
+	fn matches(&self, block: &B) -> bool {
+		BlockMatcher::matches(self, block)
 	}
 }
 
 // --
 
-pub trait BlockMatcher<B> where B: Target {
+pub trait DeprecatedBlockMatcher<B> where B: Target {
 	fn matches(&self, block: &B) -> bool;
 }
 
-impl<T, B> BlockMatcher<B> for T where T: Fn(&B) -> bool, B: Target {
+impl<T, B> DeprecatedBlockMatcher<B> for T where T: Fn(&B) -> bool, B: Target {
 	fn matches(&self, block: &B) -> bool {
 		self(block)
-	}
-}
-
-#[derive(Debug, Clone)]
-pub struct HashSetMatcher<B>(pub ::std::collections::HashSet<B>) where B: Target;
-impl<B> BlockMatcher<B> for HashSetMatcher<B> where B: Target {
-	fn matches(&self, block: &B) -> bool {
-		self.0.contains(block)
-	}
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct All;
-
-impl<B> BlockMatcher<B> for All where B: Target {
-	fn matches(&self, _block: &B) -> bool {
-		true
-	}
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct None;
-
-impl<B> BlockMatcher<B> for None where B: Target {
-	fn matches(&self, _block: &B) -> bool {
-		false
-	}
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct Is<B>(pub B) where B: Target;
-
-impl<B> BlockMatcher<B> for Is<B> where B: Target {
-	fn matches(&self, block: &B) -> bool {
-		*block == self.0
-	}
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct IsNot<B>(pub B) where B: Target;
-
-impl<B> BlockMatcher<B> for IsNot<B> where B: Target {
-	fn matches(&self, block: &B) -> bool {
-		*block != self.0
 	}
 }

@@ -15,6 +15,7 @@ use i73::generator::overworld_173::{self, Settings};
 use i73::config::biomes::{BiomesConfig, DecoratorConfig};
 use i73::biome::Lookup;
 use i73::structure;
+use i73::matcher::BlockMatcher;
 
 use vocs::indexed::ChunkIndexed;
 use vocs::world::world::World;
@@ -83,7 +84,7 @@ fn main() {
 		settings: json!({
 			"blocks": {
 				"replace": {
-					"kind": "Whitelist",
+					"blacklist": false,
 					"blocks": [16]
 				},
 				"block": 208
@@ -179,12 +180,8 @@ fn main() {
 			vertical: 4,
 			decorator: ::i73::decorator::clump::plant::PlantDecorator {
 				block: 31*16 + 1,
-				base: |ty: &u16| -> bool {
-					*ty == 2*16 || *ty == 3*16 || *ty == 60*16
-				},
-				replace: |ty: &u16| -> bool {
-					*ty == 0*16
-				}
+				base: BlockMatcher::include([2*16, 3*16, 60*16].into_iter()),
+				replace: BlockMatcher::is(0*16)
 			},
 			phantom: ::std::marker::PhantomData::<u16>
 		}),
@@ -235,18 +232,10 @@ fn main() {
 		carve: 0*16,
 		lower: 10*16,
 		surface_block: 2*16,
-		ocean: |ty: &u16| -> bool {
-			*ty == 8*16 || *ty == 9*16
-		},
-		carvable: |ty: &u16| -> bool {
-			*ty == 1*16 || *ty == 2*16 || *ty == 3*16
-		},
-		surface_top: |ty: &u16| -> bool {
-			*ty == 2*16
-		},
-		surface_fill: |ty: &u16| -> bool {
-			*ty == 3*16
-		},
+		ocean: BlockMatcher::include([8*16, 9*16].iter()),
+		carvable: BlockMatcher::include([1*16, 2*16, 3*16].iter()),
+		surface_top: BlockMatcher::is(2*16),
+		surface_fill: BlockMatcher::is(3*16),
 		blob_size_multiplier: 1.0,
 		vertical_multiplier: 1.0,
 		lower_surface: 10

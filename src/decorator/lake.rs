@@ -1,6 +1,6 @@
 use java_rand::Random;
 use vocs::indexed::Target;
-use matcher::BlockMatcher;
+use matcher::DeprecatedBlockMatcher;
 use vocs::position::{ChunkPosition, ColumnPosition, QuadPosition};
 use vocs::view::QuadMut;
 use vocs::mask::ChunkMask;
@@ -9,12 +9,12 @@ use super::{Decorator, Result};
 
 // Since lakes are always 16x8x16, they will never escape the Quad.
 
-pub struct LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+pub struct LakeDecorator<B, L, S, R> where B: Target, L: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	pub blocks: LakeBlocks<B, L, S, R>,
 	pub settings: LakeSettings
 }
 
-impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let mut lower = position.to_centered().unwrap();
 
@@ -40,7 +40,7 @@ impl<B, L, S, R> Decorator<B> for LakeDecorator<B, L, S, R> where B: Target, L: 
 	}
 }
 
-pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+pub struct LakeBlocks<B, L, S, R> where B: Target, L: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	pub is_liquid:  L,
 	pub is_solid:   S,
 	pub replacable: R,
@@ -49,7 +49,7 @@ pub struct LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockM
 	pub solidify:   Option<B>
 }
 
-impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: BlockMatcher<B>, S: BlockMatcher<B>, R: BlockMatcher<B> {
+impl<B, L, S, R> LakeBlocks<B, L, S, R> where B: Target, L: DeprecatedBlockMatcher<B>, S: DeprecatedBlockMatcher<B>, R: DeprecatedBlockMatcher<B> {
 	pub fn check_border(&self, lake: &Lake, quad: &mut QuadMut<B>, lower: ColumnPosition) -> bool {
 		
 		for x in 0..16 {
