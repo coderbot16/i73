@@ -14,6 +14,20 @@ pub struct BlockMatcher<B> where B: Target {
 }
 
 impl<B> BlockMatcher<B> where B: Target {
+	pub fn all() -> Self {
+		BlockMatcher {
+			blocks: HashSet::new(),
+			blacklist: true
+		}
+	}
+
+	pub fn none() -> Self {
+		BlockMatcher {
+			blocks: HashSet::new(),
+			blacklist: false
+		}
+	}
+
 	pub fn is(block: B) -> Self {
 		let mut blocks = HashSet::with_capacity(1);
 		blocks.insert(block);
@@ -67,10 +81,4 @@ impl<B> DeprecatedBlockMatcher<B> for BlockMatcher<B> where B: Target {
 
 pub trait DeprecatedBlockMatcher<B> where B: Target {
 	fn matches(&self, block: &B) -> bool;
-}
-
-impl<T, B> DeprecatedBlockMatcher<B> for T where T: Fn(&B) -> bool, B: Target {
-	fn matches(&self, block: &B) -> bool {
-		self(block)
-	}
 }

@@ -1,16 +1,16 @@
-use matcher::DeprecatedBlockMatcher;
+use matcher::BlockMatcher;
 use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
 use java_rand::Random;
 
-pub struct TreeDecorator<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
-	blocks: TreeBlocks<S, M, B>,
+pub struct TreeDecorator<B> where B: Target {
+	blocks: TreeBlocks<B>,
 	settings: TreeSettings
 }
 
-impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
+impl<B> Decorator<B> for TreeDecorator<B> where B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let tree = self.settings.tree(rng, position);
 		
@@ -71,7 +71,7 @@ impl<S, M, B> Decorator<B> for TreeDecorator<S, M, B> where S: DeprecatedBlockMa
 	}
 }
 
-impl Default for TreeDecorator<fn(&u16) -> bool, fn(&u16) -> bool, u16> {
+impl Default for TreeDecorator<u16> {
 	fn default() -> Self {
 		TreeDecorator {
 			blocks: TreeBlocks::default(),
@@ -80,29 +80,21 @@ impl Default for TreeDecorator<fn(&u16) -> bool, fn(&u16) -> bool, u16> {
 	}
 }
 
-struct TreeBlocks<S, M, B> where S: DeprecatedBlockMatcher<B>, M: DeprecatedBlockMatcher<B>, B: Target {
+struct TreeBlocks<B> where B: Target {
 	log:      B,
 	foliage:  B,
-	replace:  M,
-	soil:     S,
+	replace:  BlockMatcher<B>,
+	soil:     BlockMatcher<B>,
 	new_soil: B
 }
 
-fn replacable(block: &u16) -> bool {
-	*block == 0*16 || *block == 18*16
-}
-
-fn is_soil(block: &u16) -> bool {
-	*block == 2*16 || *block == 3*16
-}
-
-impl Default for TreeBlocks<fn(&u16) -> bool, fn(&u16) -> bool, u16> {
+impl Default for TreeBlocks<u16> {
 	fn default() -> Self {
 		TreeBlocks {
 			log:      17*16,
 			foliage:  18*16,
-			replace:  replacable,
-			soil:     is_soil,
+			replace:  BlockMatcher::include([0*16, 18*16].iter()),
+			soil:     BlockMatcher::include([2*16, 3*16].iter()),
 			new_soil: 3*16
 		}
 	}

@@ -114,9 +114,9 @@ fn main() {
 	decorators.push (::i73::decorator::Dispatcher {
 		decorator: Box::new(::i73::decorator::lake::LakeDecorator {
 			blocks: ::i73::decorator::lake::LakeBlocks {
-				is_liquid:  |ty: &u16| -> bool { *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16 },
-				is_solid:   |ty: &u16| -> bool { !(*ty == 0 || *ty == 8*16 || *ty == 9*16 || *ty == 10*16 || *ty == 11*16) }, // TODO: All nonsolid blocks
-				replacable: |_: &u16| -> bool { unimplemented!() },
+				is_liquid:  BlockMatcher::include([8*16, 9*16, 10*16, 11*16].iter()),
+				is_solid:   BlockMatcher::exclude([0*16, 8*16, 9*16, 10*16, 11*16].iter()), // TODO: All nonsolid blocks
+				replacable: BlockMatcher::none(), // TODO
 				liquid:     9*16,
 				carve:      0*16,
 				solidify:   None
@@ -142,16 +142,12 @@ fn main() {
 		decorator: Box::new(::i73::decorator::vein::SeasideVeinDecorator {
 			vein: ::i73::decorator::vein::VeinDecorator {
 				blocks: ::i73::decorator::vein::VeinBlocks {
-					replace: |ty: &u16| -> bool {
-						*ty == 12*16
-					},
+					replace: BlockMatcher::is(12*16),
 					block: 82*16
 				},
 				size: 32
 			},
-			ocean: |ty: &u16| -> bool {
-				*ty == 8*16 || *ty == 9*16
-			}
+			ocean: BlockMatcher::include([8*16, 9*16].iter())
 		}),
 		height_distribution: ::i73::distribution::Chance {
 			base: i73::distribution::Baseline::Linear(i73::distribution::Linear {
