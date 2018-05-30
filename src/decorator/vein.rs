@@ -1,5 +1,5 @@
 use vocs::indexed::Target;
-use matcher::{DeprecatedBlockMatcher, BlockMatcher};
+use matcher::BlockMatcher;
 use vocs::position::{QuadPosition, Offset};
 use vocs::view::QuadMut;
 use super::{Decorator, DecoratorFactory, Result};
@@ -20,7 +20,7 @@ const LENGTH_DIVISOR: f32 = 8.0;
 pub struct VeinDecoratorFactory<B>(::std::marker::PhantomData<B>);
 impl<B> DecoratorFactory<B> for VeinDecoratorFactory<B> where B: 'static + Target + ::serde::Deserialize {
 	fn configure(&self, config: serde_json::Value) -> serde_json::Result<Box<Decorator<B>>> {
-		Ok(Box::new(serde_json::from_value::<VeinDecorator<BlockMatcher<B>, B>>(config)?))
+		Ok(Box::new(serde_json::from_value::<VeinDecorator<B>>(config)?))
 	}
 }
 
@@ -28,17 +28,17 @@ impl<B> DecoratorFactory<B> for VeinDecoratorFactory<B> where B: 'static + Targe
 pub struct SeasideVeinDecoratorFactory<B>(::std::marker::PhantomData<B>);
 impl<B> DecoratorFactory<B> for SeasideVeinDecoratorFactory<B> where B: 'static + Target + ::serde::Deserialize {
 	fn configure(&self, config: serde_json::Value) -> serde_json::Result<Box<Decorator<B>>> {
-		Ok(Box::new(serde_json::from_value::<SeasideVeinDecorator<BlockMatcher<B>, BlockMatcher<B>, B>>(config)?))
+		Ok(Box::new(serde_json::from_value::<SeasideVeinDecorator<B>>(config)?))
 	}
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SeasideVeinDecorator<R, O, B> where R: DeprecatedBlockMatcher<B>, O: DeprecatedBlockMatcher<B>, B: Target {
-	pub vein: VeinDecorator<R, B>,
-	pub ocean: O
+pub struct SeasideVeinDecorator<B> where B: Target {
+	pub vein: VeinDecorator<B>,
+	pub ocean: BlockMatcher<B>
 }
 
-impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: DeprecatedBlockMatcher<B>, O: DeprecatedBlockMatcher<B>, B: Target {
+impl<B> Decorator<B> for SeasideVeinDecorator<B> where B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		if !self.ocean.matches(quad.get(position.offset((-8, 0, -8)).unwrap())) {
 			return Ok(());
@@ -49,12 +49,12 @@ impl<R, O, B> Decorator<B> for SeasideVeinDecorator<R, O, B> where R: Deprecated
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct VeinDecorator<R, B> where R: DeprecatedBlockMatcher<B>, B: Target {
-	pub blocks: VeinBlocks<R, B>,
+pub struct VeinDecorator<B> where B: Target {
+	pub blocks: VeinBlocks<B>,
 	pub size: u32
 }
 
-impl<R, B> Decorator<B> for VeinDecorator<R, B> where R: DeprecatedBlockMatcher<B>, B: Target {
+impl<B> Decorator<B> for VeinDecorator<B> where B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, rng: &mut Random, position: QuadPosition) -> Result {
 		let vein = Vein::create(self.size, (position.x() as i32, position.y() as i32, position.z() as i32), rng);
 		self.blocks.generate(&vein, quad, rng)
@@ -62,12 +62,12 @@ impl<R, B> Decorator<B> for VeinDecorator<R, B> where R: DeprecatedBlockMatcher<
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct VeinBlocks<R, B> where R: DeprecatedBlockMatcher<B>, B: Target {
-	pub replace: R,
+pub struct VeinBlocks<B> where B: Target {
+	pub replace: BlockMatcher<B>,
 	pub block:   B
 }
 
-impl<R, B> VeinBlocks<R, B> where R: DeprecatedBlockMatcher<B>, B: Target {
+impl<B> VeinBlocks<B> where B: Target {
 	pub fn generate(&self, vein: &Vein, quad: &mut QuadMut<B>, rng: &mut Random) -> Result {
 		quad.ensure_available(self.block.clone());
 		

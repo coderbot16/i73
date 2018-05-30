@@ -3,15 +3,15 @@ use vocs::indexed::Target;
 use vocs::view::QuadMut;
 use vocs::position::{QuadPosition, Offset, dir};
 use decorator::{Decorator, Result};
-use matcher::DeprecatedBlockMatcher;
+use matcher::BlockMatcher;
 
-pub struct ExposedDecorator<B, S, E> where B: Target, S: DeprecatedBlockMatcher<B>, E: DeprecatedBlockMatcher<B> {
+pub struct ExposedDecorator<B> where B: Target {
 	pub block: B,
-	pub stone: S,
-	pub empty: E
+	pub stone: BlockMatcher<B>,
+	pub empty: BlockMatcher<B>
 }
 
-impl<B, S, E> Decorator<B> for ExposedDecorator<B, S, E> where B: Target, S: DeprecatedBlockMatcher<B>, E: DeprecatedBlockMatcher<B> {
+impl<B> Decorator<B> for ExposedDecorator<B> where B: Target {
 	fn generate(&self, quad: &mut QuadMut<B>, _: &mut Random, position: QuadPosition) -> Result {
 		if !self.stone.matches(quad.get(position)) {
 			return Ok(());

@@ -70,15 +70,3 @@ impl<B> BlockMatcher<B> where B: Target {
 		self.blocks.contains(block) ^ self.blacklist
 	}
 }
-
-impl<B> DeprecatedBlockMatcher<B> for BlockMatcher<B> where B: Target {
-	fn matches(&self, block: &B) -> bool {
-		BlockMatcher::matches(self, block)
-	}
-}
-
-// --
-
-pub trait DeprecatedBlockMatcher<B> where B: Target {
-	fn matches(&self, block: &B) -> bool;
-}
