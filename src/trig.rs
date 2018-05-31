@@ -34,9 +34,9 @@ mod test {
 
 		assert_eq!(java.len(), 65536);
 
-		for index in 0..65536 {
-			let r = super::sin_index(index).to_bits();
-			let j = java[index as usize];
+		for index in 0..65536usize {
+			let r = super::sin_index(index as u32).to_bits();
+			let j = java[index];
 
 			if r != j {
 				panic!("trig::test_sin: mismatch @ index {}: {} (R) != {} (J)", index, r, j);

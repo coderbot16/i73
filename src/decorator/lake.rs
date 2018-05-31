@@ -22,7 +22,11 @@ impl<B> Decorator<B> for LakeDecorator<B> where B: Target {
 			lower = ColumnPosition::new(lower.x(), lower.y() - 1, lower.z());
 		}
 
-		// TODO: This may create a negative Y position.
+		// Trying to access blocks below Y=0 returns air, which would cause lake generation to fail.
+		if lower.y() < 4 {
+			return Ok(());
+		}
+
 		lower = ColumnPosition::new(lower.x(), lower.y() - 4, lower.z());
 
 		let mut lake = Lake::new(self.settings.surface);
