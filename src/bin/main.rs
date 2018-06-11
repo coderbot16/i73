@@ -253,6 +253,7 @@ fn main() {
 	let mut world = World::<ChunkIndexed<u16>>::new();
 
 	println!("Generating region (0, 0)");
+	let gen_start = ::std::time::Instant::now();
 
 	for x in 0..32 {
 		println!("{}", x);
@@ -290,7 +291,18 @@ fn main() {
 		}
 	}
 
+	{
+		let end = ::std::time::Instant::now();
+		let time = end.duration_since(gen_start);
+
+		let secs = time.as_secs();
+		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
+
+		println!("Generation done in {}us ({}us per column)", us, us / 1024);
+	}
+
 	println!("Decorating region (0, 0)");
+	let dec_start = ::std::time::Instant::now();
 
 	let mut decoration_rng = ::java_rand::Random::new(8399452073110208023);
 	let coefficients = (
@@ -313,6 +325,16 @@ fn main() {
 		}
 	}
 
+	{
+		let end = ::std::time::Instant::now();
+		let time = end.duration_since(dec_start);
+
+		let secs = time.as_secs();
+		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
+
+		println!("Decoration done in {}us ({}us per column)", us, us / 1024);
+	}
+
 	use vocs::nibbles::{u4, ChunkNibbles, BulkNibbles};
 	use vocs::sparse::SparseStorage;
 	use vocs::mask::LayerMask;
@@ -327,7 +349,9 @@ fn main() {
 	lighting_info.set( 8 * 16, u4::new(2));
 	lighting_info.set( 9 * 16, u4::new(2));
 
-	println!("Performing sky lighting for region (0, 0)");
+	let mut queue = Queue::default();
+
+	println!("Performing initial sky lighting for region (0, 0)");
 	let lighting_start = ::std::time::Instant::now();
 
 	for x in 0..32 {
@@ -349,7 +373,6 @@ fn main() {
 
 				let sources = SkyLightSources::build(blocks, &opacity, mask);
 
-				let mut queue = Queue::default();
 				let mut light = Lighting::new(sources, opacity);
 
 				light.initial(blocks, &mut queue);
@@ -367,15 +390,18 @@ fn main() {
 		}
 	}
 
-	let lighting_end = ::std::time::Instant::now();
-	let lighting_time = lighting_end.duration_since(lighting_start);
+	{
+		let end = ::std::time::Instant::now();
+		let time = end.duration_since(lighting_start);
 
-	let lighting_secs = lighting_time.as_secs();
-	let lighting_us = (lighting_secs * 1000000) + ((lighting_time.subsec_nanos() / 1000) as u64);
+		let secs = time.as_secs();
+		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
 
-	println!("Lighting done in {}us ({}us per column)", lighting_us, lighting_us / 1024);
+		println!("Initial sky lighting done in {}us ({}us per column)", us, us / 1024);
+	}
 
 	println!("Writing region (0, 0)");
+	let writing_start = ::std::time::Instant::now();
 
 	// use rs25::level::manager::{Manager, RegionPool};
 	// let pool = RegionPool::new(PathBuf::from("out/region/"), 512);
@@ -424,4 +450,14 @@ fn main() {
 	}
 	
 	writer.finish().unwrap();
+
+	{
+		let end = ::std::time::Instant::now();
+		let time = end.duration_since(writing_start);
+
+		let secs = time.as_secs();
+		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
+
+		println!("Writing done in {}us ({}us per column)", us, us / 1024);
+	}
 }
