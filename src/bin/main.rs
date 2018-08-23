@@ -20,7 +20,7 @@ use i73::matcher::BlockMatcher;
 use vocs::indexed::ChunkIndexed;
 use vocs::world::world::World;
 use vocs::view::ColumnMut;
-use vocs::position::GlobalColumnPosition;
+use vocs::position::{GlobalColumnPosition, GlobalChunkPosition};
 
 use rs25::level::manager::{ColumnSnapshot, ChunkSnapshot};
 use rs25::level::region::RegionWriter;
@@ -287,7 +287,7 @@ fn main() {
 				caves.apply(&mut column, column_position);
 			}
 
-			world.set_column((x as i32, z as i32), column_chunks);
+			world.set_column(column_position, column_chunks);
 		}
 	}
 
@@ -317,7 +317,7 @@ fn main() {
 			let z_part = (z as i64).wrapping_mul(coefficients.1) as u64;
 			decoration_rng = ::java_rand::Random::new((x_part.wrapping_add(z_part)) ^ 8399452073110208023);
 
-			let mut quad = world.get_quad_mut((x as i32, z as i32)).unwrap();
+			let mut quad = world.get_quad_mut(GlobalColumnPosition::new(x as i32, z as i32)).unwrap();
 
 			for dispatcher in &decorators {
 				dispatcher.generate(&mut quad, &mut decoration_rng).unwrap();
@@ -336,12 +336,16 @@ fn main() {
 	}
 
 	use vocs::nibbles::{u4, ChunkNibbles, BulkNibbles};
+	use vocs::mask::ChunkMask;
 	use vocs::sparse::SparseStorage;
 	use vocs::mask::LayerMask;
+	use vocs::component::*;
 	use rs25::dynamics::light::{SkyLightSources, Lighting, HeightMapBuilder};
 	use rs25::dynamics::queue::Queue;
+	use vocs::position::dir;
 
 	let mut sky_light = World::<ChunkNibbles>::new();
+	let mut incomplete = World::<ChunkMask>::new();
 	let mut heightmaps = ::std::collections::HashMap::<(i32, i32), Vec<u32>>::new(); // TODO: Better vocs integration.
 
 	let mut lighting_info = SparseStorage::<u4>::with_default(u4::new(15));
@@ -354,16 +358,57 @@ fn main() {
 	println!("Performing initial sky lighting for region (0, 0)");
 	let lighting_start = ::std::time::Instant::now();
 
+	fn spill_out(chunk_position: GlobalChunkPosition, incomplete: &mut World<ChunkMask>, old_spills: vocs::view::Directional<LayerMask>) {
+		if let Some(up) = chunk_position.plus_y() {
+			if !old_spills[dir::Up].is_filled(false) {
+				incomplete.get_or_create_mut(up).layer_zx_mut(0).combine(&old_spills[dir::Up]);
+			}
+		}
+
+		if let Some(down) = chunk_position.minus_y() {
+			if !old_spills[dir::Down].is_filled(false) {
+				incomplete.get_or_create_mut(down).layer_zx_mut(15).combine(&old_spills[dir::Down]);
+			}
+		}
+
+		if let Some(plus_x) = chunk_position.plus_x() {
+			if !old_spills[dir::PlusX].is_filled(false) {
+				incomplete.get_or_create_mut(plus_x).layer_zy_mut(0).combine(&old_spills[dir::PlusX]);
+			}
+		}
+
+		if let Some(minus_x) = chunk_position.minus_x() {
+			if !old_spills[dir::MinusX].is_filled(false) {
+				incomplete.get_or_create_mut(minus_x).layer_zy_mut(15).combine(&old_spills[dir::MinusX]);
+			}
+		}
+
+		if let Some(plus_z) = chunk_position.plus_z() {
+			if !old_spills[dir::PlusZ].is_filled(false) {
+				incomplete.get_or_create_mut(plus_z).layer_yx_mut(0).combine(&old_spills[dir::PlusZ]);
+			}
+		}
+
+		if let Some(minus_z) = chunk_position.minus_z() {
+			if !old_spills[dir::MinusZ].is_filled(false) {
+				incomplete.get_or_create_mut(minus_z).layer_yx_mut(15).combine(&old_spills[dir::MinusZ]);
+			}
+		}
+	}
+
 	for x in 0..32 {
 		println!("{}", x);
 		for z in 0..32 {
-			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
+			let column_position = GlobalColumnPosition::new(x, z);
 
 			let mut mask = LayerMask::default();
 			let mut heightmap = HeightMapBuilder::new();
+			let mut heightmap_sections = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None];
 
 			for y in (0..16).rev() {
-				let (blocks, palette) = column.0[y].freeze();
+				let chunk_position = GlobalChunkPosition::from_column(column_position, y);
+
+				let (blocks, palette) = world.get(chunk_position).unwrap().freeze();
 
 				let mut opacity = BulkNibbles::new(palette.len());
 
@@ -381,12 +426,25 @@ fn main() {
 				// TODO: Inter chunk lighting interactions.
 
 				let (light_data, sources) = light.decompose();
+				heightmap_sections[y as usize] = Some(sources.clone());
 				mask = heightmap.add(sources);
 
-				sky_light.set((x, y as u8, z), light_data);
+				let old_spills = queue.reset_spills();
+
+				spill_out(chunk_position, &mut incomplete, old_spills);
+
+				sky_light.set(chunk_position, light_data);
 			}
 
-			heightmaps.insert((x, z), heightmap.build().into_vec());
+			let heightmap = heightmap.build();
+
+			/*for (index, part) in heightmap_sections.iter().enumerate() {
+				let part = part.as_ref().unwrap().clone();
+
+				assert_eq!(SkyLightSources::slice(&heightmap, index as u8), part);
+			}*/
+
+			heightmaps.insert((x, z), heightmap.into_vec());
 		}
 	}
 
@@ -398,6 +456,54 @@ fn main() {
 		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
 
 		println!("Initial sky lighting done in {}us ({}us per column)", us, us / 1024);
+	}
+
+	println!("Completing sky lighting for region (0, 0)");
+	let complete_lighting_start = ::std::time::Instant::now();
+
+	while incomplete.sectors().len() > 0 {
+		let mut incomplete_front = ::std::mem::replace(&mut incomplete, World::new());
+
+		for (sector_position, mut sector) in incomplete_front.into_sectors() {
+
+			let block_sector = match world.get_sector(sector_position) {
+				Some(sector) => sector,
+				None => continue // No sense in lighting the void.
+			};
+
+			while let Some((position, incomplete)) = sector.pop_first() {
+				let (blocks, palette) = block_sector[position].as_ref().unwrap().freeze();
+
+				let mut opacity = BulkNibbles::new(palette.len());
+
+				for (index, value) in palette.iter().enumerate() {
+					opacity.set(index, value.map(|entry| lighting_info.get(entry as usize)).unwrap_or(lighting_info.default_value()));
+				}
+
+				let column_pos = GlobalColumnPosition::combine(sector_position, position.layer());
+				let heightmap = heightmaps.get(&(column_pos.x(), column_pos.z())).unwrap();
+
+				let sources = SkyLightSources::slice(&heightmap, position.y());
+
+				// TODO: In-place lighting update
+				/*let mut light = Lighting::new(sources, opacity);
+
+				light.initial(blocks, &mut queue);
+				light.finish(blocks, &mut queue);
+
+				let (light_data, sources) = light.decompose();*/
+			}
+		}
+	}
+
+	{
+		let end = ::std::time::Instant::now();
+		let time = end.duration_since(complete_lighting_start);
+
+		let secs = time.as_secs();
+		let us = (secs * 1000000) + ((time.subsec_nanos() / 1000) as u64);
+
+		println!("Sky lighting completion done in {}us ({}us per column)", us, us / 1024);
 	}
 
 	println!("Writing region (0, 0)");
@@ -413,8 +519,9 @@ fn main() {
 	for z in 0..32 {
 		println!("{}", z);
 		for x in 0..32 {
+			let column_position = GlobalColumnPosition::new(x, z);
+
 			let heightmap = heightmaps.remove(&(x, z)).unwrap();
-			let column = ColumnMut(world.get_column_mut((x as i32, z as i32)).unwrap());
 
 			let mut snapshot = ColumnSnapshot {
 				chunks: vec![None; 16],
@@ -430,14 +537,18 @@ fn main() {
 			};
 
 			for y in 0..16 {
-				if column.0[y].anvil_empty() {
+				let chunk_position = GlobalChunkPosition::from_column(column_position, y);
+
+				let chunk = world.get(chunk_position).unwrap();
+
+				if chunk.anvil_empty() {
 					continue;
 				}
 
-				let sky_light = sky_light.remove((x, y as u8, z)).unwrap()/*_or_else(ChunkNibbles::default)*/;
+				let sky_light = sky_light.remove(chunk_position).unwrap()/*_or_else(ChunkNibbles::default)*/;
 
-				snapshot.chunks[y] = Some(ChunkSnapshot {
-					blocks: column.0[y].clone(),
+				snapshot.chunks[y as usize] = Some(ChunkSnapshot {
+					blocks: chunk.clone(),
 					block_light: ChunkNibbles::default(),
 					sky_light
 				});
