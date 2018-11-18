@@ -69,7 +69,7 @@ pub fn passes<B>(seed: u64, settings: Settings<B>, biome_lookup: Lookup<B>) -> (
 			sea_coord: settings.sea_coord 
 		},
 		PaintPass { 
-			biomes: BiomeSource::new(ClimateSource::new(seed, settings.climate), biome_lookup), 
+			biomes: BiomeSource::new(ClimateSource::new(seed, settings.climate), biome_lookup),
 			blocks: settings.paint_blocks, 
 			sand, 
 			gravel, 
