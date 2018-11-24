@@ -31,7 +31,7 @@ mod test {
 	use std::io::Read;
 
 	pub fn read_u64s(name: &str) -> Vec<u64> {
-		let mut file = File::open(format!("test_data/{}.txt", name)).unwrap();
+		let file = File::open(format!("test_data/{}.txt", name)).unwrap();
 		let mut data = Vec::new();
 
 		let mut term = 0u64;

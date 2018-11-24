@@ -7,6 +7,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="explicitPathToStdlib" value="/usr/lib/rustlib/src/rust/src" />
+    <option name="toolchainHomeDirectory" value="/usr/bin" />
   </component>
 </project>

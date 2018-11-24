@@ -340,11 +340,14 @@ fn main() {
 	use vocs::sparse::SparseStorage;
 	use vocs::mask::LayerMask;
 	use vocs::component::*;
+	use vocs::view::{SplitDirectional, Directional};
 	use rs25::dynamics::light::{SkyLightSources, Lighting, HeightMapBuilder};
 	use rs25::dynamics::queue::Queue;
-	use vocs::position::dir;
+	use vocs::position::{Offset, dir};
 
-	let mut sky_light = World::<ChunkNibbles>::new();
+	use vocs::world::shared::{NoPack, SharedWorld};
+
+	let mut sky_light = SharedWorld::<NoPack<ChunkNibbles>>::new();
 	let mut incomplete = World::<ChunkMask>::new();
 	let mut heightmaps = ::std::collections::HashMap::<(i32, i32), Vec<u32>>::new(); // TODO: Better vocs integration.
 
@@ -352,6 +355,8 @@ fn main() {
 	lighting_info.set( 0 * 16, u4::new(0));
 	lighting_info.set( 8 * 16, u4::new(2));
 	lighting_info.set( 9 * 16, u4::new(2));
+
+	let empty_lighting = ChunkNibbles::default();
 
 	let mut queue = Queue::default();
 
@@ -418,14 +423,25 @@ fn main() {
 
 				let sources = SkyLightSources::build(blocks, &opacity, mask);
 
-				let mut light = Lighting::new(sources, opacity);
+				let mut light_data = ChunkNibbles::default();
+				let neighbors = Directional::combine(SplitDirectional {
+					minus_x: &empty_lighting,
+					plus_x: &empty_lighting,
+					minus_z: &empty_lighting,
+					plus_z: &empty_lighting,
+					down: &empty_lighting,
+					up: &empty_lighting
+				});
 
-				light.initial(blocks, &mut queue);
-				light.finish(blocks, &mut queue);
+				let sources = {
+					let mut light = Lighting::new(&mut light_data, neighbors, sources, opacity);
 
-				// TODO: Inter chunk lighting interactions.
+					light.initial(blocks, &mut queue);
+					light.finish(blocks, &mut queue);
 
-				let (light_data, sources) = light.decompose();
+					light.decompose().1
+				};
+
 				heightmap_sections[y as usize] = Some(sources.clone());
 				mask = heightmap.add(sources);
 
@@ -433,7 +449,7 @@ fn main() {
 
 				spill_out(chunk_position, &mut incomplete, old_spills);
 
-				sky_light.set(chunk_position, light_data);
+				sky_light.set(chunk_position, NoPack(light_data));
 			}
 
 			let heightmap = heightmap.build();
@@ -462,16 +478,25 @@ fn main() {
 	let complete_lighting_start = ::std::time::Instant::now();
 
 	while incomplete.sectors().len() > 0 {
-		let mut incomplete_front = ::std::mem::replace(&mut incomplete, World::new());
+		let incomplete_front = ::std::mem::replace(&mut incomplete, World::new());
 
 		for (sector_position, mut sector) in incomplete_front.into_sectors() {
+			println!("Completing sector @ {} - {} queued", sector_position, sector.count_sectors());
 
 			let block_sector = match world.get_sector(sector_position) {
 				Some(sector) => sector,
 				None => continue // No sense in lighting the void.
 			};
 
+			println!("(not skipped)");
+
+			let light_sector = sky_light.get_or_create_sector_mut(sector_position);
+
 			while let Some((position, incomplete)) = sector.pop_first() {
+				use vocs::mask::Mask;
+				println!("Completing chunk: {} / {} queued blocks", position, incomplete.count_ones());
+
+
 				let (blocks, palette) = block_sector[position].as_ref().unwrap().freeze();
 
 				let mut opacity = BulkNibbles::new(palette.len());
@@ -485,13 +510,33 @@ fn main() {
 
 				let sources = SkyLightSources::slice(&heightmap, position.y());
 
-				// TODO: In-place lighting update
-				/*let mut light = Lighting::new(sources, opacity);
+				// TODO: cross-sector lighting
 
-				light.initial(blocks, &mut queue);
+				let mut central = light_sector.get_or_create(position);
+				let locks = SplitDirectional {
+					up: position.offset(dir::Up).map(|position| light_sector[position].read()),
+					down: position.offset(dir::Down).map(|position| light_sector[position].read()),
+					plus_x: position.offset(dir::PlusX).map(|position| light_sector[position].read()),
+					minus_x: position.offset(dir::MinusX).map(|position| light_sector[position].read()),
+					plus_z: position.offset(dir::PlusZ).map(|position| light_sector[position].read()),
+					minus_z: position.offset(dir::MinusZ).map(|position| light_sector[position].read()),
+				};
+
+				let neighbors = SplitDirectional {
+					up: locks.up.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting),
+					down: locks.down.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting),
+					plus_x: locks.plus_x.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting),
+					minus_x: locks.minus_x.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting),
+					plus_z: locks.plus_z.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting),
+					minus_z: locks.minus_z.as_ref().and_then(|chunk| chunk.as_ref().map(|chunk| &chunk.0)).unwrap_or(&empty_lighting)
+				};
+
+				let mut light = Lighting::new(&mut central, Directional::combine(neighbors), sources, opacity);
+
+				queue.reset_from_mask(incomplete);
 				light.finish(blocks, &mut queue);
 
-				let (light_data, sources) = light.decompose();*/
+				// TODO: Queue handling
 			}
 		}
 	}
@@ -550,7 +595,7 @@ fn main() {
 				snapshot.chunks[y as usize] = Some(ChunkSnapshot {
 					blocks: chunk.clone(),
 					block_light: ChunkNibbles::default(),
-					sky_light
+					sky_light: sky_light.0
 				});
 			};
 

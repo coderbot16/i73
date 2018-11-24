@@ -58,7 +58,7 @@ pub fn passes<B>(seed: u64, settings: Settings<B>, biome_lookup: Lookup<B>) -> (
 	let height  = HeightSource::new(&mut rng, &settings.height);
 	let field   = settings.field;
 	let climate = ClimateSource::new(seed, settings.climate);
-	
+
 	(
 		ShapePass { 
 			climate, 
@@ -68,7 +68,7 @@ pub fn passes<B>(seed: u64, settings: Settings<B>, biome_lookup: Lookup<B>) -> (
 			field, 
 			sea_coord: settings.sea_coord 
 		},
-		PaintPass { 
+		PaintPass {
 			biomes: BiomeSource::new(ClimateSource::new(seed, settings.climate), biome_lookup),
 			blocks: settings.paint_blocks, 
 			sand, 
